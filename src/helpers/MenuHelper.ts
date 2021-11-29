@@ -3,11 +3,15 @@ import BaseDocument, { iBaseValue } from "../bases/BaseDocument"
 import BaseGuildCache from "../bases/BaseGuildCache"
 import ResponseBuilder from "../builders/ResponseBuilder"
 
-export default class MenuHelper<V extends iBaseValue, D extends BaseDocument<V, D>> {
-	public readonly cache: BaseGuildCache<V, D>
+export default class MenuHelper<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
+	public readonly cache: GC
 	public readonly interaction: SelectMenuInteraction
 
-	constructor(cache: BaseGuildCache<V, D>, interaction: SelectMenuInteraction) {
+	constructor(cache: GC, interaction: SelectMenuInteraction) {
 		this.cache = cache
 		this.interaction = interaction
 	}

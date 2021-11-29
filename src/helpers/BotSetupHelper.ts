@@ -28,11 +28,11 @@ export default class BotSetupHelper<
 	public readonly botCache: BC
 	public readonly interactionFiles: Collection<
 		string,
-		iInteractionFile<V, D> | iInteractionFolder<V, D>
+		iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
 	>
-	public readonly buttonFiles: Collection<string, iButtonFile<V, D>>
-	public readonly menuFiles: Collection<string, iMenuFile<V, D>>
-	public readonly messageFiles: iMessageFile<V, D>[]
+	public readonly buttonFiles: Collection<string, iButtonFile<V, D, GC>>
+	public readonly menuFiles: Collection<string, iMenuFile<V, D, GC>>
+	public readonly messageFiles: iMessageFile<V, D, GC>[]
 
 	constructor(
 		DClass: iBaseDocument<V, D>,
@@ -51,10 +51,10 @@ export default class BotSetupHelper<
 		this.messageFiles = []
 		this.interactionFiles = new Collection<
 			string,
-			iInteractionFile<V, D> | iInteractionFolder<V, D>
+			iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
 		>()
-		this.buttonFiles = new Collection<string, iButtonFile<V, D>>()
-		this.menuFiles = new Collection<string, iMenuFile<V, D>>()
+		this.buttonFiles = new Collection<string, iButtonFile<V, D, GC>>()
+		this.menuFiles = new Collection<string, iMenuFile<V, D, GC>>()
 
 		this.setupMessageCommands()
 		this.setupInteractionCommands()
@@ -115,8 +115,8 @@ export default class BotSetupHelper<
 				if (!interactionEntity) return
 
 				const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
-					? (interactionEntity as iInteractionFile<V, D>).ephemeral
-					: (interactionEntity as iInteractionFolder<V, D>).files.get(
+					? (interactionEntity as iInteractionFile<V, D, GC>).ephemeral
+					: (interactionEntity as iInteractionFolder<V, D, GC>).files.get(
 							interaction.options.getSubcommand(true)
 					  )!.ephemeral
 
@@ -126,7 +126,7 @@ export default class BotSetupHelper<
 
 				const helper = new InteractionHelper(cache, interaction)
 				try {
-					const interactionFile = interactionEntity as iInteractionFile<V, D>
+					const interactionFile = interactionEntity as iInteractionFile<V, D, GC>
 					if (interactionFile.execute) {
 						await interactionFile.execute(helper)
 						if (!interactionFile.defer) {
@@ -134,7 +134,7 @@ export default class BotSetupHelper<
 						}
 					}
 
-					const interactionFolder = interactionEntity as iInteractionFolder<V, D>
+					const interactionFolder = interactionEntity as iInteractionFolder<V, D, GC>
 					if (interactionFolder.files) {
 						const subcommand = interaction.options.getSubcommand(true)
 						const interactionFile = interactionFolder.files.get(subcommand)
@@ -229,7 +229,8 @@ export default class BotSetupHelper<
 		for (const fileName of fileNames) {
 			const file = require(path.join(this.cwd, `../messages/${fileName}`)) as iMessageFile<
 				V,
-				D
+				D,
+				GC
 			>
 			this.messageFiles.push(file)
 		}
@@ -248,12 +249,12 @@ export default class BotSetupHelper<
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iInteractionSubcommandFile<V, D>> = new Collection()
+			const files: Collection<string, iInteractionSubcommandFile<V, D, GC>> = new Collection()
 			for (const fileName of fileNames) {
 				const file = require(path.join(
 					this.cwd,
 					`../commands/${folderName}/${fileName}`
-				)) as iInteractionSubcommandFile<V, D>
+				)) as iInteractionSubcommandFile<V, D, GC>
 				files.set(file.builder.name, file)
 				builder.addSubcommand(file.builder)
 			}
@@ -270,7 +271,7 @@ export default class BotSetupHelper<
 			const file = require(path.join(
 				this.cwd,
 				`../commands/${filename}`
-			)) as iInteractionFile<V, D>
+			)) as iInteractionFile<V, D, GC>
 			this.interactionFiles.set(file.builder.name, file)
 		}
 	}
@@ -282,7 +283,11 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = require(path.join(this.cwd, `../buttons/${fileName}`)) as iButtonFile<V, D>
+			const file = require(path.join(this.cwd, `../buttons/${fileName}`)) as iButtonFile<
+				V,
+				D,
+				GC
+			>
 			this.buttonFiles.set(name, file)
 		}
 	}
@@ -294,15 +299,19 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = require(path.join(this.cwd, `../menus/${fileName}`)) as iMenuFile<V, D>
+			const file = require(path.join(this.cwd, `../menus/${fileName}`)) as iMenuFile<V, D, GC>
 			this.menuFiles.set(name, file)
 		}
 	}
 }
 
-export interface iMessageFile<V extends iBaseValue, D extends BaseDocument<V, D>> {
-	condition: (helper: MessageHelper<V, D>) => boolean
-	execute: (helper: MessageHelper<V, D>) => Promise<void>
+export interface iMessageFile<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
+	condition: (helper: MessageHelper<V, D, GC>) => boolean
+	execute: (helper: MessageHelper<V, D, GC>) => Promise<void>
 }
 
 export interface iInteractionHelp {
@@ -316,35 +325,55 @@ export interface iInteractionHelp {
 	}[]
 }
 
-export interface iInteractionFile<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export interface iInteractionFile<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
 	builder: SlashCommandBuilder
-	execute: (helper: InteractionHelper<V, D>) => Promise<any>
+	execute: (helper: InteractionHelper<V, D, GC>) => Promise<any>
 }
 
-export interface iInteractionSubcommandFile<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export interface iInteractionSubcommandFile<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
 	builder: SlashCommandSubcommandBuilder
-	execute: (helper: InteractionHelper<V, D>) => Promise<any>
+	execute: (helper: InteractionHelper<V, D, GC>) => Promise<any>
 }
 
-export interface iInteractionFolder<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export interface iInteractionFolder<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	builder: SlashCommandBuilder
-	files: Collection<string, iInteractionSubcommandFile<V, D>>
+	files: Collection<string, iInteractionSubcommandFile<V, D, GC>>
 }
 
-export interface iButtonFile<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export interface iButtonFile<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	defer: boolean
 	ephemeral: boolean
-	execute: (helper: ButtonHelper<V, D>) => Promise<any>
+	execute: (helper: ButtonHelper<V, D, GC>) => Promise<any>
 }
 
-export interface iMenuFile<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export interface iMenuFile<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	defer: boolean
 	ephemeral: boolean
-	execute: (helper: MenuHelper<V, D>) => Promise<any>
+	execute: (helper: MenuHelper<V, D, GC>) => Promise<any>
 }

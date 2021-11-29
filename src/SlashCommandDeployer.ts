@@ -5,8 +5,13 @@ import { iInteractionFile, iInteractionFolder } from "./helpers/BotSetupHelper"
 import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"
 import { SlashCommandBuilder } from "@discordjs/builders"
+import { BaseGuildCache } from "."
 
-export default class SlashCommandDeployer<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export default class SlashCommandDeployer<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	private readonly guildId: string
 	private readonly config: iConfig
 	private readonly commands: SlashCommandBuilder[]
@@ -14,7 +19,10 @@ export default class SlashCommandDeployer<V extends iBaseValue, D extends BaseDo
 	public constructor(
 		guildId: string,
 		config: iConfig,
-		interactionEntities: Collection<string, iInteractionFile<V, D> | iInteractionFolder<V, D>>
+		interactionEntities: Collection<
+			string,
+			iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
+		>
 	) {
 		this.guildId = guildId
 		this.config = config

@@ -3,16 +3,20 @@ import BaseGuildCache from "./bases/BaseGuildCache"
 import { Collection, Message, TextChannel } from "discord.js"
 
 type iFilter = (message: Message) => boolean
-export default class ChannelCleaner<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export default class ChannelCleaner<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D>
+> {
 	private readonly channelId: string
-	private readonly cache: BaseGuildCache<V, D>
+	private readonly cache: GC
 	private messageIds: string[]
 	private excluded: iFilter
 
 	private channel?: TextChannel
 	private messages: Collection<string, Message>
 
-	public constructor(cache: BaseGuildCache<V, D>, channelId: string, messageIds: string[]) {
+	public constructor(cache: GC, channelId: string, messageIds: string[]) {
 		this.excluded = () => false
 		this.cache = cache
 		this.channelId = channelId
