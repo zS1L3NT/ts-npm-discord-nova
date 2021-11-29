@@ -9,21 +9,21 @@ export type iBaseGuildCache<
 	DClass: iBaseDocument<V, D>,
 	bot: Client,
 	guild: Guild,
-	ref: FirebaseFirestore.DocumentReference<D>,
+	ref: FirebaseFirestore.DocumentReference<V>,
 	resolve: (cache: R) => void
 ) => R
 
 export default abstract class BaseGuildCache<V extends iBaseValue, D extends BaseDocument<V, D>> {
 	public readonly bot: Client
 	public readonly guild: Guild
-	public readonly ref: FirebaseFirestore.DocumentReference<D>
+	public readonly ref: FirebaseFirestore.DocumentReference<V>
 	public document: D
 
 	public constructor(
 		DClass: iBaseDocument<V, D>,
 		bot: Client,
 		guild: Guild,
-		ref: FirebaseFirestore.DocumentReference<D>,
+		ref: FirebaseFirestore.DocumentReference<V>,
 		resolve: (cache: BaseGuildCache<V, D>) => void
 	) {
 		this.bot = bot
