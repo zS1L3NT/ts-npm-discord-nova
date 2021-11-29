@@ -20,7 +20,7 @@ export default abstract class BaseBotCache<
 	private readonly GCClass: iBaseGuildCache<V, D, GC>
 
 	public readonly bot: Client
-	private readonly ref: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>
+	private readonly ref: FirebaseFirestore.CollectionReference<D>
 	private readonly guilds: Collection<string, GC>
 
 	public constructor(
@@ -37,7 +37,9 @@ export default abstract class BaseBotCache<
 			databaseURL: config.firebase.database_url
 		})
 		this.bot = bot
-		this.ref = admin.firestore().collection(config.firebase.collection)
+		this.ref = admin
+			.firestore()
+			.collection(config.firebase.collection) as FirebaseFirestore.CollectionReference<D>
 		this.guilds = new Collection<string, GC>()
 	}
 

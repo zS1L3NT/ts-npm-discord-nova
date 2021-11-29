@@ -1,6 +1,6 @@
 {
 	"name": "discordjs-nova",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Discord Nova, a framework for building Discord Bots",
 	"main": "build/index.js",
 	"types": "build/index.d.ts",
