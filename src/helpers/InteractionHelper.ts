@@ -1,4 +1,12 @@
-import { CommandInteraction, InteractionReplyOptions, MessagePayload } from "discord.js"
+import {
+	CommandInteraction,
+	GuildChannel,
+	GuildMember,
+	InteractionReplyOptions,
+	MessagePayload,
+	Role,
+	User
+} from "discord.js"
 import BaseDocument, { iBaseValue } from "../bases/BaseDocument"
 import BaseGuildCache from "../bases/BaseGuildCache"
 import ResponseBuilder from "../builders/ResponseBuilder"
@@ -39,15 +47,15 @@ export default class InteractionHelper<V extends iBaseValue, D extends BaseDocum
 	}
 
 	public mentionable(name: string) {
-		return this.interaction.options.getMentionable(name)
+		return this.interaction.options.getMentionable(name) as User | GuildMember | Role | null
 	}
 
 	public channel(name: string) {
-		return this.interaction.options.getChannel(name)
+		return this.interaction.options.getChannel(name) as GuildChannel | null
 	}
 
 	public role(name: string) {
-		return this.interaction.options.getRole(name)
+		return this.interaction.options.getRole(name) as Role | null
 	}
 
 	public user(name: string) {

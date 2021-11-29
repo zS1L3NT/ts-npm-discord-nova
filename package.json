@@ -1,13 +1,17 @@
 {
-	"name": "ts-npm-discord-nova",
+	"name": "discordjs-nova",
 	"version": "1.0.0",
-	"description": "",
-	"main": "build/app.js",
-	"author": "zS1L3NT",
-	"scripts": {
-		"start": "node build/app.js",
-		"dev": "ts-node src/app.ts"
+	"description": "Discord Nova, a framework for building Discord Bots",
+	"main": "build/index.js",
+	"types": "build/index.d.ts",
+	"author": "zS1L3NT <zechariahtan144@gmail.com> (http://www.zectan.com)",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/zS1L3NT/ts-npm-discordjs-nova"
 	},
+	"keywords": [
+		"discordjs"
+	],
 	"dependencies": {
 		"@discordjs/builders": "^0.5.0",
 		"@discordjs/rest": "^0.1.0-canary.0",
