@@ -23,6 +23,7 @@ export default class BotSetupHelper<
 	private readonly DClass: iBaseDocument<V, D>
 	private readonly GCClass: iBaseGuildCache<V, D, GC>
 
+	private readonly bot: Client
 	public readonly cwd: string
 	public readonly botCache: BC
 	public readonly interactionFiles: Collection<
@@ -31,8 +32,7 @@ export default class BotSetupHelper<
 	>
 	public readonly buttonFiles: Collection<string, iButtonFile<V, D>>
 	public readonly menuFiles: Collection<string, iMenuFile<V, D>>
-	private readonly bot: Client
-	private readonly messageFiles: iMessageFile<V, D>[]
+	public readonly messageFiles: iMessageFile<V, D>[]
 
 	constructor(
 		DClass: iBaseDocument<V, D>,

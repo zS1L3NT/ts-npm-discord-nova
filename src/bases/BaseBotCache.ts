@@ -20,8 +20,8 @@ export default abstract class BaseBotCache<
 	private readonly GCClass: iBaseGuildCache<V, D, GC>
 
 	public readonly bot: Client
-	private readonly ref: FirebaseFirestore.CollectionReference<V>
-	private readonly guilds: Collection<string, GC>
+	public readonly ref: FirebaseFirestore.CollectionReference<V>
+	public readonly guilds: Collection<string, GC>
 
 	public constructor(
 		DClass: iBaseDocument<V, D>,
