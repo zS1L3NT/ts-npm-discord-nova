@@ -1,5 +1,5 @@
 import AfterEvery from "after-every"
-import { BitFieldResolvable, Client, Intents, IntentsString } from "discord.js"
+import { BitFieldResolvable, Client, IntentsString } from "discord.js"
 import { useTryAsync } from "no-try"
 import BaseBotCache, { iBaseBotCache } from "./bases/BaseBotCache"
 import BaseDocument, { iBaseDocument, iBaseValue } from "./bases/BaseDocument"

@@ -10,9 +10,9 @@ import path from "path"
 import ResponseBuilder, { Emoji } from "../builders/ResponseBuilder"
 import SlashCommandDeployer from "../SlashCommandDeployer"
 import { Client, Collection } from "discord.js"
+import { iConfig } from "../NovaBot"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
-import { iConfig } from "../DiscordNova"
 
 export default class BotSetupHelper<
 	V extends iBaseValue,

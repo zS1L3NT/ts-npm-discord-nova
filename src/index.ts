@@ -1,4 +1,4 @@
-import DiscordNova from "./DiscordNova"
+import NovaBot from "./NovaBot"
 
 export { default as BaseBotCache } from "./bases/BaseBotCache"
 export { default as BaseDocument } from "./bases/BaseDocument"
@@ -6,8 +6,10 @@ export { default as BaseGuildCache } from "./bases/BaseGuildCache"
 export { default as ResponseBuilder } from "./builders/ResponseBuilder"
 export { default as DateHelper } from "./helpers/DateHelper"
 export { default as ChannelCleaner } from "./ChannelCleaner"
+export * from "./NovaBot"
 export * from "./bases/BaseBotCache"
 export * from "./bases/BaseDocument"
 export * from "./bases/BaseGuildCache"
 export * from "./builders/ResponseBuilder"
-export default DiscordNova
+export * from "./helpers/BotSetupHelper"
+export default NovaBot

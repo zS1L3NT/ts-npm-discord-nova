@@ -1,6 +1,6 @@
 import BaseDocument, { iBaseValue } from "./bases/BaseDocument"
 import { Collection } from "discord.js"
-import { iConfig } from "./DiscordNova"
+import { iConfig } from "./NovaBot"
 import { iInteractionFile, iInteractionFolder } from "./helpers/BotSetupHelper"
 import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"
