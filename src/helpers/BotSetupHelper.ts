@@ -9,11 +9,12 @@ import {
 	BaseDocument,
 	BaseGuildCache,
 	Emoji,
+	HelpBuilder,
 	iBaseBotCache,
 	iBaseDocument,
 	iBaseGuildCache,
 	iBaseValue,
-	iConfig,
+	NovaOptions,
 	ResponseBuilder,
 	SlashCommandDeployer
 } from ".."
@@ -31,7 +32,7 @@ export default class BotSetupHelper<
 	private readonly GCClass: iBaseGuildCache<V, D, GC>
 
 	private readonly bot: Client
-	public readonly cwd: string
+	public readonly options: NovaOptions<V, D, GC, BC>
 	public readonly botCache: BC
 	public readonly interactionFiles: Collection<
 		string,
@@ -45,16 +46,15 @@ export default class BotSetupHelper<
 		DClass: iBaseDocument<V, D>,
 		GCClass: iBaseGuildCache<V, D, GC>,
 		BCClass: iBaseBotCache<V, D, GC, BC>,
-		config: iConfig,
-		cwd: string,
+		options: NovaOptions<V, D, GC, BC>,
 		bot: Client
 	) {
 		this.DClass = DClass
 		this.GCClass = GCClass
 
-		this.cwd = cwd
+		this.options = options
 		this.bot = bot
-		this.botCache = new BCClass(this.DClass, this.GCClass, config, this.bot)
+		this.botCache = new BCClass(this.DClass, this.GCClass, this.options.config, this.bot)
 		this.messageFiles = []
 		this.interactionFiles = new Collection<
 			string,
@@ -215,7 +215,7 @@ export default class BotSetupHelper<
 		this.bot.on("guildCreate", async guild => {
 			console.log(`Added to Guild(${guild.name})`)
 			await this.botCache.registerGuildCache(guild.id)
-			await new SlashCommandDeployer(guild.id, config, this.interactionFiles)
+			await new SlashCommandDeployer(guild.id, this.options.config, this.interactionFiles)
 		})
 
 		this.bot.on("guildDelete", async guild => {
@@ -229,7 +229,9 @@ export default class BotSetupHelper<
 	}
 
 	private setupMessageCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "messages")))
+		const [err, fileNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.cwd, "messages"))
+		)
 
 		if (err) return
 
@@ -240,14 +242,16 @@ export default class BotSetupHelper<
 	}
 
 	private setupInteractionCommands() {
-		const [err, entityNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "commands")))
+		const [err, entityNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.cwd, "commands"))
+		)
 
 		if (err) return
 
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.cwd, `commands/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.options.cwd, `commands/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
@@ -273,10 +277,33 @@ export default class BotSetupHelper<
 			const file = this.require<iInteractionFile<V, D, GC>>(`commands/${filename}`)
 			this.interactionFiles.set(file.builder.name, file)
 		}
+
+		this.interactionFiles.set("help", {
+			defer: false,
+			ephemeral: false,
+			help: {
+				description: "Shows you the help menu that you are looking at right now",
+				params: []
+			},
+			builder: new SlashCommandBuilder()
+				.setName("help")
+				.setDescription("Displays the help command"),
+			execute: async helper => {
+				helper.interaction.channel?.send(
+					new HelpBuilder(
+						this.options.help.message,
+						this.options.help.icon,
+						this.options.cwd
+					).buildMinimum()
+				)
+			}
+		})
 	}
 
 	private setupButtonCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "buttons")))
+		const [err, fileNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.cwd, "buttons"))
+		)
 
 		if (err) return
 
@@ -285,10 +312,37 @@ export default class BotSetupHelper<
 			const file = this.require<iButtonFile<V, D, GC>>(`buttons/${fileName}`)
 			this.buttonFiles.set(name, file)
 		}
+
+		this.buttonFiles.set("help-maximum", {
+			defer: false,
+			ephemeral: true,
+			execute: async helper => {
+				await helper.interaction.update(
+					new HelpBuilder(
+						this.options.help.message,
+						this.options.help.icon,
+						this.options.cwd
+					).buildMaximum()
+				)
+			}
+		})
+		this.buttonFiles.set("help-minimum", {
+			defer: false,
+			ephemeral: true,
+			execute: async helper => {
+				await helper.interaction.update(
+					new HelpBuilder(
+						this.options.help.message,
+						this.options.help.icon,
+						this.options.cwd
+					).buildMinimum()
+				)
+			}
+		})
 	}
 
 	private setupMenuCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "menus")))
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "menus")))
 
 		if (err) return
 
@@ -297,10 +351,24 @@ export default class BotSetupHelper<
 			const file = this.require<iMenuFile<V, D, GC>>(`menus/${fileName}`)
 			this.menuFiles.set(name, file)
 		}
+
+		this.menuFiles.set("help-item", {
+			defer: false,
+			ephemeral: true,
+			execute: async helper => {
+				helper.interaction.update(
+					new HelpBuilder(
+						this.options.help.message,
+						this.options.help.icon,
+						this.options.cwd
+					).buildCommand(helper.value()!)
+				)
+			}
+		})
 	}
 
 	private require<T>(location: string): T {
-		const file = require(path.join(this.cwd, location))
+		const file = require(path.join(this.options.cwd, location))
 		if ("default" in file) {
 			return file.default
 		} else {

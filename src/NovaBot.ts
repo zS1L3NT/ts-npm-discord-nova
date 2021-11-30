@@ -38,6 +38,11 @@ export type NovaOptions<
 	config: iConfig
 	updatesMinutely: boolean
 
+	help: {
+		message: string
+		icon: string
+	}
+
 	Document: iBaseDocument<V, D>
 	GuildCache: iBaseGuildCache<V, D, GC>
 	BotCache: iBaseBotCache<V, D, GC, BC>
@@ -59,8 +64,7 @@ export default class NovaBot<
 			Document,
 			GuildCache,
 			BotCache,
-			options.config,
-			options.cwd,
+			options,
 			bot
 		)
 		const { botCache } = botSetupHelper

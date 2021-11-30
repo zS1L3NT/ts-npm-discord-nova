@@ -219,7 +219,7 @@ class HelpBuilder<
 		// Slash commands
 		const fileNames = entitiyNames.filter(f => HelpBuilder.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<V, D, GC>>(`commands/${filename}`)
+			const file = this.require<iInteractionFile<V, D, GC>>(`../commands/${filename}`)
 			interactionFiles.set(file.builder.name, file)
 		}
 
