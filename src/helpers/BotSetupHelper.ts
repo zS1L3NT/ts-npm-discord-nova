@@ -227,11 +227,7 @@ export default class BotSetupHelper<
 		if (err) return
 
 		for (const fileName of fileNames) {
-			const file = require(path.join(this.cwd, `../messages/${fileName}`)) as iMessageFile<
-				V,
-				D,
-				GC
-			>
+			const file = this.require<iMessageFile<V, D, GC>>(`../messages/${fileName}`)
 			this.messageFiles.push(file)
 		}
 	}
@@ -251,10 +247,9 @@ export default class BotSetupHelper<
 
 			const files: Collection<string, iInteractionSubcommandFile<V, D, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file = require(path.join(
-					this.cwd,
+				const file = this.require<iInteractionSubcommandFile<V, D, GC>>(
 					`../commands/${folderName}/${fileName}`
-				)) as iInteractionSubcommandFile<V, D, GC>
+				)
 				files.set(file.builder.name, file)
 				builder.addSubcommand(file.builder)
 			}
@@ -268,10 +263,7 @@ export default class BotSetupHelper<
 		// Slash commands
 		const fileNames = entityNames.filter(f => BotSetupHelper.isFile(f))
 		for (const filename of fileNames) {
-			const file = require(path.join(
-				this.cwd,
-				`../commands/${filename}`
-			)) as iInteractionFile<V, D, GC>
+			const file = this.require<iInteractionFile<V, D, GC>>(`../commands/${filename}`)
 			this.interactionFiles.set(file.builder.name, file)
 		}
 	}
@@ -283,11 +275,7 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = require(path.join(this.cwd, `../buttons/${fileName}`)) as iButtonFile<
-				V,
-				D,
-				GC
-			>
+			const file = this.require<iButtonFile<V, D, GC>>(`../buttons/${fileName}`)
 			this.buttonFiles.set(name, file)
 		}
 	}
@@ -299,8 +287,17 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = require(path.join(this.cwd, `../menus/${fileName}`)) as iMenuFile<V, D, GC>
+			const file = this.require<iMenuFile<V, D, GC>>(`../menus/${fileName}`)
 			this.menuFiles.set(name, file)
+		}
+	}
+
+	private require<T>(location: string): T {
+		const file = require(path.join(this.cwd, location))
+		if ("default" in file) {
+			return file.default
+		} else {
+			return file
 		}
 	}
 }
