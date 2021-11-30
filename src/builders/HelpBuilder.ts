@@ -26,28 +26,31 @@ class HelpBuilder<
 	GC extends BaseGuildCache<V, D, GC>
 > {
 	private message: string
+	private icon: string
+	private cwd: string
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
-	private readonly PROFILE =
-		"https://cdn.discordapp.com/avatars/899858077027811379/56e8665909db40439b09e13627970b62.png?size=128"
 
-	public constructor(message: string) {
+	public constructor(message: string, icon: string, cwd: string) {
 		this.message = message
+		this.icon = icon
+		this.cwd = cwd
 	}
 
 	public buildMaximum(): MessageOptions {
 		const interactionFiles = this.getInteractionFiles()
+
 		const embed = new MessageEmbed()
+			.setAuthor("Help", this.QUESTION)
+			.setThumbnail(this.icon)
+			.setColor("#C7D1D8")
+			.setDescription("Overview of all commands")
+
 		const button = new MessageButton()
 			.setCustomId("help-minimum")
 			.setLabel("Minimise")
 			.setStyle("PRIMARY")
 			.setEmoji("➖")
-
-		embed.setAuthor("Help", this.QUESTION)
-		embed.setThumbnail(this.PROFILE)
-		embed.setColor("#C7D1D8")
-		embed.setDescription("Overview of all commands")
 
 		for (const [entityName, entity] of interactionFiles) {
 			if (Object.keys(entity).includes("files")) {
@@ -71,23 +74,23 @@ class HelpBuilder<
 
 	public buildMinimum(): MessageOptions {
 		const embed = new MessageEmbed()
+			.setAuthor("Help", this.QUESTION)
+			.setThumbnail(this.icon)
+			.setColor("#C7D1D8")
+			.setDescription(
+				[
+					...this.message.split("\n"),
+					"",
+					"Click the button below to see all available commands",
+					"Use the select menu below to find out more about a specific command"
+				].join("\n")
+			)
+
 		const button = new MessageButton()
 			.setCustomId("help-maximum")
 			.setLabel("Maximise")
 			.setStyle("PRIMARY")
 			.setEmoji("➕")
-
-		embed.setAuthor("Help", this.QUESTION)
-		embed.setThumbnail(this.PROFILE)
-		embed.setColor("#C7D1D8")
-		embed.setDescription(
-			[
-				...this.message.split("\n"),
-				"",
-				"Click the button below to see all available commands",
-				"Use the select menu below to find out more about a specific command"
-			].join("\n")
-		)
 
 		return {
 			embeds: [embed],
@@ -100,7 +103,8 @@ class HelpBuilder<
 
 	public buildCommand(command: string): MessageOptions {
 		const interactionFiles = this.getInteractionFiles()
-		const embed = new MessageEmbed()
+
+		const embed = new MessageEmbed().setAuthor(command, this.QUESTION)
 		const button = new MessageButton()
 			.setCustomId("help-minimum")
 			.setLabel("Back")
@@ -113,24 +117,18 @@ class HelpBuilder<
 			  ).files.get(command.split(" ")[1])!.help
 			: (interactionFiles.get(command) as iInteractionFile<V, D, GC>).help
 
-		embed.setAuthor(command, this.QUESTION)
-		const description = [help.description]
-
 		const [ts_err] = useTry(() => {
-			fs.readFileSync(
-				path.join(__dirname, "../messages", command.replaceAll(" ", "/") + ".ts")
-			)
+			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".ts"))
 		})
 		const [js_err] = useTry(() => {
-			fs.readFileSync(
-				path.join(__dirname, "../messages", command.replaceAll(" ", "/") + ".js")
-			)
+			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".js"))
 		})
 
-		description.push(
+		const description = [
+			help.description,
 			"",
 			`__Message Commands__: **${ts_err && js_err ? "Unsupported" : "Supported"}**`
-		)
+		]
 
 		if (help.params.length) {
 			description.push("", "__Input Parameters__")
@@ -191,28 +189,23 @@ class HelpBuilder<
 			string,
 			iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
 		>()
-		const [err, entitiyNames] = useTry(() =>
-			fs.readdirSync(path.join(__dirname, "../commands"))
-		)
+		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "commands")))
 
 		if (err) return interactionFiles
 
 		// Slash subcommands
 		const folderNames = entitiyNames.filter(f => !HelpBuilder.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(__dirname, `../commands/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.cwd, `commands/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
 			const files: Collection<string, iInteractionSubcommandFile<V, D, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file =
-					require(`../commands/${folderName}/${fileName}`) as iInteractionSubcommandFile<
-						V,
-						D,
-						GC
-					>
+				const file = this.require<iInteractionSubcommandFile<V, D, GC>>(
+					`commands/${folderName}/${fileName}`
+				)
 				files.set(file.builder.name, file)
 				builder.addSubcommand(file.builder)
 			}
@@ -226,11 +219,20 @@ class HelpBuilder<
 		// Slash commands
 		const fileNames = entitiyNames.filter(f => HelpBuilder.isFile(f))
 		for (const filename of fileNames) {
-			const file = require(`../commands/${filename}`) as iInteractionFile<V, D, GC>
+			const file = this.require<iInteractionFile<V, D, GC>>(`commands/${filename}`)
 			interactionFiles.set(file.builder.name, file)
 		}
 
 		return interactionFiles
+	}
+
+	private require<T>(location: string): T {
+		const file = require(path.join(this.cwd, location))
+		if ("default" in file) {
+			return file.default
+		} else {
+			return file
+		}
 	}
 
 	private static isFile(file: string): boolean {
