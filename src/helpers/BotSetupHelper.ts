@@ -242,6 +242,27 @@ export default class BotSetupHelper<
 	}
 
 	private setupInteractionCommands() {
+		this.interactionFiles.set("help", {
+			defer: false,
+			ephemeral: false,
+			help: {
+				description: "Shows you the help menu that you are looking at right now",
+				params: []
+			},
+			builder: new SlashCommandBuilder()
+				.setName("help")
+				.setDescription("Displays the help command"),
+			execute: async helper => {
+				helper.interaction.channel?.send(
+					new HelpBuilder(
+						this.options.help.message,
+						this.options.help.icon,
+						this.options.cwd
+					).buildMinimum()
+				)
+			}
+		})
+
 		const [err, entityNames] = useTry(() =>
 			fs.readdirSync(path.join(this.options.cwd, "commands"))
 		)
@@ -277,42 +298,9 @@ export default class BotSetupHelper<
 			const file = this.require<iInteractionFile<V, D, GC>>(`commands/${filename}`)
 			this.interactionFiles.set(file.builder.name, file)
 		}
-
-		this.interactionFiles.set("help", {
-			defer: false,
-			ephemeral: false,
-			help: {
-				description: "Shows you the help menu that you are looking at right now",
-				params: []
-			},
-			builder: new SlashCommandBuilder()
-				.setName("help")
-				.setDescription("Displays the help command"),
-			execute: async helper => {
-				helper.interaction.channel?.send(
-					new HelpBuilder(
-						this.options.help.message,
-						this.options.help.icon,
-						this.options.cwd
-					).buildMinimum()
-				)
-			}
-		})
 	}
 
 	private setupButtonCommands() {
-		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "buttons"))
-		)
-
-		if (err) return
-
-		for (const fileName of fileNames) {
-			const name = fileName.split(".")[0]
-			const file = this.require<iButtonFile<V, D, GC>>(`buttons/${fileName}`)
-			this.buttonFiles.set(name, file)
-		}
-
 		this.buttonFiles.set("help-maximum", {
 			defer: false,
 			ephemeral: true,
@@ -339,19 +327,21 @@ export default class BotSetupHelper<
 				)
 			}
 		})
-	}
 
-	private setupMenuCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "menus")))
+		const [err, fileNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.cwd, "buttons"))
+		)
 
 		if (err) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = this.require<iMenuFile<V, D, GC>>(`menus/${fileName}`)
-			this.menuFiles.set(name, file)
+			const file = this.require<iButtonFile<V, D, GC>>(`buttons/${fileName}`)
+			this.buttonFiles.set(name, file)
 		}
+	}
 
+	private setupMenuCommands() {
 		this.menuFiles.set("help-item", {
 			defer: false,
 			ephemeral: true,
@@ -365,6 +355,16 @@ export default class BotSetupHelper<
 				)
 			}
 		})
+
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "menus")))
+
+		if (err) return
+
+		for (const fileName of fileNames) {
+			const name = fileName.split(".")[0]
+			const file = this.require<iMenuFile<V, D, GC>>(`menus/${fileName}`)
+			this.menuFiles.set(name, file)
+		}
 	}
 
 	private require<T>(location: string): T {
