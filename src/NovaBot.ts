@@ -42,7 +42,7 @@ export type NovaOptions<
 	GuildCache: iBaseGuildCache<V, D, GC>
 	BotCache: iBaseBotCache<V, D, GC, BC>
 
-	onSetup?: (bot: Client) => void
+	onSetup?: (botCache: BC) => void
 }
 
 export default class NovaBot<
@@ -110,7 +110,7 @@ export default class NovaBot<
 			console.log(`✅ All bot cache restored`)
 			console.log("|")
 
-			options.onSetup?.(bot)
+			options.onSetup?.(botCache)
 
 			if (options.updatesMinutely) {
 				AfterEvery(1).minutes(async () => {
