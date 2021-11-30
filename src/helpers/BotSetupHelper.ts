@@ -229,25 +229,25 @@ export default class BotSetupHelper<
 	}
 
 	private setupMessageCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "../messages")))
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "messages")))
 
 		if (err) return
 
 		for (const fileName of fileNames) {
-			const file = this.require<iMessageFile<V, D, GC>>(`../messages/${fileName}`)
+			const file = this.require<iMessageFile<V, D, GC>>(`messages/${fileName}`)
 			this.messageFiles.push(file)
 		}
 	}
 
 	private setupInteractionCommands() {
-		const [err, entityNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "../commands")))
+		const [err, entityNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "commands")))
 
 		if (err) return
 
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.cwd, `../commands/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.cwd, `commands/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
@@ -255,7 +255,7 @@ export default class BotSetupHelper<
 			const files: Collection<string, iInteractionSubcommandFile<V, D, GC>> = new Collection()
 			for (const fileName of fileNames) {
 				const file = this.require<iInteractionSubcommandFile<V, D, GC>>(
-					`../commands/${folderName}/${fileName}`
+					`commands/${folderName}/${fileName}`
 				)
 				files.set(file.builder.name, file)
 				builder.addSubcommand(file.builder)
@@ -270,31 +270,31 @@ export default class BotSetupHelper<
 		// Slash commands
 		const fileNames = entityNames.filter(f => BotSetupHelper.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<V, D, GC>>(`../commands/${filename}`)
+			const file = this.require<iInteractionFile<V, D, GC>>(`commands/${filename}`)
 			this.interactionFiles.set(file.builder.name, file)
 		}
 	}
 
 	private setupButtonCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "../buttons")))
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "buttons")))
 
 		if (err) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = this.require<iButtonFile<V, D, GC>>(`../buttons/${fileName}`)
+			const file = this.require<iButtonFile<V, D, GC>>(`buttons/${fileName}`)
 			this.buttonFiles.set(name, file)
 		}
 	}
 
 	private setupMenuCommands() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "../menus")))
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "menus")))
 
 		if (err) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = this.require<iMenuFile<V, D, GC>>(`../menus/${fileName}`)
+			const file = this.require<iMenuFile<V, D, GC>>(`menus/${fileName}`)
 			this.menuFiles.set(name, file)
 		}
 	}
