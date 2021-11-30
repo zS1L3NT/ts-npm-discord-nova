@@ -8,7 +8,7 @@ import {
 } from "."
 import { Collection } from "discord.js"
 import { REST } from "@discordjs/rest"
-import { Routes } from "discord-api-types"
+import { Routes } from "discord-api-types/v9"
 import { SlashCommandBuilder } from "@discordjs/builders"
 
 export default class SlashCommandDeployer<
