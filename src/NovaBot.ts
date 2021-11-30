@@ -100,9 +100,7 @@ export default class NovaBot<
 				}
 
 				if (options.updatesMinutely) {
-					console.time(`Updated Channels for Guild(${guild.name}) [${debugCount}]`)
-					cache.updateMinutely(debugCount)
-					console.timeEnd(`Updated Channels for Guild(${guild.name}) [${debugCount}]`)
+					await cache.updateMinutely(debugCount)
 				}
 
 				console.log(`${tag} ✅ Restored cache for Guild(${guild.name})`)
