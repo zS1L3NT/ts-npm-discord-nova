@@ -1,16 +1,23 @@
-import BaseBotCache, { iBaseBotCache } from "../bases/BaseBotCache"
-import BaseDocument, { iBaseDocument, iBaseValue } from "../bases/BaseDocument"
-import BaseGuildCache, { iBaseGuildCache } from "../bases/BaseGuildCache"
 import ButtonHelper from "./ButtonHelper"
 import fs from "fs"
 import InteractionHelper from "./InteractionHelper"
 import MenuHelper from "./MenuHelper"
 import MessageHelper from "./MessageHelper"
 import path from "path"
-import ResponseBuilder, { Emoji } from "../builders/ResponseBuilder"
-import SlashCommandDeployer from "../SlashCommandDeployer"
+import {
+	BaseBotCache,
+	BaseDocument,
+	BaseGuildCache,
+	Emoji,
+	iBaseBotCache,
+	iBaseDocument,
+	iBaseGuildCache,
+	iBaseValue,
+	iConfig,
+	ResponseBuilder,
+	SlashCommandDeployer
+} from ".."
 import { Client, Collection } from "discord.js"
-import { iConfig } from "../NovaBot"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 

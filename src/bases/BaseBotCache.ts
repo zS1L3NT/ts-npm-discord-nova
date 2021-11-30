@@ -1,8 +1,13 @@
 import admin from "firebase-admin"
-import BaseDocument, { iBaseDocument, iBaseValue } from "./BaseDocument"
-import BaseGuildCache, { iBaseGuildCache } from "./BaseGuildCache"
+import {
+	BaseDocument,
+	BaseGuildCache,
+	iBaseDocument,
+	iBaseGuildCache,
+	iBaseValue,
+	iConfig
+} from ".."
 import { Client, Collection, Guild } from "discord.js"
-import { iConfig } from "../NovaBot"
 
 export type iBaseBotCache<
 	V extends iBaseValue,

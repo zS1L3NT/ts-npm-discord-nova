@@ -1,11 +1,17 @@
 import AfterEvery from "after-every"
+import {
+	BaseBotCache,
+	BaseDocument,
+	BaseGuildCache,
+	BotSetupHelper,
+	iBaseBotCache,
+	iBaseDocument,
+	iBaseGuildCache,
+	iBaseValue,
+	SlashCommandDeployer
+} from "."
 import { BitFieldResolvable, Client, IntentsString } from "discord.js"
 import { useTryAsync } from "no-try"
-import BaseBotCache, { iBaseBotCache } from "./bases/BaseBotCache"
-import BaseDocument, { iBaseDocument, iBaseValue } from "./bases/BaseDocument"
-import BaseGuildCache, { iBaseGuildCache } from "./bases/BaseGuildCache"
-import BotSetupHelper from "./helpers/BotSetupHelper"
-import SlashCommandDeployer from "./SlashCommandDeployer"
 
 export type iConfig = {
 	firebase: {
@@ -45,35 +51,29 @@ export default class NovaBot<
 	GC extends BaseGuildCache<V, D>,
 	BC extends BaseBotCache<V, D, GC>
 > {
-	private readonly bot: Client
-	private readonly options: NovaOptions<V, D, GC, BC>
-
 	public constructor(options: NovaOptions<V, D, GC, BC>) {
-		this.options = options
-		this.bot = new Client({ intents: options.intents })
-	}
+		const bot = new Client({ intents: options.intents })
 
-	public start() {
-		const { Document, GuildCache, BotCache } = this.options
+		const { Document, GuildCache, BotCache } = options
 		const botSetupHelper = new BotSetupHelper<V, D, GC, BC>(
 			Document,
 			GuildCache,
 			BotCache,
-			this.options.config,
-			this.options.cwd,
-			this.bot
+			options.config,
+			options.cwd,
+			bot
 		)
 		const { botCache } = botSetupHelper
 
-		this.bot.login(this.options.config.discord.token)
-		this.bot.on("ready", async () => {
-			console.log(`Logged in as ${this.options.name}`)
+		bot.login(options.config.discord.token)
+		bot.on("ready", async () => {
+			console.log(`Logged in as ${options.name}`)
 
 			let debugCount = 0
 
 			let i = 0
-			let count = this.bot.guilds.cache.size
-			for (const guild of this.bot.guilds.cache.toJSON()) {
+			let count = bot.guilds.cache.size
+			for (const guild of bot.guilds.cache.toJSON()) {
 				const tag = `${(++i).toString().padStart(count.toString().length, "0")}/${count}`
 				const [cacheErr, cache] = await useTryAsync(() => botCache.getGuildCache(guild))
 				if (cacheErr) {
@@ -87,7 +87,7 @@ export default class NovaBot<
 				const [deployErr] = await useTryAsync(() =>
 					new SlashCommandDeployer(
 						guild.id,
-						this.options.config,
+						options.config,
 						botSetupHelper.interactionFiles
 					).deploy()
 				)
@@ -99,7 +99,7 @@ export default class NovaBot<
 					continue
 				}
 
-				if (this.options.updatesMinutely) {
+				if (options.updatesMinutely) {
 					console.time(`Updated Channels for Guild(${guild.name}) [${debugCount}]`)
 					cache.updateMinutely(debugCount)
 					console.timeEnd(`Updated Channels for Guild(${guild.name}) [${debugCount}]`)
@@ -110,12 +110,12 @@ export default class NovaBot<
 			console.log(`✅ All bot cache restored`)
 			console.log("|")
 
-			this.options.onSetup?.()
+			options.onSetup?.()
 
-			if (this.options.updatesMinutely) {
+			if (options.updatesMinutely) {
 				AfterEvery(1).minutes(async () => {
 					debugCount++
-					for (const guild of this.bot.guilds.cache.toJSON()) {
+					for (const guild of bot.guilds.cache.toJSON()) {
 						const cache = await botCache.getGuildCache(guild)
 						cache.updateMinutely(debugCount)
 					}

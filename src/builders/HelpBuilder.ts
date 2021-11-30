@@ -1,6 +1,14 @@
 import fs from "fs"
 import path from "path"
-import { BaseDocument, BaseGuildCache, iBaseValue } from ".."
+import {
+	BaseDocument,
+	BaseGuildCache,
+	iBaseValue,
+	iInteractionFile,
+	iInteractionFolder,
+	iInteractionHelp,
+	iInteractionSubcommandFile
+} from ".."
 import {
 	Collection,
 	MessageActionRow,
@@ -9,12 +17,6 @@ import {
 	MessageOptions,
 	MessageSelectMenu
 } from "discord.js"
-import {
-	iInteractionFile,
-	iInteractionFolder,
-	iInteractionHelp,
-	iInteractionSubcommandFile
-} from "../helpers/BotSetupHelper"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
@@ -23,14 +25,14 @@ class HelpBuilder<
 	D extends BaseDocument<V, D>,
 	GC extends BaseGuildCache<V, D>
 > {
-	private cache: GC
+	private message: string
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 	private readonly PROFILE =
 		"https://cdn.discordapp.com/avatars/899858077027811379/56e8665909db40439b09e13627970b62.png?size=128"
 
-	public constructor(cache: GC) {
-		this.cache = cache
+	public constructor(message: string) {
+		this.message = message
 	}
 
 	public buildMaximum(): MessageOptions {
@@ -80,13 +82,7 @@ class HelpBuilder<
 		embed.setColor("#C7D1D8")
 		embed.setDescription(
 			[
-				"Welcome to SounDroid!",
-				"SounDroid is a Music bot which plays songs from Spotify and YouTube",
-				!("getPrefix" in this.cache)
-					? "Message commands not supported"
-					: (this.cache as any).getPrefix()
-					? `My prefix for message commands is \`${(this.cache as any).getPrefix()}\``
-					: `No message command prefix for this server`,
+				...this.message.split("\n"),
 				"",
 				"Click the button below to see all available commands",
 				"Use the select menu below to find out more about a specific command"

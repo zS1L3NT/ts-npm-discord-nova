@@ -1,5 +1,5 @@
+import { BaseDocument, iBaseDocument, iBaseValue } from ".."
 import { Client, Guild } from "discord.js"
-import BaseDocument, { iBaseDocument, iBaseValue } from "./BaseDocument"
 
 export type iBaseGuildCache<
 	V extends iBaseValue,

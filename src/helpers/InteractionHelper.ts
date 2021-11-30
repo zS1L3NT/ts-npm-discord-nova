@@ -1,3 +1,4 @@
+import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
 import {
 	CommandInteraction,
 	GuildChannel,
@@ -7,9 +8,6 @@ import {
 	Role,
 	User
 } from "discord.js"
-import BaseDocument, { iBaseValue } from "../bases/BaseDocument"
-import BaseGuildCache from "../bases/BaseGuildCache"
-import ResponseBuilder from "../builders/ResponseBuilder"
 
 export default class InteractionHelper<
 	V extends iBaseValue,

@@ -1,6 +1,4 @@
-import BaseDocument, { iBaseValue } from "../bases/BaseDocument"
-import BaseGuildCache from "../bases/BaseGuildCache"
-import ResponseBuilder from "../builders/ResponseBuilder"
+import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
 import { InteractionReplyOptions, Message, MessagePayload } from "discord.js"
 
 const time = (ms: number) => new Promise(res => setTimeout(res, ms))

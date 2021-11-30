@@ -1,6 +1,5 @@
-import BaseDocument, { iBaseValue } from "./bases/BaseDocument"
-import BaseGuildCache from "./bases/BaseGuildCache"
-import { Collection, Message, TextChannel } from "discord.js"
+import { Message, TextChannel, Collection } from "discord.js"
+import { iBaseValue, BaseDocument, BaseGuildCache } from "."
 
 type iFilter = (message: Message) => boolean
 export default class ChannelCleaner<

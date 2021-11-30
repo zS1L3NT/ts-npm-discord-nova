@@ -1,11 +1,15 @@
-import BaseDocument, { iBaseValue } from "./bases/BaseDocument"
+import {
+	BaseDocument,
+	BaseGuildCache,
+	iBaseValue,
+	iConfig,
+	iInteractionFile,
+	iInteractionFolder
+} from "."
 import { Collection } from "discord.js"
-import { iConfig } from "./NovaBot"
-import { iInteractionFile, iInteractionFolder } from "./helpers/BotSetupHelper"
 import { REST } from "@discordjs/rest"
-import { Routes } from "discord-api-types/v9"
+import { Routes } from "discord-api-types"
 import { SlashCommandBuilder } from "@discordjs/builders"
-import { BaseGuildCache } from "."
 
 export default class SlashCommandDeployer<
 	V extends iBaseValue,

@@ -1,7 +1,5 @@
+import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
 import { InteractionReplyOptions, MessagePayload, SelectMenuInteraction } from "discord.js"
-import BaseDocument, { iBaseValue } from "../bases/BaseDocument"
-import BaseGuildCache from "../bases/BaseGuildCache"
-import ResponseBuilder from "../builders/ResponseBuilder"
 
 export default class MenuHelper<
 	V extends iBaseValue,
