@@ -4,7 +4,7 @@ import { Client, Guild } from "discord.js"
 export type iBaseGuildCache<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	R extends BaseGuildCache<V, D>
+	R extends BaseGuildCache<V, D, R>
 > = new (
 	DClass: iBaseDocument<V, D>,
 	bot: Client,
@@ -13,7 +13,11 @@ export type iBaseGuildCache<
 	resolve: (cache: R) => void
 ) => R
 
-export default abstract class BaseGuildCache<V extends iBaseValue, D extends BaseDocument<V, D>> {
+export default abstract class BaseGuildCache<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	R extends BaseGuildCache<V, D, R>
+> {
 	public readonly bot: Client
 	public readonly guild: Guild
 	public readonly ref: FirebaseFirestore.DocumentReference<V>
@@ -24,7 +28,7 @@ export default abstract class BaseGuildCache<V extends iBaseValue, D extends Bas
 		bot: Client,
 		guild: Guild,
 		ref: FirebaseFirestore.DocumentReference<V>,
-		resolve: <GC extends BaseGuildCache<V, D>>(cache: GC) => void
+		resolve: (cache: R) => void
 	) {
 		this.bot = bot
 		this.guild = guild
@@ -33,7 +37,7 @@ export default abstract class BaseGuildCache<V extends iBaseValue, D extends Bas
 		this.resolve(resolve)
 	}
 
-	public abstract resolve(resolve: <GC extends BaseGuildCache<V, D>>(cache: GC) => void): void
+	public abstract resolve(resolve: (cache: R) => void): void
 
 	/**
 	 * Method run every minute

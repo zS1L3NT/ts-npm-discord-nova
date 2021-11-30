@@ -24,7 +24,7 @@ import { useTry } from "no-try"
 export default class BotSetupHelper<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>,
+	GC extends BaseGuildCache<V, D, GC>,
 	BC extends BaseBotCache<V, D, GC>
 > {
 	private readonly DClass: iBaseDocument<V, D>
@@ -312,7 +312,7 @@ export default class BotSetupHelper<
 export interface iMessageFile<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	condition: (helper: MessageHelper<V, D, GC>) => boolean
 	execute: (helper: MessageHelper<V, D, GC>) => Promise<void>
@@ -332,7 +332,7 @@ export interface iInteractionHelp {
 export interface iInteractionFile<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	defer: boolean
 	ephemeral: boolean
@@ -344,7 +344,7 @@ export interface iInteractionFile<
 export interface iInteractionSubcommandFile<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	defer: boolean
 	ephemeral: boolean
@@ -356,7 +356,7 @@ export interface iInteractionSubcommandFile<
 export interface iInteractionFolder<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	builder: SlashCommandBuilder
 	files: Collection<string, iInteractionSubcommandFile<V, D, GC>>
@@ -365,7 +365,7 @@ export interface iInteractionFolder<
 export interface iButtonFile<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	defer: boolean
 	ephemeral: boolean
@@ -375,7 +375,7 @@ export interface iButtonFile<
 export interface iMenuFile<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	defer: boolean
 	ephemeral: boolean

@@ -4,7 +4,7 @@ import { InteractionReplyOptions, MessagePayload, SelectMenuInteraction } from "
 export default class MenuHelper<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	public readonly cache: GC
 	public readonly interaction: SelectMenuInteraction

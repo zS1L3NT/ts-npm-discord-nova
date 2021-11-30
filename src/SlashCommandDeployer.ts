@@ -14,7 +14,7 @@ import { SlashCommandBuilder } from "@discordjs/builders"
 export default class SlashCommandDeployer<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	private readonly guildId: string
 	private readonly config: iConfig

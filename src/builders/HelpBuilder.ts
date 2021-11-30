@@ -23,7 +23,7 @@ import { useTry } from "no-try"
 class HelpBuilder<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	private message: string
 	private readonly QUESTION =

@@ -12,7 +12,7 @@ import { Client, Collection, Guild } from "discord.js"
 export type iBaseBotCache<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>,
+	GC extends BaseGuildCache<V, D, GC>,
 	R extends BaseBotCache<V, D, GC>
 > = new (
 	DClass: iBaseDocument<V, D>,
@@ -24,7 +24,7 @@ export type iBaseBotCache<
 export default abstract class BaseBotCache<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	private readonly DClass: iBaseDocument<V, D>
 	private readonly GCClass: iBaseGuildCache<V, D, GC>

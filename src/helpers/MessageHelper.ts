@@ -6,7 +6,7 @@ const time = (ms: number) => new Promise(res => setTimeout(res, ms))
 export default class MessageHelper<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>
+	GC extends BaseGuildCache<V, D, GC>
 > {
 	public readonly cache: GC
 	public readonly message: Message

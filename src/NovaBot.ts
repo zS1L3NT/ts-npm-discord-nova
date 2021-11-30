@@ -29,7 +29,7 @@ export type iConfig = {
 export type NovaOptions<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>,
+	GC extends BaseGuildCache<V, D, GC>,
 	BC extends BaseBotCache<V, D, GC>
 > = {
 	intents: BitFieldResolvable<IntentsString, number>
@@ -48,7 +48,7 @@ export type NovaOptions<
 export default class NovaBot<
 	V extends iBaseValue,
 	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D>,
+	GC extends BaseGuildCache<V, D, GC>,
 	BC extends BaseBotCache<V, D, GC>
 > {
 	public constructor(options: NovaOptions<V, D, GC, BC>) {
