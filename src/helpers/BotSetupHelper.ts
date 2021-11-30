@@ -54,7 +54,7 @@ export default class BotSetupHelper<
 
 		this.cwd = cwd
 		this.bot = bot
-		this.botCache = new BCClass(this.DClass, this.GCClass, this.bot)
+		this.botCache = new BCClass(this.DClass, this.GCClass, config, this.bot)
 		this.messageFiles = []
 		this.interactionFiles = new Collection<
 			string,

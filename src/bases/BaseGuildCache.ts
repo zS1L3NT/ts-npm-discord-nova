@@ -24,7 +24,7 @@ export default abstract class BaseGuildCache<V extends iBaseValue, D extends Bas
 		bot: Client,
 		guild: Guild,
 		ref: FirebaseFirestore.DocumentReference<V>,
-		resolve: (cache: BaseGuildCache<V, D>) => void
+		resolve: <GC extends BaseGuildCache<V, D>>(cache: GC) => void
 	) {
 		this.bot = bot
 		this.guild = guild
@@ -33,7 +33,7 @@ export default abstract class BaseGuildCache<V extends iBaseValue, D extends Bas
 		this.resolve(resolve)
 	}
 
-	public abstract resolve(resolve: (cache: BaseGuildCache<V, D>) => void): void
+	public abstract resolve(resolve: <GC extends BaseGuildCache<V, D>>(cache: GC) => void): void
 
 	/**
 	 * Method run every minute

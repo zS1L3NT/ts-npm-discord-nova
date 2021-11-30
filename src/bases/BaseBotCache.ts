@@ -14,7 +14,12 @@ export type iBaseBotCache<
 	D extends BaseDocument<V, D>,
 	GC extends BaseGuildCache<V, D>,
 	R extends BaseBotCache<V, D, GC>
-> = new (DClass: iBaseDocument<V, D>, GCClass: iBaseGuildCache<V, D, GC>, bot: Client) => R
+> = new (
+	DClass: iBaseDocument<V, D>,
+	GCClass: iBaseGuildCache<V, D, GC>,
+	config: iConfig,
+	bot: Client
+) => R
 
 export default abstract class BaseBotCache<
 	V extends iBaseValue,
