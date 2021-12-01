@@ -39,7 +39,7 @@ export type NovaOptions<
 	updatesMinutely: boolean
 
 	help: {
-		message: string
+		message: (cache: GC) => string
 		icon: string
 	}
 

@@ -255,7 +255,7 @@ export default class BotSetupHelper<
 			execute: async helper => {
 				helper.interaction.channel?.send(
 					new HelpBuilder(
-						this.options.help.message,
+						this.options.help.message(helper.cache),
 						this.options.help.icon,
 						this.options.cwd
 					).buildMinimum()
@@ -307,7 +307,7 @@ export default class BotSetupHelper<
 			execute: async helper => {
 				await helper.interaction.update(
 					new HelpBuilder(
-						this.options.help.message,
+						this.options.help.message(helper.cache),
 						this.options.help.icon,
 						this.options.cwd
 					).buildMaximum()
@@ -320,7 +320,7 @@ export default class BotSetupHelper<
 			execute: async helper => {
 				await helper.interaction.update(
 					new HelpBuilder(
-						this.options.help.message,
+						this.options.help.message(helper.cache),
 						this.options.help.icon,
 						this.options.cwd
 					).buildMinimum()
@@ -348,7 +348,7 @@ export default class BotSetupHelper<
 			execute: async helper => {
 				helper.interaction.update(
 					new HelpBuilder(
-						this.options.help.message,
+						this.options.help.message(helper.cache),
 						this.options.help.icon,
 						this.options.cwd
 					).buildCommand(helper.value()!)
