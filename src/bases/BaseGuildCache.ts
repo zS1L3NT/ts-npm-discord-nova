@@ -1,3 +1,4 @@
+import admin from "firebase-admin"
 import { BaseDocument, iBaseDocument, iBaseValue } from ".."
 import { Client, Guild } from "discord.js"
 
@@ -9,7 +10,7 @@ export type iBaseGuildCache<
 	DClass: iBaseDocument<V, D>,
 	bot: Client,
 	guild: Guild,
-	ref: FirebaseFirestore.DocumentReference<V>,
+	ref: admin.firestore.DocumentReference<V>,
 	resolve: (cache: R) => void
 ) => R
 
@@ -20,14 +21,14 @@ export default abstract class BaseGuildCache<
 > {
 	public readonly bot: Client
 	public readonly guild: Guild
-	public readonly ref: FirebaseFirestore.DocumentReference<V>
+	public readonly ref: admin.firestore.DocumentReference<V>
 	public document: D
 
 	public constructor(
 		DClass: iBaseDocument<V, D>,
 		bot: Client,
 		guild: Guild,
-		ref: FirebaseFirestore.DocumentReference<V>,
+		ref: admin.firestore.DocumentReference<V>,
 		resolve: (cache: R) => void
 	) {
 		this.bot = bot
@@ -35,12 +36,10 @@ export default abstract class BaseGuildCache<
 		this.ref = ref
 		this.document = new DClass().getEmpty()
 		this.resolve(resolve)
+		this.onConstruct()
 	}
 
+	public abstract onConstruct(): void
 	public abstract resolve(resolve: (cache: R) => void): void
-
-	/**
-	 * Method run every minute
-	 */
-	public abstract updateMinutely(debug: number): Promise<void>
+	public abstract updateMinutely(debug: number): void
 }

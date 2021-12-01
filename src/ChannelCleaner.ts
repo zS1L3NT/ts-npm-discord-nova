@@ -83,7 +83,7 @@ export default class ChannelCleaner<
 		return this.messageIds
 	}
 
-	public getMessages() {
+	public getMessages(): Collection<string, Message> {
 		return this.messages
 	}
 }

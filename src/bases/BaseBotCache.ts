@@ -30,7 +30,7 @@ export default abstract class BaseBotCache<
 	private readonly GCClass: iBaseGuildCache<V, D, GC>
 
 	public readonly bot: Client
-	public readonly ref: FirebaseFirestore.CollectionReference<V>
+	public readonly ref: admin.firestore.CollectionReference<V>
 	public readonly guilds: Collection<string, GC>
 
 	public constructor(
@@ -49,18 +49,24 @@ export default abstract class BaseBotCache<
 		this.bot = bot
 		this.ref = admin
 			.firestore()
-			.collection(config.firebase.collection) as FirebaseFirestore.CollectionReference<V>
+			.collection(config.firebase.collection) as admin.firestore.CollectionReference<V>
 		this.guilds = new Collection<string, GC>()
+		this.onConstruct()
 	}
 
 	public getGuildCache(guild: Guild): Promise<GC> {
 		return new Promise<GC>((resolve, reject) => {
 			const cache = this.guilds.get(guild.id)
 			if (!cache) {
-				this.guilds.set(
-					guild.id,
-					new this.GCClass(this.DClass, this.bot, guild, this.ref.doc(guild.id), resolve)
+				const cache = new this.GCClass(
+					this.DClass,
+					this.bot,
+					guild,
+					this.ref.doc(guild.id),
+					resolve
 				)
+				this.guilds.set(guild.id, cache)
+				this.onSetGuildCache(cache)
 
 				this.ref
 					.doc(guild.id)
@@ -74,6 +80,8 @@ export default abstract class BaseBotCache<
 		})
 	}
 
-	public abstract registerGuildCache(guildId: string): Promise<void>
-	public abstract eraseGuildCache(guildId: string): Promise<void>
+	public abstract onConstruct(): void
+	public abstract onSetGuildCache(cache: GC): void
+	public abstract registerGuildCache(guildId: string): void
+	public abstract eraseGuildCache(guildId: string): void
 }
