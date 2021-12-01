@@ -405,7 +405,7 @@ export interface iInteractionFile<
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
-	builder: SlashCommandBuilder
+	builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
 	execute: (helper: InteractionHelper<V, D, GC>) => Promise<any>
 }
 

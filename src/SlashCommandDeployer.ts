@@ -18,7 +18,10 @@ export default class SlashCommandDeployer<
 > {
 	private readonly guildId: string
 	private readonly config: iConfig
-	private readonly commands: SlashCommandBuilder[]
+	private readonly commands: (
+		| SlashCommandBuilder
+		| Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
+	)[]
 
 	public constructor(
 		guildId: string,
