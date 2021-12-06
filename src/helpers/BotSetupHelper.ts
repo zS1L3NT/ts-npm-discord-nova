@@ -18,7 +18,7 @@ import {
 	ResponseBuilder,
 	SlashCommandDeployer
 } from ".."
-import { Client, Collection } from "discord.js"
+import { Client, ClientEvents, Collection } from "discord.js"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
@@ -41,6 +41,7 @@ export default class BotSetupHelper<
 	public readonly buttonFiles: Collection<string, iButtonFile<V, D, GC>>
 	public readonly menuFiles: Collection<string, iMenuFile<V, D, GC>>
 	public readonly messageFiles: iMessageFile<V, D, GC>[]
+	public readonly eventFiles: iEventFile<V, D, GC, BC, keyof ClientEvents>[]
 
 	constructor(
 		DClass: iBaseDocument<V, D>,
@@ -56,6 +57,7 @@ export default class BotSetupHelper<
 		this.bot = bot
 		this.botCache = new BCClass(this.DClass, this.GCClass, this.options.config, this.bot)
 		this.messageFiles = []
+		this.eventFiles = []
 		this.interactionFiles = new Collection<
 			string,
 			iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
@@ -63,10 +65,15 @@ export default class BotSetupHelper<
 		this.buttonFiles = new Collection<string, iButtonFile<V, D, GC>>()
 		this.menuFiles = new Collection<string, iMenuFile<V, D, GC>>()
 
-		this.setupMessageCommands()
-		this.setupInteractionCommands()
-		this.setupButtonCommands()
-		this.setupMenuCommands()
+		this.setupMessages()
+		this.setupCommands()
+		this.setupButtons()
+		this.setupMenus()
+		this.setupEvents()
+
+		for (const event of this.eventFiles) {
+			this.bot.on(event.name, (...args) => event.execute(this.botCache, ...args))
+		}
 
 		this.bot.on("messageCreate", async message => {
 			if (message.author.bot) return
@@ -228,7 +235,7 @@ export default class BotSetupHelper<
 		return file.endsWith(".ts") || file.endsWith(".js")
 	}
 
-	private setupMessageCommands() {
+	private setupMessages() {
 		const [err, fileNames] = useTry(() =>
 			fs.readdirSync(path.join(this.options.cwd, "messages"))
 		)
@@ -241,7 +248,7 @@ export default class BotSetupHelper<
 		}
 	}
 
-	private setupInteractionCommands() {
+	private setupCommands() {
 		this.interactionFiles.set("help", {
 			defer: false,
 			ephemeral: false,
@@ -300,7 +307,7 @@ export default class BotSetupHelper<
 		}
 	}
 
-	private setupButtonCommands() {
+	private setupButtons() {
 		this.buttonFiles.set("help-maximum", {
 			defer: false,
 			ephemeral: true,
@@ -341,7 +348,7 @@ export default class BotSetupHelper<
 		}
 	}
 
-	private setupMenuCommands() {
+	private setupMenus() {
 		this.menuFiles.set("help-item", {
 			defer: false,
 			ephemeral: true,
@@ -364,6 +371,19 @@ export default class BotSetupHelper<
 			const name = fileName.split(".")[0]
 			const file = this.require<iMenuFile<V, D, GC>>(`menus/${fileName}`)
 			this.menuFiles.set(name, file)
+		}
+	}
+
+	private setupEvents() {
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "events")))
+
+		if (err) return
+
+		for (const fileName of fileNames) {
+			const file = this.require<iEventFile<V, D, GC, BC, keyof ClientEvents>>(
+				`events/${fileName}`
+			)
+			this.eventFiles.push(file)
 		}
 	}
 
@@ -448,4 +468,15 @@ export interface iMenuFile<
 	defer: boolean
 	ephemeral: boolean
 	execute: (helper: MenuHelper<V, D, GC>) => Promise<any>
+}
+
+export interface iEventFile<
+	V extends iBaseValue,
+	D extends BaseDocument<V, D>,
+	GC extends BaseGuildCache<V, D, GC>,
+	BC extends BaseBotCache<V, D, GC>,
+	N extends keyof ClientEvents
+> {
+	name: N
+	execute: (botCache: BC, ...args: ClientEvents[N]) => Promise<any>
 }
