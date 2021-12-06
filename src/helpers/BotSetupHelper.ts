@@ -6,14 +6,12 @@ import MessageHelper from "./MessageHelper"
 import path from "path"
 import {
 	BaseBotCache,
-	BaseDocument,
 	BaseGuildCache,
+	BaseRecord,
 	Emoji,
 	HelpBuilder,
 	iBaseBotCache,
-	iBaseDocument,
 	iBaseGuildCache,
-	iBaseValue,
 	NovaOptions,
 	ResponseBuilder,
 	SlashCommandDeployer
@@ -23,47 +21,43 @@ import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/b
 import { useTry } from "no-try"
 
 export default class BotSetupHelper<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>,
-	BC extends BaseBotCache<V, D, GC>
+	R extends BaseRecord,
+	GC extends BaseGuildCache<R, GC>,
+	BC extends BaseBotCache<R, GC>
 > {
-	private readonly DClass: iBaseDocument<V, D>
-	private readonly GCClass: iBaseGuildCache<V, D, GC>
+	private readonly GCClass: iBaseGuildCache<R, GC>
 
 	private readonly bot: Client
-	public readonly options: NovaOptions<V, D, GC, BC>
+	public readonly options: NovaOptions<R, GC, BC>
 	public readonly botCache: BC
 	public readonly interactionFiles: Collection<
 		string,
-		iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
+		iInteractionFile<R, GC> | iInteractionFolder<R, GC>
 	>
-	public readonly buttonFiles: Collection<string, iButtonFile<V, D, GC>>
-	public readonly menuFiles: Collection<string, iMenuFile<V, D, GC>>
-	public readonly messageFiles: iMessageFile<V, D, GC>[]
-	public readonly eventFiles: iEventFile<V, D, GC, BC, keyof ClientEvents>[]
+	public readonly buttonFiles: Collection<string, iButtonFile<R, GC>>
+	public readonly menuFiles: Collection<string, iMenuFile<R, GC>>
+	public readonly messageFiles: iMessageFile<R, GC>[]
+	public readonly eventFiles: iEventFile<R, GC, BC, keyof ClientEvents>[]
 
 	constructor(
-		DClass: iBaseDocument<V, D>,
-		GCClass: iBaseGuildCache<V, D, GC>,
-		BCClass: iBaseBotCache<V, D, GC, BC>,
-		options: NovaOptions<V, D, GC, BC>,
+		GCClass: iBaseGuildCache<R, GC>,
+		BCClass: iBaseBotCache<R, GC, BC>,
+		options: NovaOptions<R, GC, BC>,
 		bot: Client
 	) {
-		this.DClass = DClass
 		this.GCClass = GCClass
 
 		this.options = options
 		this.bot = bot
-		this.botCache = new BCClass(this.DClass, this.GCClass, this.options.config, this.bot)
+		this.botCache = new BCClass(this.GCClass, this.options.config, this.bot)
 		this.messageFiles = []
 		this.eventFiles = []
 		this.interactionFiles = new Collection<
 			string,
-			iInteractionFile<V, D, GC> | iInteractionFolder<V, D, GC>
+			iInteractionFile<R, GC> | iInteractionFolder<R, GC>
 		>()
-		this.buttonFiles = new Collection<string, iButtonFile<V, D, GC>>()
-		this.menuFiles = new Collection<string, iMenuFile<V, D, GC>>()
+		this.buttonFiles = new Collection<string, iButtonFile<R, GC>>()
+		this.menuFiles = new Collection<string, iMenuFile<R, GC>>()
 
 		this.setupMessages()
 		this.setupCommands()
@@ -129,8 +123,8 @@ export default class BotSetupHelper<
 				if (!interactionEntity) return
 
 				const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
-					? (interactionEntity as iInteractionFile<V, D, GC>).ephemeral
-					: (interactionEntity as iInteractionFolder<V, D, GC>).files.get(
+					? (interactionEntity as iInteractionFile<R, GC>).ephemeral
+					: (interactionEntity as iInteractionFolder<R, GC>).files.get(
 							interaction.options.getSubcommand(true)
 					  )!.ephemeral
 
@@ -140,7 +134,7 @@ export default class BotSetupHelper<
 
 				const helper = new InteractionHelper(cache, interaction)
 				try {
-					const interactionFile = interactionEntity as iInteractionFile<V, D, GC>
+					const interactionFile = interactionEntity as iInteractionFile<R, GC>
 					if (interactionFile.execute) {
 						await interactionFile.execute(helper)
 						if (!interactionFile.defer) {
@@ -148,7 +142,7 @@ export default class BotSetupHelper<
 						}
 					}
 
-					const interactionFolder = interactionEntity as iInteractionFolder<V, D, GC>
+					const interactionFolder = interactionEntity as iInteractionFolder<R, GC>
 					if (interactionFolder.files) {
 						const subcommand = interaction.options.getSubcommand(true)
 						const interactionFile = interactionFolder.files.get(subcommand)
@@ -243,7 +237,7 @@ export default class BotSetupHelper<
 		if (err) return
 
 		for (const fileName of fileNames) {
-			const file = this.require<iMessageFile<V, D, GC>>(`messages/${fileName}`)
+			const file = this.require<iMessageFile<R, GC>>(`messages/${fileName}`)
 			this.messageFiles.push(file)
 		}
 	}
@@ -284,9 +278,9 @@ export default class BotSetupHelper<
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iInteractionSubcommandFile<V, D, GC>> = new Collection()
+			const files: Collection<string, iInteractionSubcommandFile<R, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file = this.require<iInteractionSubcommandFile<V, D, GC>>(
+				const file = this.require<iInteractionSubcommandFile<R, GC>>(
 					`commands/${folderName}/${fileName}`
 				)
 				files.set(file.builder.name, file)
@@ -302,7 +296,7 @@ export default class BotSetupHelper<
 		// Slash commands
 		const fileNames = entityNames.filter(f => BotSetupHelper.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<V, D, GC>>(`commands/${filename}`)
+			const file = this.require<iInteractionFile<R, GC>>(`commands/${filename}`)
 			this.interactionFiles.set(file.builder.name, file)
 		}
 	}
@@ -343,7 +337,7 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = this.require<iButtonFile<V, D, GC>>(`buttons/${fileName}`)
+			const file = this.require<iButtonFile<R, GC>>(`buttons/${fileName}`)
 			this.buttonFiles.set(name, file)
 		}
 	}
@@ -369,7 +363,7 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]
-			const file = this.require<iMenuFile<V, D, GC>>(`menus/${fileName}`)
+			const file = this.require<iMenuFile<R, GC>>(`menus/${fileName}`)
 			this.menuFiles.set(name, file)
 		}
 	}
@@ -380,7 +374,7 @@ export default class BotSetupHelper<
 		if (err) return
 
 		for (const fileName of fileNames) {
-			const file = this.require<iEventFile<V, D, GC, BC, keyof ClientEvents>>(
+			const file = this.require<iEventFile<R, GC, BC, keyof ClientEvents>>(
 				`events/${fileName}`
 			)
 			this.eventFiles.push(file)
@@ -397,13 +391,9 @@ export default class BotSetupHelper<
 	}
 }
 
-export interface iMessageFile<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
-	condition: (helper: MessageHelper<V, D, GC>) => boolean
-	execute: (helper: MessageHelper<V, D, GC>) => Promise<void>
+export interface iMessageFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
+	condition: (helper: MessageHelper<R, GC>) => boolean
+	execute: (helper: MessageHelper<R, GC>) => Promise<void>
 }
 
 export interface iInteractionHelp {
@@ -417,64 +407,46 @@ export interface iInteractionHelp {
 	}[]
 }
 
-export interface iInteractionFile<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export interface iInteractionFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
 	builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
-	execute: (helper: InteractionHelper<V, D, GC>) => Promise<any>
+	execute: (helper: InteractionHelper<R, GC>) => Promise<any>
 }
 
 export interface iInteractionSubcommandFile<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
+	R extends BaseRecord,
+	GC extends BaseGuildCache<R, GC>
 > {
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
 	builder: SlashCommandSubcommandBuilder
-	execute: (helper: InteractionHelper<V, D, GC>) => Promise<any>
+	execute: (helper: InteractionHelper<R, GC>) => Promise<any>
 }
 
-export interface iInteractionFolder<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export interface iInteractionFolder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	builder: SlashCommandBuilder
-	files: Collection<string, iInteractionSubcommandFile<V, D, GC>>
+	files: Collection<string, iInteractionSubcommandFile<R, GC>>
 }
 
-export interface iButtonFile<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export interface iButtonFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	execute: (helper: ButtonHelper<V, D, GC>) => Promise<any>
+	execute: (helper: ButtonHelper<R, GC>) => Promise<any>
 }
 
-export interface iMenuFile<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export interface iMenuFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	execute: (helper: MenuHelper<V, D, GC>) => Promise<any>
+	execute: (helpe3r: MenuHelper<R, GC>) => Promise<any>
 }
 
 export interface iEventFile<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>,
-	BC extends BaseBotCache<V, D, GC>,
+	R extends BaseRecord,
+	GC extends BaseGuildCache<R, GC>,
+	BC extends BaseBotCache<R, GC>,
 	N extends keyof ClientEvents
 > {
 	name: N

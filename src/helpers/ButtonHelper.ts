@@ -1,11 +1,7 @@
-import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
+import { BaseGuildCache, BaseRecord, ResponseBuilder } from ".."
 import { ButtonInteraction, InteractionReplyOptions, MessagePayload } from "discord.js"
 
-export default class ButtonHelper<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export default class ButtonHelper<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	public readonly cache: GC
 	public readonly interaction: ButtonInteraction
 
