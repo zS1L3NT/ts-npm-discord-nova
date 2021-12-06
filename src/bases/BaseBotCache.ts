@@ -1,21 +1,21 @@
 import admin from "firebase-admin"
-import { BaseGuildCache, BaseRecord, iBaseGuildCache, iConfig } from ".."
+import { BaseEntry, BaseGuildCache, iBaseGuildCache, iConfig } from ".."
 import { Client, Collection, Guild } from "discord.js"
 
 export type iBaseBotCache<
-	R extends BaseRecord,
-	GC extends BaseGuildCache<R, GC>,
-	BC extends BaseBotCache<R, GC>
-> = new (GCClass: iBaseGuildCache<R, GC>, config: iConfig, bot: Client) => BC
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	BC extends BaseBotCache<E, GC>
+> = new (GCClass: iBaseGuildCache<E, GC>, config: iConfig, bot: Client) => BC
 
-export default abstract class BaseBotCache<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
-	private readonly GCClass: iBaseGuildCache<R, GC>
+export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	private readonly GCClass: iBaseGuildCache<E, GC>
 
 	public readonly bot: Client
-	public readonly ref: admin.firestore.CollectionReference<R>
+	public readonly ref: admin.firestore.CollectionReference<E>
 	public readonly caches: Collection<string, GC>
 
-	public constructor(GCClass: iBaseGuildCache<R, GC>, config: iConfig, bot: Client) {
+	public constructor(GCClass: iBaseGuildCache<E, GC>, config: iConfig, bot: Client) {
 		this.GCClass = GCClass
 
 		admin.initializeApp({
@@ -25,7 +25,7 @@ export default abstract class BaseBotCache<R extends BaseRecord, GC extends Base
 		this.bot = bot
 		this.ref = admin
 			.firestore()
-			.collection(config.firebase.collection) as admin.firestore.CollectionReference<R>
+			.collection(config.firebase.collection) as admin.firestore.CollectionReference<E>
 		this.caches = new Collection<string, GC>()
 		this.onConstruct()
 	}

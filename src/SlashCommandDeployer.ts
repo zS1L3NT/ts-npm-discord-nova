@@ -1,11 +1,11 @@
-import { BaseGuildCache, BaseRecord, iConfig, iInteractionFile, iInteractionFolder } from "."
+import CommandBuilder from "./builders/CommandBuilder"
+import { BaseEntry, BaseGuildCache, iConfig, iInteractionFile, iInteractionFolder } from "."
 import { Collection } from "discord.js"
 import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"
 import { SlashCommandBuilder } from "@discordjs/builders"
-import CommandBuilder from "./builders/CommandBuilder"
 
-export default class SlashCommandDeployer<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
+export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private readonly guildId: string
 	private readonly config: iConfig
 	private readonly commands: (
@@ -16,7 +16,7 @@ export default class SlashCommandDeployer<R extends BaseRecord, GC extends BaseG
 	public constructor(
 		guildId: string,
 		config: iConfig,
-		interactionEntities: Collection<string, iInteractionFile<R, GC> | iInteractionFolder<R, GC>>
+		interactionEntities: Collection<string, iInteractionFile<E, GC> | iInteractionFolder<E, GC>>
 	) {
 		this.guildId = guildId
 		this.config = config

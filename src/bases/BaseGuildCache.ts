@@ -1,33 +1,33 @@
 import admin from "firebase-admin"
-import { BaseRecord } from ".."
+import { BaseEntry } from ".."
 import { Client, Guild } from "discord.js"
 
-export type iBaseGuildCache<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> = new (
+export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> = new (
 	bot: Client,
 	guild: Guild,
-	ref: admin.firestore.DocumentReference<R>,
+	ref: admin.firestore.DocumentReference<E>,
 	resolve: (cache: GC) => void
 ) => GC
 
 export default abstract class BaseGuildCache<
-	R extends BaseRecord,
-	GC extends BaseGuildCache<R, GC>
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>
 > {
 	public readonly bot: Client
 	public readonly guild: Guild
-	public readonly ref: admin.firestore.DocumentReference<R>
-	public record: R
+	public readonly ref: admin.firestore.DocumentReference<E>
+	public entry: E
 
 	public constructor(
 		bot: Client,
 		guild: Guild,
-		ref: admin.firestore.DocumentReference<R>,
+		ref: admin.firestore.DocumentReference<E>,
 		resolve: (cache: GC) => void
 	) {
 		this.bot = bot
 		this.guild = guild
 		this.ref = ref
-		this.record = this.getEmptyRecord()
+		this.entry = this.getEmptyEntry()
 		this.resolve(resolve)
 		this.onConstruct()
 	}
@@ -35,5 +35,5 @@ export default abstract class BaseGuildCache<
 	public abstract onConstruct(): void
 	public abstract resolve(resolve: (cache: GC) => void): void
 	public abstract updateMinutely(debug: number): void
-	public abstract getEmptyRecord(): R
+	public abstract getEmptyEntry(): E
 }

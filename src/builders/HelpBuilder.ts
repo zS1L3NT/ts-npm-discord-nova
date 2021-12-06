@@ -2,8 +2,8 @@ import CommandBuilder from "./CommandBuilder"
 import fs from "fs"
 import path from "path"
 import {
+	BaseEntry,
 	BaseGuildCache,
-	BaseRecord,
 	iInteractionFile,
 	iInteractionFolder,
 	iInteractionHelp,
@@ -20,7 +20,7 @@ import {
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
-class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
+class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private message: string
 	private icon: string
 	private cwd: string
@@ -50,12 +50,12 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 
 		for (const [entityName, entity] of interactionFiles) {
 			if (Object.keys(entity).includes("files")) {
-				for (const [fileName, file] of (entity as iInteractionFolder<R, GC>).files) {
+				for (const [fileName, file] of (entity as iInteractionFolder<E, GC>).files) {
 					const name = `${entityName} ${fileName}`
 					embed.addField(name, file.help.description)
 				}
 			} else {
-				embed.addField(entityName, (entity as iInteractionFile<R, GC>).help.description)
+				embed.addField(entityName, (entity as iInteractionFile<E, GC>).help.description)
 			}
 		}
 
@@ -108,10 +108,10 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 			.setEmoji("⬅")
 
 		const help: iInteractionHelp = command.includes(" ")
-			? (interactionFiles.get(command.split(" ")[0]) as iInteractionFolder<R, GC>).files.get(
+			? (interactionFiles.get(command.split(" ")[0]) as iInteractionFolder<E, GC>).files.get(
 					command.split(" ")[1]
 			  )!.help
-			: (interactionFiles.get(command) as iInteractionFile<R, GC>).help
+			: (interactionFiles.get(command) as iInteractionFile<E, GC>).help
 
 		const [ts_err] = useTry(() => {
 			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".ts"))
@@ -162,7 +162,7 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 
 		for (const [entityName, entity] of interactionFiles) {
 			if (Object.keys(entity).includes("files")) {
-				for (const [fileName] of (entity as iInteractionFolder<R, GC>).files) {
+				for (const [fileName] of (entity as iInteractionFolder<E, GC>).files) {
 					const name = `${entityName} ${fileName}`
 					menu.addOptions({
 						label: name,
@@ -183,7 +183,7 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	private getInteractionFiles() {
 		const interactionFiles = new Collection<
 			string,
-			iInteractionFile<R, GC> | iInteractionFolder<R, GC>
+			iInteractionFile<E, GC> | iInteractionFolder<E, GC>
 		>()
 		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "commands")))
 
@@ -197,9 +197,9 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iInteractionSubcommandFile<R, GC>> = new Collection()
+			const files: Collection<string, iInteractionSubcommandFile<E, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file = this.require<iInteractionSubcommandFile<R, GC>>(
+				const file = this.require<iInteractionSubcommandFile<E, GC>>(
 					`commands/${folderName}/${fileName}`
 				)
 				files.set(file.builder.name, file)
@@ -215,7 +215,7 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 		// Slash commands
 		const fileNames = entitiyNames.filter(f => HelpBuilder.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<R, GC>>(`../commands/${filename}`)
+			const file = this.require<iInteractionFile<E, GC>>(`../commands/${filename}`)
 			interactionFiles.set(file.builder.name, file)
 		}
 

@@ -1,8 +1,8 @@
-import { BaseGuildCache, BaseRecord } from "."
+import { BaseEntry, BaseGuildCache } from "."
 import { Collection, Message, TextChannel } from "discord.js"
 
 type iFilter = (message: Message) => boolean
-export default class ChannelCleaner<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
+export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private readonly channelId: string
 	private readonly cache: GC
 	private messageIds: string[]

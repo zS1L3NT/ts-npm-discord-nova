@@ -1,8 +1,8 @@
 import AfterEvery from "after-every"
 import {
 	BaseBotCache,
+	BaseEntry,
 	BaseGuildCache,
-	BaseRecord,
 	BotSetupHelper,
 	iBaseBotCache,
 	iBaseGuildCache,
@@ -25,9 +25,9 @@ export type iConfig = {
 }
 
 export type NovaOptions<
-	R extends BaseRecord,
-	GC extends BaseGuildCache<R, GC>,
-	BC extends BaseBotCache<R, GC>
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	BC extends BaseBotCache<E, GC>
 > = {
 	intents: BitFieldResolvable<IntentsString, number>
 	name: string
@@ -40,22 +40,22 @@ export type NovaOptions<
 		icon: string
 	}
 
-	GuildCache: iBaseGuildCache<R, GC>
-	BotCache: iBaseBotCache<R, GC, BC>
+	GuildCache: iBaseGuildCache<E, GC>
+	BotCache: iBaseBotCache<E, GC, BC>
 
 	onSetup?: (botCache: BC) => void
 }
 
 export default class NovaBot<
-	R extends BaseRecord,
-	GC extends BaseGuildCache<R, GC>,
-	BC extends BaseBotCache<R, GC>
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	BC extends BaseBotCache<E, GC>
 > {
-	public constructor(options: NovaOptions<R, GC, BC>) {
+	public constructor(options: NovaOptions<E, GC, BC>) {
 		const bot = new Client({ intents: options.intents })
 
 		const { GuildCache, BotCache } = options
-		const botSetupHelper = new BotSetupHelper<R, GC, BC>(GuildCache, BotCache, options, bot)
+		const botSetupHelper = new BotSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
 		const { botCache } = botSetupHelper
 
 		bot.login(options.config.discord.token)
