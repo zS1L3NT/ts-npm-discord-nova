@@ -6,6 +6,7 @@ export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC
 	bot: Client,
 	guild: Guild,
 	ref: admin.firestore.DocumentReference<E>,
+	entry: E,
 	resolve: (cache: GC) => void
 ) => GC
 
@@ -22,12 +23,13 @@ export default abstract class BaseGuildCache<
 		bot: Client,
 		guild: Guild,
 		ref: admin.firestore.DocumentReference<E>,
+		entry: E,
 		resolve: (cache: GC) => void
 	) {
 		this.bot = bot
 		this.guild = guild
 		this.ref = ref
-		this.entry = this.getEmptyEntry()
+		this.entry = entry
 		this.resolve(resolve)
 		this.onConstruct()
 	}
@@ -35,5 +37,4 @@ export default abstract class BaseGuildCache<
 	public abstract onConstruct(): void
 	public abstract resolve(resolve: (cache: GC) => void): void
 	public abstract updateMinutely(debug: number): void
-	public abstract getEmptyEntry(): E
 }

@@ -34,7 +34,13 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 		return new Promise<GC>((resolve, reject) => {
 			const cache = this.caches.get(guild.id)
 			if (!cache) {
-				const cache = new this.GCClass(this.bot, guild, this.ref.doc(guild.id), resolve)
+				const cache = new this.GCClass(
+					this.bot,
+					guild,
+					this.ref.doc(guild.id),
+					this.getEmptyEntry(),
+					resolve
+				)
 				this.caches.set(guild.id, cache)
 				this.onSetGuildCache(cache)
 
@@ -54,4 +60,5 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 	public abstract onSetGuildCache(cache: GC): void
 	public abstract registerGuildCache(guildId: string): void
 	public abstract eraseGuildCache(guildId: string): void
+	public abstract getEmptyEntry(): E
 }
