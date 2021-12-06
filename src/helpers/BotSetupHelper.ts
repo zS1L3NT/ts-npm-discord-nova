@@ -391,11 +391,6 @@ export default class BotSetupHelper<
 	}
 }
 
-export interface iMessageFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
-	condition: (helper: MessageHelper<R, GC>) => boolean
-	execute: (helper: MessageHelper<R, GC>) => Promise<void>
-}
-
 export interface iInteractionHelp {
 	description: string
 	params: {
@@ -405,6 +400,22 @@ export interface iInteractionHelp {
 		required: boolean
 		default?: string
 	}[]
+}
+
+export interface iInteractionBuilder {
+	name: string
+	description: string
+	options: {
+		type: "string" | "integer" | "boolean" | "user" | "role" | "channel" | "mentionable"
+		name: string
+		description: string
+		required: boolean
+	}[]
+}
+
+export interface iMessageFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
+	condition: (helper: MessageHelper<R, GC>) => boolean
+	execute: (helper: MessageHelper<R, GC>) => Promise<void>
 }
 
 export interface iInteractionFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
