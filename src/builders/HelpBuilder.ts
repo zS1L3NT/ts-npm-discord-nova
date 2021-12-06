@@ -1,3 +1,4 @@
+import CommandBuilder from "./CommandBuilder"
 import fs from "fs"
 import path from "path"
 import {
@@ -202,7 +203,7 @@ class HelpBuilder<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 					`commands/${folderName}/${fileName}`
 				)
 				files.set(file.builder.name, file)
-				builder.addSubcommand(file.builder)
+				builder.addSubcommand(new CommandBuilder(file.builder).buildSubcommand())
 			}
 
 			interactionFiles.set(folderName, {

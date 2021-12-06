@@ -3,6 +3,7 @@ import { Collection } from "discord.js"
 import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"
 import { SlashCommandBuilder } from "@discordjs/builders"
+import CommandBuilder from "./builders/CommandBuilder"
 
 export default class SlashCommandDeployer<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	private readonly guildId: string
@@ -19,7 +20,11 @@ export default class SlashCommandDeployer<R extends BaseRecord, GC extends BaseG
 	) {
 		this.guildId = guildId
 		this.config = config
-		this.commands = interactionEntities.map(file => file.builder)
+		this.commands = interactionEntities.map(file =>
+			file.builder instanceof SlashCommandBuilder
+				? file.builder
+				: new CommandBuilder(file.builder).buildCommand()
+		)
 	}
 
 	public async deploy() {

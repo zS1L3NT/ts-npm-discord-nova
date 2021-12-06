@@ -1,4 +1,5 @@
 import ButtonHelper from "./ButtonHelper"
+import CommandBuilder, { iInteractionBuilder } from "../builders/CommandBuilder"
 import fs from "fs"
 import InteractionHelper from "./InteractionHelper"
 import MenuHelper from "./MenuHelper"
@@ -17,7 +18,7 @@ import {
 	SlashCommandDeployer
 } from ".."
 import { Client, ClientEvents, Collection } from "discord.js"
-import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
+import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
 export default class BotSetupHelper<
@@ -250,9 +251,10 @@ export default class BotSetupHelper<
 				description: "Shows you the help menu that you are looking at right now",
 				params: []
 			},
-			builder: new SlashCommandBuilder()
-				.setName("help")
-				.setDescription("Displays the help command"),
+			builder: {
+				name: "help",
+				description: "Displays the help command"
+			},
 			execute: async helper => {
 				helper.interaction.channel?.send(
 					new HelpBuilder(
@@ -284,7 +286,7 @@ export default class BotSetupHelper<
 					`commands/${folderName}/${fileName}`
 				)
 				files.set(file.builder.name, file)
-				builder.addSubcommand(file.builder)
+				builder.addSubcommand(new CommandBuilder(file.builder).buildSubcommand())
 			}
 
 			this.interactionFiles.set(folderName, {
@@ -402,17 +404,6 @@ export interface iInteractionHelp {
 	}[]
 }
 
-export interface iInteractionBuilder {
-	name: string
-	description: string
-	options: {
-		type: "string" | "integer" | "boolean" | "user" | "role" | "channel" | "mentionable"
-		name: string
-		description: string
-		required: boolean
-	}[]
-}
-
 export interface iMessageFile<R extends BaseRecord, GC extends BaseGuildCache<R, GC>> {
 	condition: (helper: MessageHelper<R, GC>) => boolean
 	execute: (helper: MessageHelper<R, GC>) => Promise<void>
@@ -422,7 +413,7 @@ export interface iInteractionFile<R extends BaseRecord, GC extends BaseGuildCach
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
-	builder: SlashCommandBuilder | Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">
+	builder: iInteractionBuilder
 	execute: (helper: InteractionHelper<R, GC>) => Promise<any>
 }
 
@@ -433,7 +424,7 @@ export interface iInteractionSubcommandFile<
 	defer: boolean
 	ephemeral: boolean
 	help: iInteractionHelp
-	builder: SlashCommandSubcommandBuilder
+	builder: iInteractionBuilder
 	execute: (helper: InteractionHelper<R, GC>) => Promise<any>
 }
 
