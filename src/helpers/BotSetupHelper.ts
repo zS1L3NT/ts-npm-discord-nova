@@ -223,6 +223,7 @@ export default class BotSetupHelper<
 		this.bot.on("guildDelete", async guild => {
 			console.log(`Removed from Guild(${guild.name})`)
 			await this.botCache.eraseGuildCache(guild.id)
+			this.botCache.caches.delete(guild.id)
 		})
 	}
 
