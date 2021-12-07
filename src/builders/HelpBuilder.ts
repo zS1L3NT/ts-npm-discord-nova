@@ -52,12 +52,12 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			if (Object.keys(entity).includes("files")) {
 				for (const [fileName, file] of (entity as iInteractionFolder<E, GC>).files) {
 					const name = `${entityName} ${fileName}`
-					embed.addField(name, file.data.description.detailed)
+					embed.addField(name, file.data.description.help)
 				}
 			} else {
 				embed.addField(
 					entityName,
-					(entity as iInteractionFile<E, GC>).data.description.detailed
+					(entity as iInteractionFile<E, GC>).data.description.help
 				)
 			}
 		}
@@ -124,7 +124,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		})
 
 		const description = [
-			data.description.detailed,
+			data.description.help,
 			"",
 			`__Message Commands__: **${ts_err && js_err ? "Unsupported" : "Supported"}**`
 		]
@@ -135,7 +135,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 				const option = data.options[i]
 				const values = [
 					`**(${option.required ? "required" : "optional"})**`,
-					`**About**: _${option.description.detailed}_`,
+					`**About**: _${option.description.help}_`,
 					`**Type**: ${option.requirements}`
 				]
 				if (option.default) {

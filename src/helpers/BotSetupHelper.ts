@@ -250,8 +250,8 @@ export default class BotSetupHelper<
 			data: {
 				name: "help",
 				description: {
-					brief: "Displays the help command",
-					detailed: "Shows you the help menu that you are looking at right now"
+					slash: "Displays the help command",
+					help: "Shows you the help menu that you are looking at right now"
 				}
 			},
 			execute: async helper => {

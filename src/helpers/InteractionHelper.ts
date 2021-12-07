@@ -12,8 +12,8 @@ import {
 export interface iInteractionData {
 	name: string
 	description: {
-		brief: string
-		detailed: string
+		slash: string
+		help: string
 	}
 	options?: (iInteractionDefaultOption | iInteractionStringOption | iInteractionNumberOption)[]
 }
@@ -21,8 +21,8 @@ export interface iInteractionData {
 interface iInteractionOption {
 	name: string
 	description: {
-		brief: string
-		detailed: string
+		slash: string
+		help: string
 	}
 	requirements: string
 	required: boolean

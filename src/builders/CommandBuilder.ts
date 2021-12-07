@@ -21,7 +21,7 @@ export default class CommandBuilder {
 	): B {
 		const builder = new Builder()
 			.setName(this.data.name)
-			.setDescription(this.data.description.brief)
+			.setDescription(this.data.description.slash)
 
 		if (this.data.options) {
 			for (const option of this.data.options) {
@@ -30,7 +30,7 @@ export default class CommandBuilder {
 						builder.addStringOption(string => {
 							string
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 
 							if (option.choices) {
@@ -46,7 +46,7 @@ export default class CommandBuilder {
 						builder.addNumberOption(number => {
 							number
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 
 							if (option.choices) {
@@ -62,7 +62,7 @@ export default class CommandBuilder {
 						builder.addBooleanOption(boolean =>
 							boolean
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 						)
 						break
@@ -70,7 +70,7 @@ export default class CommandBuilder {
 						builder.addUserOption(user =>
 							user
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 						)
 						break
@@ -78,7 +78,7 @@ export default class CommandBuilder {
 						builder.addRoleOption(role =>
 							role
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 						)
 						break
@@ -86,7 +86,7 @@ export default class CommandBuilder {
 						builder.addChannelOption(channel =>
 							channel
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 						)
 						break
@@ -94,7 +94,7 @@ export default class CommandBuilder {
 						builder.addMentionableOption(mentionable =>
 							mentionable
 								.setName(option.name)
-								.setDescription(option.description.brief)
+								.setDescription(option.description.slash)
 								.setRequired(option.required)
 						)
 						break
