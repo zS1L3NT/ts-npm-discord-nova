@@ -15,4 +15,5 @@ export * from "./bases/BaseEntry"
 export * from "./bases/BaseGuildCache"
 export * from "./builders/ResponseBuilder"
 export * from "./helpers/BotSetupHelper"
+export * from "./helpers/InteractionHelper"
 export default NovaBot

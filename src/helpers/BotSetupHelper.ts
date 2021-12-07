@@ -1,7 +1,7 @@
 import ButtonHelper from "./ButtonHelper"
-import CommandBuilder, { iInteractionBuilder } from "../builders/CommandBuilder"
+import CommandBuilder from "../builders/CommandBuilder"
 import fs from "fs"
-import InteractionHelper from "./InteractionHelper"
+import InteractionHelper, { iInteractionData } from "./InteractionHelper"
 import MenuHelper from "./MenuHelper"
 import MessageHelper from "./MessageHelper"
 import path from "path"
@@ -247,13 +247,12 @@ export default class BotSetupHelper<
 		this.interactionFiles.set("help", {
 			defer: false,
 			ephemeral: false,
-			help: {
-				description: "Shows you the help menu that you are looking at right now",
-				params: []
-			},
-			builder: {
+			data: {
 				name: "help",
-				description: "Displays the help command"
+				description: {
+					brief: "Displays the help command",
+					detailed: "Shows you the help menu that you are looking at right now"
+				}
 			},
 			execute: async helper => {
 				helper.interaction.channel?.send(
@@ -285,12 +284,12 @@ export default class BotSetupHelper<
 				const file = this.require<iInteractionSubcommandFile<E, GC>>(
 					`commands/${folderName}/${fileName}`
 				)
-				files.set(file.builder.name, file)
-				builder.addSubcommand(new CommandBuilder(file.builder).buildSubcommand())
+				files.set(file.data.name, file)
+				builder.addSubcommand(new CommandBuilder(file.data).buildSubcommand())
 			}
 
 			this.interactionFiles.set(folderName, {
-				builder,
+				data: builder,
 				files
 			})
 		}
@@ -299,7 +298,7 @@ export default class BotSetupHelper<
 		const fileNames = entityNames.filter(f => BotSetupHelper.isFile(f))
 		for (const filename of fileNames) {
 			const file = this.require<iInteractionFile<E, GC>>(`commands/${filename}`)
-			this.interactionFiles.set(file.builder.name, file)
+			this.interactionFiles.set(file.data.name, file)
 		}
 	}
 
@@ -393,17 +392,6 @@ export default class BotSetupHelper<
 	}
 }
 
-export interface iInteractionHelp {
-	description: string
-	params: {
-		name: string
-		description: string
-		requirements: string
-		required: boolean
-		default?: string
-	}[]
-}
-
 export interface iMessageFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	condition: (helper: MessageHelper<E, GC>) => boolean
 	execute: (helper: MessageHelper<E, GC>) => Promise<void>
@@ -412,21 +400,19 @@ export interface iMessageFile<E extends BaseEntry, GC extends BaseGuildCache<E, 
 export interface iInteractionFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	help: iInteractionHelp
-	builder: iInteractionBuilder
+	data: iInteractionData
 	execute: (helper: InteractionHelper<E, GC>) => Promise<any>
 }
 
 export interface iInteractionSubcommandFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	help: iInteractionHelp
-	builder: iInteractionBuilder
+	data: iInteractionData
 	execute: (helper: InteractionHelper<E, GC>) => Promise<any>
 }
 
 export interface iInteractionFolder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	builder: SlashCommandBuilder
+	data: SlashCommandBuilder
 	files: Collection<string, iInteractionSubcommandFile<E, GC>>
 }
 

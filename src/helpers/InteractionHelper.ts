@@ -9,6 +9,46 @@ import {
 	User
 } from "discord.js"
 
+export interface iInteractionData {
+	name: string
+	description: {
+		brief: string
+		detailed: string
+	}
+	options?: (iInteractionDefaultOption | iInteractionStringOption | iInteractionNumberOption)[]
+}
+
+interface iInteractionOption {
+	name: string
+	description: {
+		brief: string
+		detailed: string
+	}
+	requirements: string
+	required: boolean
+	default?: string
+}
+
+interface iInteractionDefaultOption extends iInteractionOption {
+	type: "boolean" | "user" | "role" | "channel" | "mentionable"
+}
+
+interface iInteractionStringOption extends iInteractionOption {
+	type: "string"
+	choices?: {
+		name: string
+		value: string
+	}[]
+}
+
+interface iInteractionNumberOption extends iInteractionOption {
+	type: "number"
+	choices?: {
+		name: string
+		value: number
+	}[]
+}
+
 export default class InteractionHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly interaction: CommandInteraction

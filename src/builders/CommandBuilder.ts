@@ -1,49 +1,11 @@
+import { iInteractionData } from "../helpers/InteractionHelper"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 
-export interface iInteractionBuilder {
-	name: string
-	description: string
-	options?: (
-		| iInteractionBuilderStringOption
-		| iInteractionBuilderNumberOption
-		| iInteractionBuilderDefaultOption
-	)[]
-}
-
-interface iInteractionBuilderDefaultOption {
-	type: "boolean" | "user" | "role" | "channel" | "mentionable"
-	name: string
-	description: string
-	required: boolean
-}
-
-interface iInteractionBuilderStringOption {
-	type: "string"
-	name: string
-	description: string
-	required: boolean
-	choices?: {
-		name: string
-		value: string
-	}[]
-}
-
-interface iInteractionBuilderNumberOption {
-	type: "number"
-	name: string
-	description: string
-	required: boolean
-	choices?: {
-		name: string
-		value: number
-	}[]
-}
-
 export default class CommandBuilder {
-	private builder: iInteractionBuilder
+	private data: iInteractionData
 
-	public constructor(builder: iInteractionBuilder) {
-		this.builder = builder
+	public constructor(data: iInteractionData) {
+		this.data = data
 	}
 
 	public buildCommand(): SlashCommandBuilder {
@@ -58,17 +20,17 @@ export default class CommandBuilder {
 		Builder: new () => B
 	): B {
 		const builder = new Builder()
-			.setName(this.builder.name)
-			.setDescription(this.builder.description)
+			.setName(this.data.name)
+			.setDescription(this.data.description.brief)
 
-		if (this.builder.options) {
-			for (const option of this.builder.options) {
+		if (this.data.options) {
+			for (const option of this.data.options) {
 				switch (option.type) {
 					case "string":
 						builder.addStringOption(string => {
 							string
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 
 							if (option.choices) {
@@ -84,7 +46,7 @@ export default class CommandBuilder {
 						builder.addNumberOption(number => {
 							number
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 
 							if (option.choices) {
@@ -100,7 +62,7 @@ export default class CommandBuilder {
 						builder.addBooleanOption(boolean =>
 							boolean
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 						)
 						break
@@ -108,7 +70,7 @@ export default class CommandBuilder {
 						builder.addUserOption(user =>
 							user
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 						)
 						break
@@ -116,7 +78,7 @@ export default class CommandBuilder {
 						builder.addRoleOption(role =>
 							role
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 						)
 						break
@@ -124,7 +86,7 @@ export default class CommandBuilder {
 						builder.addChannelOption(channel =>
 							channel
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 						)
 						break
@@ -132,7 +94,7 @@ export default class CommandBuilder {
 						builder.addMentionableOption(mentionable =>
 							mentionable
 								.setName(option.name)
-								.setDescription(option.description)
+								.setDescription(option.description.brief)
 								.setRequired(option.required)
 						)
 						break

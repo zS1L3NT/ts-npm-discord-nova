@@ -21,9 +21,9 @@ export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGu
 		this.guildId = guildId
 		this.config = config
 		this.commands = interactionEntities.map(file =>
-			file.builder instanceof SlashCommandBuilder
-				? file.builder
-				: new CommandBuilder(file.builder).buildCommand()
+			file.data instanceof SlashCommandBuilder
+				? file.data
+				: new CommandBuilder(file.data).buildCommand()
 		)
 	}
 
