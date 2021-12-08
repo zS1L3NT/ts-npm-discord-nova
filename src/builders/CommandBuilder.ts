@@ -43,7 +43,7 @@ export default class CommandBuilder {
 						})
 						break
 					case "number":
-						builder.addNumberOption(number => {
+						builder.addIntegerOption(number => {
 							number
 								.setName(option.name)
 								.setDescription(option.description.slash)
