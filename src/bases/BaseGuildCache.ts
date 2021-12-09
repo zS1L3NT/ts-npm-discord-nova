@@ -1,45 +1,40 @@
 import admin from "firebase-admin"
-import { BaseDocument, iBaseDocument, iBaseValue } from ".."
+import { BaseEntry } from ".."
 import { Client, Guild } from "discord.js"
 
-export type iBaseGuildCache<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	R extends BaseGuildCache<V, D, R>
-> = new (
-	DClass: iBaseDocument<V, D>,
+export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> = new (
 	bot: Client,
 	guild: Guild,
-	ref: admin.firestore.DocumentReference<V>,
-	resolve: (cache: R) => void
-) => R
+	ref: admin.firestore.DocumentReference<E>,
+	entry: E,
+	resolve: (cache: GC) => void
+) => GC
 
 export default abstract class BaseGuildCache<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	R extends BaseGuildCache<V, D, R>
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>
 > {
 	public readonly bot: Client
 	public readonly guild: Guild
-	public readonly ref: admin.firestore.DocumentReference<V>
-	public document: D
+	public readonly ref: admin.firestore.DocumentReference<E>
+	public entry: E
 
 	public constructor(
-		DClass: iBaseDocument<V, D>,
 		bot: Client,
 		guild: Guild,
-		ref: admin.firestore.DocumentReference<V>,
-		resolve: (cache: R) => void
+		ref: admin.firestore.DocumentReference<E>,
+		entry: E,
+		resolve: (cache: GC) => void
 	) {
 		this.bot = bot
 		this.guild = guild
 		this.ref = ref
-		this.document = new DClass().getEmpty()
+		this.entry = entry
 		this.resolve(resolve)
 		this.onConstruct()
 	}
 
 	public abstract onConstruct(): void
-	public abstract resolve(resolve: (cache: R) => void): void
+	public abstract resolve(resolve: (cache: GC) => void): void
 	public abstract updateMinutely(debug: number): void
 }

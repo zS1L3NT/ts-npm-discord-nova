@@ -1,11 +1,7 @@
-import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 import { InteractionReplyOptions, MessagePayload, SelectMenuInteraction } from "discord.js"
 
-export default class MenuHelper<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export default class MenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly interaction: SelectMenuInteraction
 

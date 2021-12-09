@@ -1,4 +1,4 @@
-import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 import {
 	CommandInteraction,
 	GuildChannel,
@@ -9,11 +9,47 @@ import {
 	User
 } from "discord.js"
 
-export default class InteractionHelper<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export interface iInteractionData {
+	name: string
+	description: {
+		slash: string
+		help: string
+	}
+	options?: (iInteractionDefaultOption | iInteractionStringOption | iInteractionNumberOption)[]
+}
+
+interface iInteractionOption {
+	name: string
+	description: {
+		slash: string
+		help: string
+	}
+	requirements: string
+	required: boolean
+	default?: string
+}
+
+interface iInteractionDefaultOption extends iInteractionOption {
+	type: "boolean" | "user" | "role" | "channel" | "mentionable"
+}
+
+interface iInteractionStringOption extends iInteractionOption {
+	type: "string"
+	choices?: {
+		name: string
+		value: string
+	}[]
+}
+
+interface iInteractionNumberOption extends iInteractionOption {
+	type: "number"
+	choices?: {
+		name: string
+		value: number
+	}[]
+}
+
+export default class InteractionHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly interaction: CommandInteraction
 	private responded = false

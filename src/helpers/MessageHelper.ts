@@ -1,13 +1,9 @@
-import { BaseDocument, BaseGuildCache, iBaseValue, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 import { InteractionReplyOptions, Message, MessagePayload } from "discord.js"
 
 const time = (ms: number) => new Promise(res => setTimeout(res, ms))
 
-export default class MessageHelper<
-	V extends iBaseValue,
-	D extends BaseDocument<V, D>,
-	GC extends BaseGuildCache<V, D, GC>
-> {
+export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly message: Message
 
