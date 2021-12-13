@@ -5,18 +5,7 @@ import InteractionHelper, { iInteractionData } from "./InteractionHelper"
 import MenuHelper from "./MenuHelper"
 import MessageHelper from "./MessageHelper"
 import path from "path"
-import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	Emoji,
-	HelpBuilder,
-	iBaseBotCache,
-	iBaseGuildCache,
-	NovaOptions,
-	ResponseBuilder,
-	SlashCommandDeployer
-} from ".."
+import { BaseBotCache, BaseEntry, BaseGuildCache, Emoji, HelpBuilder, iBaseBotCache, iBaseGuildCache, NovaOptions, ResponseBuilder, SlashCommandDeployer } from ".."
 import { Client, ClientEvents, Collection } from "discord.js"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
@@ -69,25 +58,6 @@ export default class BotSetupHelper<
 		for (const event of this.eventFiles) {
 			this.bot.on(event.name, (...args) => event.execute(this.botCache, ...args))
 		}
-
-		this.bot.on("messageCreate", async message => {
-			if (message.author.bot) return
-			if (!message.guild) return
-			const cache = await this.botCache.getGuildCache(message.guild!)
-
-			const helper = new MessageHelper(cache, message)
-			try {
-				for (const messageFile of this.messageFiles) {
-					if (messageFile.condition(helper)) {
-						message.react("⌛").catch(() => {})
-						await messageFile.execute(helper)
-						break
-					}
-				}
-			} catch (error) {
-				console.error(error)
-			}
-		})
 
 		this.bot.on("messageCreate", async message => {
 			if (message.author.bot) return
