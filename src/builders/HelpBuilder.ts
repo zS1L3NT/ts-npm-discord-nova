@@ -218,7 +218,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		// Slash commands
 		const fileNames = entitiyNames.filter(f => HelpBuilder.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<E, GC>>(`../commands/${filename}`)
+			const file = this.require<iInteractionFile<E, GC>>(`commands/${filename}`)
 			interactionFiles.set(file.data.name, file)
 		}
 
