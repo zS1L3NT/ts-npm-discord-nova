@@ -44,7 +44,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 		const button = new MessageButton()
 			.setCustomId("help-minimum")
-			.setLabel("Minimise")
+			.setLabel("Show Help Overview")
 			.setStyle("PRIMARY")
 			.setEmoji("➖")
 
@@ -87,7 +87,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 		const button = new MessageButton()
 			.setCustomId("help-maximum")
-			.setLabel("Maximise")
+			.setLabel("Show all Commands")
 			.setStyle("PRIMARY")
 			.setEmoji("➕")
 

@@ -5,7 +5,18 @@ import InteractionHelper, { iInteractionData } from "./InteractionHelper"
 import MenuHelper from "./MenuHelper"
 import MessageHelper from "./MessageHelper"
 import path from "path"
-import { BaseBotCache, BaseEntry, BaseGuildCache, Emoji, HelpBuilder, iBaseBotCache, iBaseGuildCache, NovaOptions, ResponseBuilder, SlashCommandDeployer } from ".."
+import {
+	BaseBotCache,
+	BaseEntry,
+	BaseGuildCache,
+	Emoji,
+	HelpBuilder,
+	iBaseBotCache,
+	iBaseGuildCache,
+	NovaOptions,
+	ResponseBuilder,
+	SlashCommandDeployer
+} from ".."
 import { Client, ClientEvents, Collection } from "discord.js"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
