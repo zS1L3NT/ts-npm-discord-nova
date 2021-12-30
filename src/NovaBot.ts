@@ -37,7 +37,8 @@ export type NovaOptions<
 
 	help: {
 		message: (cache: GC) => string
-		icon: string
+		icon: string,
+		commandRegex?: string
 	}
 
 	GuildCache: iBaseGuildCache<E, GC>

@@ -213,6 +213,21 @@ export default class BotSetupHelper<
 	}
 
 	private setupMessages() {
+		if (this.options.help.commandRegex) {
+			this.messageFiles.push({
+				condition: helper => !!helper.match(this.options.help.commandRegex!),
+				execute: async helper => {
+					helper.respond(
+						new HelpBuilder(
+							this.options.help.message(helper.cache),
+							this.options.help.icon,
+							this.options.cwd
+						).buildMinimum()
+					)
+				}
+			})
+		}
+
 		const [err, fileNames] = useTry(() =>
 			fs.readdirSync(path.join(this.options.cwd, "messages"))
 		)
