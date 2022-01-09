@@ -48,7 +48,7 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 					.doc(guild.id)
 					.get()
 					.then(snap => {
-						if (!snap.exists) reject()
+						if (!snap.exists) reject(new Error())
 					})
 			} else {
 				resolve(cache)
