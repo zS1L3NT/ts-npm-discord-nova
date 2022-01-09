@@ -334,7 +334,7 @@ export default class BotSetupHelper<
 		if (err) return
 
 		for (const fileName of fileNames) {
-			const name = fileName.split(".")[0]
+			const name = fileName.split(".")[0]!
 			const file = this.require<iButtonFile<E, GC>>(`buttons/${fileName}`)
 			this.buttonFiles.set(name, file)
 		}
@@ -360,7 +360,7 @@ export default class BotSetupHelper<
 		if (err) return
 
 		for (const fileName of fileNames) {
-			const name = fileName.split(".")[0]
+			const name = fileName.split(".")[0]!
 			const file = this.require<iMenuFile<E, GC>>(`menus/${fileName}`)
 			this.menuFiles.set(name, file)
 		}

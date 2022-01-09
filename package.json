@@ -2,8 +2,8 @@
 	"name": "nova-bot",
 	"version": "1.0.3",
 	"description": "Nova Bot, a framework for building Discord Bots",
-	"main": "build/index.js",
-	"types": "build/index.d.ts",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"author": "zS1L3NT <zechariahtan144@gmail.com> (https://www.zectan.com)",
 	"repository": {
 		"type": "git",

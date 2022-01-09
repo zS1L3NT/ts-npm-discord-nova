@@ -111,8 +111,8 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			.setEmoji("⬅")
 
 		const data: iInteractionData = command.includes(" ")
-			? (interactionFiles.get(command.split(" ")[0]) as iInteractionFolder<E, GC>).files.get(
-					command.split(" ")[1]
+			? (interactionFiles.get(command.split(" ")[0]!) as iInteractionFolder<E, GC>).files.get(
+					command.split(" ")[1]!
 			  )!.data
 			: (interactionFiles.get(command) as iInteractionFile<E, GC>).data
 
@@ -132,7 +132,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		if (data.options) {
 			description.push("", "__Input Parameters__")
 			for (let i = 0, il = data.options.length; i < il; i++) {
-				const option = data.options[i]
+				const option = data.options[i]!
 				const values = [
 					`**(${option.required ? "required" : "optional"})**`,
 					`**About**: _${option.description.help}_`,
