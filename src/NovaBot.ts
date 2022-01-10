@@ -13,7 +13,11 @@ import { useTryAsync } from "no-try"
 
 export type iConfig = {
 	firebase: {
-		service_account: any
+		service_account: {
+			projectId: string
+			privateKey: string
+			clientEmail: string
+		}
 		collection: string
 		database_url: string
 	}
@@ -37,7 +41,7 @@ export type NovaOptions<
 
 	help: {
 		message: (cache: GC) => string
-		icon: string,
+		icon: string
 		commandRegex?: string
 	}
 
