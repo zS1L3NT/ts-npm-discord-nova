@@ -198,7 +198,11 @@ export default class BotSetupHelper<
 		this.bot.on("guildCreate", async guild => {
 			console.log(`Added to Guild(${guild.name})`)
 			await this.botCache.registerGuildCache(guild.id)
-			await new SlashCommandDeployer(guild.id, this.options.config, this.interactionFiles)
+			await new SlashCommandDeployer(
+				guild.id,
+				this.options.config,
+				this.interactionFiles
+			).deploy()
 		})
 
 		this.bot.on("guildDelete", async guild => {
