@@ -63,22 +63,22 @@ export default class InteractionHelper<E extends BaseEntry, GC extends BaseGuild
 		if (this.responded) {
 			if (options instanceof ResponseBuilder) {
 				this.interaction
-					.editReply({
-						embeds: [options.build()]
-					})
-					.catch(() => {})
+					.editReply({ embeds: [options.build()] })
+					.catch(err => logger.warn("Failed to edit command interaction", err))
 			} else {
-				this.interaction.editReply(options).catch(() => {})
+				this.interaction
+					.editReply(options)
+					.catch(err => logger.warn("Failed to edit command interaction", err))
 			}
 		} else {
 			if (options instanceof ResponseBuilder) {
 				this.interaction
-					.followUp({
-						embeds: [options.build()]
-					})
-					.catch(() => {})
+					.followUp({ embeds: [options.build()] })
+					.catch(err => logger.warn("Failed to follow up command interaction", err))
 			} else {
-				this.interaction.followUp(options).catch(() => {})
+				this.interaction
+					.followUp(options)
+					.catch(err => logger.warn("Failed to follow up command interaction", err))
 			}
 			this.responded = true
 		}

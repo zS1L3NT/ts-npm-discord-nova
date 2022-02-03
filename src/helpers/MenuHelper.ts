@@ -13,22 +13,24 @@ export default class MenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E
 	public respond(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
-				.followUp({
-					embeds: [options.build()]
-				})
-				.catch(() => {})
+				.followUp({ embeds: [options.build()] })
+				.catch(err => logger.warn("Failed to follow up menu interaction", err))
 		} else {
-			this.interaction.followUp(options).catch(() => {})
+			this.interaction
+				.followUp(options)
+				.catch(err => logger.warn("Failed to follow up menu interaction", err))
 		}
 	}
 
 	public update(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
 		if (options instanceof ResponseBuilder) {
-			this.interaction.update({
-				embeds: [options.build()]
-			})
+			this.interaction
+				.update({ embeds: [options.build()] })
+				.catch(err => logger.warn("Failed to update menu interaction", err))
 		} else {
-			this.interaction.update(options)
+			this.interaction
+				.update(options)
+				.catch(err => logger.warn("Failed to update menu interaction", err))
 		}
 	}
 

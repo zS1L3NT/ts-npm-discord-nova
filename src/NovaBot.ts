@@ -9,6 +9,7 @@ import {
 	SlashCommandDeployer
 } from "."
 import { BitFieldResolvable, Client, IntentsString } from "discord.js"
+import { Tracer } from "tracer"
 import { useTryAsync } from "no-try"
 
 export type iConfig = {
@@ -49,6 +50,7 @@ export type NovaOptions<
 	BotCache: iBaseBotCache<E, GC, BC>
 
 	onSetup?: (botCache: BC) => void
+	logger: Tracer.Logger | Console
 }
 
 export default class NovaBot<
@@ -58,6 +60,7 @@ export default class NovaBot<
 > {
 	public constructor(options: NovaOptions<E, GC, BC>) {
 		const bot = new Client({ intents: options.intents })
+		global.logger = options.logger
 
 		const { GuildCache, BotCache } = options
 		const botSetupHelper = new BotSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
@@ -65,18 +68,19 @@ export default class NovaBot<
 
 		bot.login(options.config.discord.token)
 		bot.on("ready", async () => {
-			console.log(`Logged in as ${options.name}`)
+			logger.info(`Logged in as ${options.name}`)
 
 			let debugCount = 0
 
 			let i = 0
 			let count = bot.guilds.cache.size
 			for (const guild of bot.guilds.cache.toJSON()) {
-				const tag = `${(++i).toString().padStart(count.toString().length, "0")}/${count}`
+				const tag = `[${(++i).toString().padStart(count.toString().length, "0")}/${count}]`
 				const [cacheErr, cache] = await useTryAsync(() => botCache.getGuildCache(guild))
 				if (cacheErr) {
-					console.error(
-						`${tag} ❌ Couldn't find a Firebase Document for Guild(${guild.name})`
+					logger.error(
+						tag,
+						`❌ Couldn't find a Firebase Document for Guild(${guild.name})`
 					)
 					guild.leave()
 					continue
@@ -90,8 +94,9 @@ export default class NovaBot<
 					).deploy()
 				)
 				if (deployErr) {
-					console.error(
-						`${tag} ❌ Couldn't get Slash Command permission for Guild(${guild.name})`
+					logger.error(
+						tag,
+						`❌ Couldn't get Slash Command permission for Guild(${guild.name})`
 					)
 					guild.leave()
 					continue
@@ -101,10 +106,9 @@ export default class NovaBot<
 					await cache.updateMinutely(debugCount)
 				}
 
-				console.log(`${tag} ✅ Restored cache for Guild(${guild.name})`)
+				logger.info(tag, `✅ Restored cache for Guild(${guild.name})`)
 			}
-			console.log(`✅ All bot cache restored`)
-			console.log("|")
+			logger.info(`✅ All bot cache restored`)
 
 			options.onSetup?.(botCache)
 

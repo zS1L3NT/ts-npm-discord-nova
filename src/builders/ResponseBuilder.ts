@@ -16,7 +16,7 @@ export default class ResponseBuilder {
 
 	public build() {
 		return new MessageEmbed()
-			.setAuthor(this.content, this.emoji)
+			.setAuthor({ name: this.content, iconURL: this.emoji })
 			.setColor(this.emoji === Emoji.GOOD ? "#77B255" : "#DD2E44")
 	}
 }

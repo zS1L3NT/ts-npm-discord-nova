@@ -38,8 +38,10 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 			// Clear all unrelated messages first
 			for (const message of messages.values()) {
 				if (!this.excluded(message) && !this.messageIds.includes(message.id)) {
-					console.warn(`Message(${message.id}) shouldn't be in Channel(${channel.id})`)
-					message.delete().catch(() => {})
+					logger.warn(
+						`Message(${message.content}) shouldn't be in Channel(${channel.name})`
+					)
+					message.delete().catch(err => logger.warn("Failed to delete message", err))
 				} else {
 					this.messages.set(message.id, message)
 				}
@@ -49,7 +51,7 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 			let removeCount = 0
 			for (const messageId of this.messageIds) {
 				if (!channel.messages.cache.get(messageId)) {
-					console.warn(`Channel(${channel.id}) has no Message(${messageId})`)
+					logger.warn(`Channel(${channel.id}) has no Message(${messageId})`)
 					this.messageIds = this.messageIds.filter(m => m !== messageId)
 					removeCount++
 				}

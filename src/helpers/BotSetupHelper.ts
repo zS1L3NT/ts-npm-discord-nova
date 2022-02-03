@@ -17,7 +17,15 @@ import {
 	ResponseBuilder,
 	SlashCommandDeployer
 } from ".."
-import { Client, ClientEvents, Collection } from "discord.js"
+import {
+	ButtonInteraction,
+	Client,
+	ClientEvents,
+	Collection,
+	CommandInteraction,
+	Message,
+	SelectMenuInteraction
+} from "discord.js"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
@@ -75,128 +83,20 @@ export default class BotSetupHelper<
 			if (!message.guild) return
 			const cache = await this.botCache.getGuildCache(message.guild!)
 
-			const helper = new MessageHelper(cache, message)
-			try {
-				for (const messageFile of this.messageFiles) {
-					if (messageFile.condition(helper)) {
-						message.react("⌛").catch(() => {})
-						await messageFile.execute(helper)
-						break
-					}
-				}
-			} catch (error) {
-				console.error(error)
-				helper.reactFailure()
-				helper.respond(
-					new ResponseBuilder(
-						Emoji.BAD,
-						"There was an error while executing this command!"
-					)
-				)
-			}
+			await this.onMessage(cache, message)
 		})
 
 		this.bot.on("interactionCreate", async interaction => {
 			if (!interaction.guild) return
 			const cache = await this.botCache.getGuildCache(interaction.guild!)
 
-			if (interaction.isCommand()) {
-				const interactionEntity = this.interactionFiles.get(interaction.commandName)
-				if (!interactionEntity) return
-
-				const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
-					? (interactionEntity as iInteractionFile<E, GC>).ephemeral
-					: (interactionEntity as iInteractionFolder<E, GC>).files.get(
-							interaction.options.getSubcommand(true)
-					  )!.ephemeral
-
-				await interaction
-					.deferReply({ ephemeral })
-					.catch(err => console.error("Failed to defer interaction", err))
-
-				const helper = new InteractionHelper(cache, interaction)
-				try {
-					const interactionFile = interactionEntity as iInteractionFile<E, GC>
-					if (interactionFile.execute) {
-						await interactionFile.execute(helper)
-						if (!interactionFile.defer) {
-							await interaction.deleteReply()
-						}
-					}
-
-					const interactionFolder = interactionEntity as iInteractionFolder<E, GC>
-					if (interactionFolder.files) {
-						const subcommand = interaction.options.getSubcommand(true)
-						const interactionFile = interactionFolder.files.get(subcommand)
-						if (!interactionFile) return
-
-						await interactionFile.execute(helper)
-						if (!interactionFile.defer) {
-							await interaction.deleteReply()
-						}
-					}
-				} catch (error) {
-					console.error(error)
-					helper.respond(
-						new ResponseBuilder(
-							Emoji.BAD,
-							"There was an error while executing this command!"
-						)
-					)
-				}
-			}
-
-			if (interaction.isButton()) {
-				const buttonFile = this.buttonFiles.get(interaction.customId)
-				if (!buttonFile) return
-
-				if (buttonFile.defer) {
-					await interaction
-						.deferReply({ ephemeral: buttonFile.ephemeral })
-						.catch(() => console.error("Failed to defer interaction"))
-				}
-
-				const helper = new ButtonHelper(cache, interaction)
-				try {
-					await buttonFile.execute(helper)
-				} catch (error) {
-					console.error(error)
-					helper.respond(
-						new ResponseBuilder(
-							Emoji.BAD,
-							"There was an error while executing this command!"
-						)
-					)
-				}
-			}
-
-			if (interaction.isSelectMenu()) {
-				const menuFile = this.menuFiles.get(interaction.customId)
-				if (!menuFile) return
-
-				if (menuFile.defer) {
-					await interaction
-						.deferReply({ ephemeral: menuFile.ephemeral })
-						.catch(() => console.error("Failed to defer interaction"))
-				}
-
-				const helper = new MenuHelper(cache, interaction)
-				try {
-					await menuFile.execute(helper)
-				} catch (error) {
-					console.error(error)
-					helper.respond(
-						new ResponseBuilder(
-							Emoji.BAD,
-							"There was an error while executing this command!"
-						)
-					)
-				}
-			}
+			if (interaction.isCommand()) await this.onCommandInteraction(cache, interaction)
+			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
+			if (interaction.isSelectMenu()) await this.onSelectMenuInteraction(cache, interaction)
 		})
 
 		this.bot.on("guildCreate", async guild => {
-			console.log(`Added to Guild(${guild.name})`)
+			logger.info(`Added to Guild(${guild.name})`)
 			await this.botCache.registerGuildCache(guild.id)
 			await new SlashCommandDeployer(
 				guild.id,
@@ -206,7 +106,7 @@ export default class BotSetupHelper<
 		})
 
 		this.bot.on("guildDelete", async guild => {
-			console.log(`Removed from Guild(${guild.name})`)
+			logger.info(`Removed from Guild(${guild.name})`)
 			await this.botCache.eraseGuildCache(guild.id)
 			this.botCache.caches.delete(guild.id)
 		})
@@ -236,7 +136,7 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.cwd, "messages"))
 		)
 
-		if (err) return
+		if (err) return logger.error(`Failed to read messages directory`, err)
 
 		for (const fileName of fileNames) {
 			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
@@ -270,7 +170,7 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.cwd, "commands"))
 		)
 
-		if (err) return
+		if (err) return logger.error(`Failed to read commands directory`, err)
 
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
@@ -335,7 +235,7 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.cwd, "buttons"))
 		)
 
-		if (err) return
+		if (err) return logger.error(`Failed to read buttons directory`, err)
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
@@ -361,7 +261,7 @@ export default class BotSetupHelper<
 
 		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "menus")))
 
-		if (err) return
+		if (err) return logger.error(`Failed to read menus directory`, err)
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
@@ -373,7 +273,7 @@ export default class BotSetupHelper<
 	private setupEvents() {
 		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "events")))
 
-		if (err) return
+		if (err) return logger.error(`Failed to read events directory`, err)
 
 		for (const fileName of fileNames) {
 			const file = this.require<iEventFile<E, GC, BC, keyof ClientEvents>>(
@@ -389,6 +289,112 @@ export default class BotSetupHelper<
 			return file.default
 		} else {
 			return file
+		}
+	}
+
+	private async onMessage(cache: GC, message: Message) {
+		const helper = new MessageHelper(cache, message)
+		try {
+			for (const messageFile of this.messageFiles) {
+				if (messageFile.condition(helper)) {
+					message
+						.react("⌛")
+						.catch(err => logger.warn("Failed to react (⌛) to message command", err))
+					await messageFile.execute(helper)
+					break
+				}
+			}
+		} catch (err) {
+			logger.error("Error executing message command", err)
+			helper.reactFailure()
+			helper.respond(
+				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
+			)
+		}
+	}
+
+	private async onCommandInteraction(cache: GC, interaction: CommandInteraction) {
+		const interactionEntity = this.interactionFiles.get(interaction.commandName)
+		if (!interactionEntity) return
+
+		const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
+			? (interactionEntity as iInteractionFile<E, GC>).ephemeral
+			: (interactionEntity as iInteractionFolder<E, GC>).files.get(
+					interaction.options.getSubcommand(true)
+			  )!.ephemeral
+
+		await interaction
+			.deferReply({ ephemeral })
+			.catch(err => logger.error("Failed to defer command interaction", err))
+
+		const helper = new InteractionHelper(cache, interaction)
+		try {
+			const interactionFile = interactionEntity as iInteractionFile<E, GC>
+			if (interactionFile.execute) {
+				await interactionFile.execute(helper)
+				if (!interactionFile.defer) {
+					await interaction.deleteReply()
+				}
+			}
+
+			const interactionFolder = interactionEntity as iInteractionFolder<E, GC>
+			if (interactionFolder.files) {
+				const subcommand = interaction.options.getSubcommand(true)
+				const interactionFile = interactionFolder.files.get(subcommand)
+				if (!interactionFile) return
+
+				await interactionFile.execute(helper)
+				if (!interactionFile.defer) {
+					await interaction.deleteReply()
+				}
+			}
+		} catch (err) {
+			logger.error("Error executing command interaction", err)
+			helper.respond(
+				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
+			)
+		}
+	}
+
+	private async onButtonInteraction(cache: GC, interaction: ButtonInteraction) {
+		const buttonFile = this.buttonFiles.get(interaction.customId)
+		if (!buttonFile) return
+
+		if (buttonFile.defer) {
+			await interaction
+				.deferReply({ ephemeral: buttonFile.ephemeral })
+				.catch(err => logger.error("Failed to defer button interaction", err))
+		}
+
+		const helper = new ButtonHelper(cache, interaction)
+		try {
+			await buttonFile.execute(helper)
+		} catch (err) {
+			logger.error("Error executing button interaction", err)
+			helper.respond(
+				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
+			)
+		}
+	}
+
+	private async onSelectMenuInteraction(cache: GC, interaction: SelectMenuInteraction) {
+		const menuFile = this.menuFiles.get(interaction.customId)
+		if (!menuFile) return
+
+		if (menuFile.defer) {
+			await interaction
+				.deferReply({ ephemeral: menuFile.ephemeral })
+				.catch(err => logger.error("Failed to defer select menu interaction", err))
+		}
+
+		const helper = new MenuHelper(cache, interaction)
+		try {
+			await menuFile.execute(helper)
+		} catch (err) {
+			logger.error("Error executing select menu command", err)
+			helper.respond(
+				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
+			)
 		}
 	}
 }
