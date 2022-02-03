@@ -75,7 +75,7 @@ export default class NovaBot<
 			let i = 0
 			let count = bot.guilds.cache.size
 			for (const guild of bot.guilds.cache.toJSON()) {
-				const tag = `${(++i).toString().padStart(count.toString().length, "0")}/${count}`
+				const tag = `[${(++i).toString().padStart(count.toString().length, "0")}/${count}]`
 				const [cacheErr, cache] = await useTryAsync(() => botCache.getGuildCache(guild))
 				if (cacheErr) {
 					logger.error(
@@ -109,7 +109,6 @@ export default class NovaBot<
 				logger.info(tag, `✅ Restored cache for Guild(${guild.name})`)
 			}
 			logger.info(`✅ All bot cache restored`)
-			logger.info(`.`)
 
 			options.onSetup?.(botCache)
 
