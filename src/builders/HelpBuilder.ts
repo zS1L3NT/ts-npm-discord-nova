@@ -37,7 +37,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		const interactionFiles = this.getInteractionFiles()
 
 		const embed = new MessageEmbed()
-			.setAuthor("Help", this.QUESTION)
+			.setAuthor({ name: "Help", iconURL: this.QUESTION })
 			.setThumbnail(this.icon)
 			.setColor("#C7D1D8")
 			.setDescription("Overview of all commands")
@@ -73,7 +73,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 	public buildMinimum(): MessageOptions {
 		const embed = new MessageEmbed()
-			.setAuthor("Help", this.QUESTION)
+			.setAuthor({ name: "Help", iconURL: this.QUESTION })
 			.setThumbnail(this.icon)
 			.setColor("#C7D1D8")
 			.setDescription(
@@ -103,7 +103,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public buildCommand(command: string): MessageOptions {
 		const interactionFiles = this.getInteractionFiles()
 
-		const embed = new MessageEmbed().setAuthor(command, this.QUESTION)
+		const embed = new MessageEmbed().setAuthor({ name: command, iconURL: this.QUESTION })
 		const button = new MessageButton()
 			.setCustomId("help-minimum")
 			.setLabel("Back")
