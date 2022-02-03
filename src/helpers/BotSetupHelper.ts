@@ -297,7 +297,9 @@ export default class BotSetupHelper<
 		try {
 			for (const messageFile of this.messageFiles) {
 				if (messageFile.condition(helper)) {
-					message.react("⌛").catch(() => {})
+					message
+						.react("⌛")
+						.catch(err => logger.warn("Failed to react (⌛) to message command", err))
 					await messageFile.execute(helper)
 					break
 				}

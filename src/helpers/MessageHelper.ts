@@ -38,16 +38,20 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 
 	public clearAfter(ms: number) {
 		setTimeout(() => {
-			this.message.delete().catch(() => {})
+			this.message.delete().catch(err => logger.warn("Failed to delete message", err))
 		}, ms)
 	}
 
 	public reactSuccess() {
-		this.message.react("✅").catch(() => {})
+		this.message
+			.react("✅")
+			.catch(err => logger.warn("Failed to react (✅) to message command", err))
 	}
 
 	public reactFailure() {
-		this.message.react("❌").catch(() => {})
+		this.message
+			.react("❌")
+			.catch(err => logger.warn("Failed to react (❌) to message command", err))
 	}
 
 	public respond(
@@ -64,13 +68,12 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			message = this.message.channel.send(options as MessagePayload | InteractionReplyOptions)
 		}
 
-		message
-			.then(async temporary => {
-				if (ms) {
-					await time(ms)
-					await temporary.delete().catch(() => {})
-				}
-			})
-			.catch(() => {})
+		message.then(async temporary => {
+			if (ms) {
+				await time(ms)
+				temporary.delete().catch(err => logger.warn("Failed to delete message", err))
+				this.message.delete().catch(err => logger.warn("Failed to delete message", err))
+			}
+		})
 	}
 }
