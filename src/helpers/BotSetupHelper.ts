@@ -297,7 +297,9 @@ export default class BotSetupHelper<
 
 		for (const [fileName, messageFile] of this.messageFiles) {
 			if (messageFile.condition(helper)) {
-				logger.discord(`Opening MessageCommand(${fileName}) for ${message.author.username}`)
+				logger.discord(
+					`Opening MessageCommand(${fileName}) for User(${message.author.tag})`
+				)
 				try {
 					message
 						.react("⌛")
@@ -313,7 +315,9 @@ export default class BotSetupHelper<
 						)
 					)
 				}
-				logger.discord(`Closing MessageCommand(${fileName}) for ${message.author.username}`)
+				logger.discord(
+					`Closing MessageCommand(${fileName}) for User(${message.author.tag})`
+				)
 				return
 			}
 		}
@@ -323,7 +327,7 @@ export default class BotSetupHelper<
 		const interactionEntity = this.interactionFiles.get(interaction.commandName)
 		if (!interactionEntity) return
 		logger.discord(
-			`Opening CommandInteraction(${interaction.commandName}) for ${interaction.user.username}`
+			`Opening CommandInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
 
 		const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
@@ -364,7 +368,7 @@ export default class BotSetupHelper<
 			)
 		}
 		logger.discord(
-			`Closing CommandInteraction(${interaction.commandName}) for ${interaction.user.username}`
+			`Closing CommandInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
 	}
 
@@ -372,7 +376,7 @@ export default class BotSetupHelper<
 		const buttonFile = this.buttonFiles.get(interaction.customId)
 		if (!buttonFile) return
 		logger.discord(
-			`Opening ButtonInteraction(${interaction.customId}) for ${interaction.user.username}`
+			`Opening ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
 
 		if (buttonFile.defer) {
@@ -391,7 +395,7 @@ export default class BotSetupHelper<
 			)
 		}
 		logger.discord(
-			`Closing CommandInteraction(${interaction.customId}) for ${interaction.user.username}`
+			`Closing ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
 	}
 
@@ -399,7 +403,7 @@ export default class BotSetupHelper<
 		const menuFile = this.menuFiles.get(interaction.customId)
 		if (!menuFile) return
 		logger.discord(
-			`Opening CommandInteraction(${interaction.customId}) for ${interaction.user.username}`
+			`Opening SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
 
 		if (menuFile.defer) {
@@ -418,7 +422,7 @@ export default class BotSetupHelper<
 			)
 		}
 		logger.discord(
-			`Closing CommandInteraction(${interaction.customId}) for ${interaction.user.username}`
+			`Closing SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
 	}
 }
