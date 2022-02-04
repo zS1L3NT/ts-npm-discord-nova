@@ -45,7 +45,7 @@ export default class BotSetupHelper<
 	>
 	public readonly buttonFiles: Collection<string, iButtonFile<E, GC>>
 	public readonly menuFiles: Collection<string, iMenuFile<E, GC>>
-	public readonly messageFiles: iMessageFile<E, GC>[]
+	public readonly messageFiles: Collection<string, iMessageFile<E, GC>>
 	public readonly eventFiles: iEventFile<E, GC, BC, keyof ClientEvents>[]
 
 	constructor(
@@ -59,19 +59,19 @@ export default class BotSetupHelper<
 		this.options = options
 		this.bot = bot
 		this.botCache = new BCClass(this.GCClass, this.options.config, this.bot)
-		this.messageFiles = []
-		this.eventFiles = []
 		this.interactionFiles = new Collection<
 			string,
 			iInteractionFile<E, GC> | iInteractionFolder<E, GC>
 		>()
 		this.buttonFiles = new Collection<string, iButtonFile<E, GC>>()
 		this.menuFiles = new Collection<string, iMenuFile<E, GC>>()
+		this.messageFiles = new Collection<string, iMessageFile<E, GC>>()
+		this.eventFiles = []
 
-		this.setupMessages()
 		this.setupCommands()
 		this.setupButtons()
 		this.setupMenus()
+		this.setupMessages()
 		this.setupEvents()
 
 		for (const event of this.eventFiles) {
@@ -118,7 +118,7 @@ export default class BotSetupHelper<
 
 	private setupMessages() {
 		if (this.options.help.commandRegex) {
-			this.messageFiles.push({
+			this.messageFiles.set("help", {
 				condition: helper => !!helper.match(this.options.help.commandRegex!),
 				execute: async helper => {
 					helper.respond(
@@ -140,7 +140,7 @@ export default class BotSetupHelper<
 
 		for (const fileName of fileNames) {
 			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
-			this.messageFiles.push(file)
+			this.messageFiles.set(fileName.split(".ts").at(0)!, file)
 		}
 	}
 
@@ -294,28 +294,37 @@ export default class BotSetupHelper<
 
 	private async onMessage(cache: GC, message: Message) {
 		const helper = new MessageHelper(cache, message)
-		try {
-			for (const messageFile of this.messageFiles) {
-				if (messageFile.condition(helper)) {
+
+		for (const [fileName, messageFile] of this.messageFiles) {
+			if (messageFile.condition(helper)) {
+				logger.discord(`Opening MessageCommand(${fileName}) for ${message.author.username}`)
+				try {
 					message
 						.react("⌛")
 						.catch(err => logger.warn("Failed to react (⌛) to message command", err))
 					await messageFile.execute(helper)
-					break
+				} catch (err) {
+					logger.error("Error executing message command", err)
+					helper.reactFailure()
+					helper.respond(
+						new ResponseBuilder(
+							Emoji.BAD,
+							"There was an error while executing this command!"
+						)
+					)
 				}
+				logger.discord(`Closing MessageCommand(${fileName}) for ${message.author.username}`)
+				return
 			}
-		} catch (err) {
-			logger.error("Error executing message command", err)
-			helper.reactFailure()
-			helper.respond(
-				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
-			)
 		}
 	}
 
 	private async onCommandInteraction(cache: GC, interaction: CommandInteraction) {
 		const interactionEntity = this.interactionFiles.get(interaction.commandName)
 		if (!interactionEntity) return
+		logger.discord(
+			`Opening CommandInteraction(${interaction.commandName}) for ${interaction.user.username}`
+		)
 
 		const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
 			? (interactionEntity as iInteractionFile<E, GC>).ephemeral
@@ -354,11 +363,17 @@ export default class BotSetupHelper<
 				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
 			)
 		}
+		logger.discord(
+			`Closing CommandInteraction(${interaction.commandName}) for ${interaction.user.username}`
+		)
 	}
 
 	private async onButtonInteraction(cache: GC, interaction: ButtonInteraction) {
 		const buttonFile = this.buttonFiles.get(interaction.customId)
 		if (!buttonFile) return
+		logger.discord(
+			`Opening ButtonInteraction(${interaction.customId}) for ${interaction.user.username}`
+		)
 
 		if (buttonFile.defer) {
 			await interaction
@@ -375,11 +390,17 @@ export default class BotSetupHelper<
 				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
 			)
 		}
+		logger.discord(
+			`Closing CommandInteraction(${interaction.customId}) for ${interaction.user.username}`
+		)
 	}
 
 	private async onSelectMenuInteraction(cache: GC, interaction: SelectMenuInteraction) {
 		const menuFile = this.menuFiles.get(interaction.customId)
 		if (!menuFile) return
+		logger.discord(
+			`Opening CommandInteraction(${interaction.customId}) for ${interaction.user.username}`
+		)
 
 		if (menuFile.defer) {
 			await interaction
@@ -396,6 +417,9 @@ export default class BotSetupHelper<
 				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
 			)
 		}
+		logger.discord(
+			`Closing CommandInteraction(${interaction.customId}) for ${interaction.user.username}`
+		)
 	}
 }
 

@@ -60,7 +60,10 @@ export default class NovaBot<
 > {
 	public constructor(options: NovaOptions<E, GC, BC>) {
 		const bot = new Client({ intents: options.intents })
-		global.logger = options.logger
+		global.logger =
+			"discord" in options.logger
+				? (options.logger as Tracer.Logger & { discord: Tracer.FilterFunction })
+				: Object.assign(options.logger, { discord: console.log })
 
 		const { GuildCache, BotCache } = options
 		const botSetupHelper = new BotSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
