@@ -9,7 +9,6 @@ import {
 	SlashCommandDeployer
 } from "."
 import { BitFieldResolvable, Client, IntentsString } from "discord.js"
-import { Tracer } from "tracer"
 import { useTryAsync } from "no-try"
 
 export type iConfig = {
@@ -50,7 +49,12 @@ export type NovaOptions<
 	BotCache: iBaseBotCache<E, GC, BC>
 
 	onSetup?: (botCache: BC) => void
-	logger: Tracer.Logger | Console
+	logger: {
+		discord: (...args: any[]) => void
+		info: (...args: any[]) => void
+		warn: (...args: any[]) => void
+		error: (...args: any[]) => void
+	}
 }
 
 export default class NovaBot<
@@ -60,10 +64,7 @@ export default class NovaBot<
 > {
 	public constructor(options: NovaOptions<E, GC, BC>) {
 		const bot = new Client({ intents: options.intents })
-		global.logger =
-			"discord" in options.logger
-				? (options.logger as Tracer.Logger & { discord: Tracer.FilterFunction })
-				: Object.assign(options.logger, { discord: console.log })
+		global.logger = options.logger
 
 		const { GuildCache, BotCache } = options
 		const botSetupHelper = new BotSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)

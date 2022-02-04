@@ -1,8 +1,9 @@
-import { Tracer } from "tracer"
-
 declare global {
-	var logger: (Tracer.Logger | Console) & {
-		discord: (...args: any[]) => void | Tracer.LogOutput
+	var logger: {
+		discord: (...args: any[]) => void
+		info: (...args: any[]) => void
+		warn: (...args: any[]) => void
+		error: (...args: any[]) => void
 	}
 }
 
