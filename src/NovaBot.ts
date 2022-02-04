@@ -70,48 +70,55 @@ export default class NovaBot<
 		const { botCache } = botSetupHelper
 
 		bot.login(options.config.discord.token)
-		bot.on("ready", async () => {
+		bot.on("ready", () => {
 			logger.info(`Logged in as ${options.name}`)
 
 			let debugCount = 0
 
 			let i = 0
 			let count = bot.guilds.cache.size
-			for (const guild of bot.guilds.cache.toJSON()) {
-				const tag = `[${(++i).toString().padStart(count.toString().length, "0")}/${count}]`
-				const [cacheErr, cache] = await useTryAsync(() => botCache.getGuildCache(guild))
-				if (cacheErr) {
-					logger.error(
-						tag,
-						`❌ Couldn't find a Firebase Document for Guild(${guild.name})`
+			const getTag = () => `[${`${++i}`.padStart(`${count}`.length, "0")}/${count}]`
+			Promise.allSettled(
+				bot.guilds.cache.map(async guild => {
+					const [cacheErr, cache] = await useTryAsync(() => botCache.getGuildCache(guild))
+					if (cacheErr) {
+						const tag = getTag()
+						logger.error(
+							tag,
+							`❌ Couldn't find a Firebase Document for Guild(${guild.name})`
+						)
+						await guild.leave()
+						logger.error(tag, `Left Guild(${guild.name})`)
+						return
+					}
+
+					const [deployErr] = await useTryAsync(() =>
+						new SlashCommandDeployer(
+							guild.id,
+							options.config,
+							botSetupHelper.interactionFiles
+						).deploy()
 					)
-					guild.leave()
-					continue
-				}
+					if (deployErr) {
+						const tag = getTag()
+						logger.error(
+							tag,
+							`❌ Couldn't get Slash Command permission for Guild(${guild.name})`
+						)
+						await guild.leave()
+						logger.error(tag, `Left Guild(${guild.name})`)
+						return
+					}
 
-				const [deployErr] = await useTryAsync(() =>
-					new SlashCommandDeployer(
-						guild.id,
-						options.config,
-						botSetupHelper.interactionFiles
-					).deploy()
-				)
-				if (deployErr) {
-					logger.error(
-						tag,
-						`❌ Couldn't get Slash Command permission for Guild(${guild.name})`
-					)
-					guild.leave()
-					continue
-				}
+					if (options.updatesMinutely) {
+						await cache.updateMinutely(debugCount)
+					}
 
-				if (options.updatesMinutely) {
-					await cache.updateMinutely(debugCount)
-				}
-
-				logger.info(tag, `✅ Restored cache for Guild(${guild.name})`)
-			}
-			logger.info(`✅ All bot cache restored`)
+					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)
+				})
+			).then(() => {
+				logger.info(`✅ All bot cache restored`)
+			})
 
 			options.onSetup?.(botCache)
 
