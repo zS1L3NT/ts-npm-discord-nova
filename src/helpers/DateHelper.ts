@@ -2,7 +2,7 @@ import { DateTime } from "luxon"
 
 export default class DateHelper {
 	private readonly time: number
-	public static readonly days_of_week: {
+	public static readonly daysOfWeek: {
 		[day: string]: string
 	} = {
 		Mon: "Monday",
@@ -13,7 +13,7 @@ export default class DateHelper {
 		Sat: "Saturday",
 		Sun: "Sunday"
 	}
-	public static name_of_months = [
+	public static nameOfMonths = [
 		"January",
 		"February",
 		"March",
@@ -27,7 +27,7 @@ export default class DateHelper {
 		"November",
 		"December"
 	]
-	public static readonly longer_months = [1, 3, 5, 7, 8, 10, 12]
+	public static readonly longerMonths = [1, 3, 5, 7, 8, 10, 12]
 
 	public constructor(time: number) {
 		this.time = time
@@ -36,7 +36,7 @@ export default class DateHelper {
 	public static verify(day: number, month: number, year: number, hour: number, minute: number) {
 		const now = DateTime.now()
 
-		if (this.longer_months.includes(month)) {
+		if (this.longerMonths.includes(month)) {
 			if (day > 31) {
 				throw new Error(`This month cannot have ${day} days`)
 			}

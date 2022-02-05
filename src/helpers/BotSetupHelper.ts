@@ -1,10 +1,10 @@
 import ButtonHelper from "./ButtonHelper"
-import CommandBuilder from "../builders/CommandBuilder"
 import fs from "fs"
-import InteractionHelper, { iInteractionData } from "./InteractionHelper"
-import MenuHelper from "./MenuHelper"
 import MessageHelper from "./MessageHelper"
 import path from "path"
+import SelectMenuHelper from "./SelectMenuHelper"
+import SlashBuilder from "../builders/SlashBuilder"
+import SlashHelper, { iSlashData } from "./SlashHelper"
 import {
 	BaseBotCache,
 	BaseEntry,
@@ -39,12 +39,9 @@ export default class BotSetupHelper<
 	private readonly bot: Client
 	public readonly options: NovaOptions<E, GC, BC>
 	public readonly botCache: BC
-	public readonly interactionFiles: Collection<
-		string,
-		iInteractionFile<E, GC> | iInteractionFolder<E, GC>
-	>
+	public readonly slashFiles: Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>
 	public readonly buttonFiles: Collection<string, iButtonFile<E, GC>>
-	public readonly menuFiles: Collection<string, iMenuFile<E, GC>>
+	public readonly selectMenuFiles: Collection<string, iSelectMenuFile<E, GC>>
 	public readonly messageFiles: Collection<string, iMessageFile<E, GC>>
 	public readonly eventFiles: iEventFile<E, GC, BC, keyof ClientEvents>[]
 
@@ -59,18 +56,15 @@ export default class BotSetupHelper<
 		this.options = options
 		this.bot = bot
 		this.botCache = new BCClass(this.GCClass, this.options.config, this.bot)
-		this.interactionFiles = new Collection<
-			string,
-			iInteractionFile<E, GC> | iInteractionFolder<E, GC>
-		>()
+		this.slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
 		this.buttonFiles = new Collection<string, iButtonFile<E, GC>>()
-		this.menuFiles = new Collection<string, iMenuFile<E, GC>>()
+		this.selectMenuFiles = new Collection<string, iSelectMenuFile<E, GC>>()
 		this.messageFiles = new Collection<string, iMessageFile<E, GC>>()
 		this.eventFiles = []
 
-		this.setupCommands()
+		this.setupSlashs()
 		this.setupButtons()
-		this.setupMenus()
+		this.setupSelectMenus()
 		this.setupMessages()
 		this.setupEvents()
 
@@ -90,7 +84,7 @@ export default class BotSetupHelper<
 			if (!interaction.guild) return
 			const cache = await this.botCache.getGuildCache(interaction.guild!)
 
-			if (interaction.isCommand()) await this.onCommandInteraction(cache, interaction)
+			if (interaction.isCommand()) await this.onSlashInteraction(cache, interaction)
 			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
 			if (interaction.isSelectMenu()) await this.onSelectMenuInteraction(cache, interaction)
 		})
@@ -98,11 +92,7 @@ export default class BotSetupHelper<
 		this.bot.on("guildCreate", async guild => {
 			logger.info(`Added to Guild(${guild.name})`)
 			await this.botCache.registerGuildCache(guild.id)
-			await new SlashCommandDeployer(
-				guild.id,
-				this.options.config,
-				this.interactionFiles
-			).deploy()
+			await new SlashCommandDeployer(guild.id, this.options.config, this.slashFiles).deploy()
 		})
 
 		this.bot.on("guildDelete", async guild => {
@@ -116,36 +106,8 @@ export default class BotSetupHelper<
 		return file.endsWith(".ts") || file.endsWith(".js")
 	}
 
-	private setupMessages() {
-		if (this.options.help.commandRegex) {
-			this.messageFiles.set("help", {
-				condition: helper => !!helper.match(this.options.help.commandRegex!),
-				execute: async helper => {
-					helper.respond(
-						new HelpBuilder(
-							this.options.help.message(helper.cache),
-							this.options.help.icon,
-							this.options.cwd
-						).buildMinimum()
-					)
-				}
-			})
-		}
-
-		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "messages"))
-		)
-
-		if (err) return logger.error(`Failed to read messages directory`, err)
-
-		for (const fileName of fileNames) {
-			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
-			this.messageFiles.set(fileName.split(".ts").at(0)!, file)
-		}
-	}
-
-	private setupCommands() {
-		this.interactionFiles.set("help", {
+	private setupSlashs() {
+		this.slashFiles.set("help", {
 			defer: false,
 			ephemeral: false,
 			data: {
@@ -167,29 +129,27 @@ export default class BotSetupHelper<
 		})
 
 		const [err, entityNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "commands"))
+			fs.readdirSync(path.join(this.options.cwd, "slashs"))
 		)
 
-		if (err) return logger.error(`Failed to read commands directory`, err)
+		if (err) return logger.error(`Failed to read slashs directory`, err)
 
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.options.cwd, `commands/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.options.cwd, `slashs/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iInteractionSubcommandFile<E, GC>> = new Collection()
+			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file = this.require<iInteractionSubcommandFile<E, GC>>(
-					`commands/${folderName}/${fileName}`
-				)
+				const file = this.require<iSlashSubFile<E, GC>>(`slashs/${folderName}/${fileName}`)
 				files.set(file.data.name, file)
-				builder.addSubcommand(new CommandBuilder(file.data).buildSubcommand())
+				builder.addSubcommand(new SlashBuilder(file.data).buildSubcommand())
 			}
 
-			this.interactionFiles.set(folderName, {
+			this.slashFiles.set(folderName, {
 				data: builder,
 				files
 			})
@@ -198,8 +158,8 @@ export default class BotSetupHelper<
 		// Slash commands
 		const fileNames = entityNames.filter(f => BotSetupHelper.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<E, GC>>(`commands/${filename}`)
-			this.interactionFiles.set(file.data.name, file)
+			const file = this.require<iSlashFile<E, GC>>(`slashs/${filename}`)
+			this.slashFiles.set(file.data.name, file)
 		}
 	}
 
@@ -244,8 +204,8 @@ export default class BotSetupHelper<
 		}
 	}
 
-	private setupMenus() {
-		this.menuFiles.set("help-item", {
+	private setupSelectMenus() {
+		this.selectMenuFiles.set("help-item", {
 			defer: false,
 			ephemeral: true,
 			execute: async helper => {
@@ -259,14 +219,44 @@ export default class BotSetupHelper<
 			}
 		})
 
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "menus")))
+		const [err, fileNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.cwd, "selectMenus"))
+		)
 
-		if (err) return logger.error(`Failed to read menus directory`, err)
+		if (err) return logger.error(`Failed to read selectMenus directory`, err)
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<iMenuFile<E, GC>>(`menus/${fileName}`)
-			this.menuFiles.set(name, file)
+			const file = this.require<iSelectMenuFile<E, GC>>(`selectMenus/${fileName}`)
+			this.selectMenuFiles.set(name, file)
+		}
+	}
+
+	private setupMessages() {
+		if (this.options.help.commandRegex) {
+			this.messageFiles.set("help", {
+				condition: helper => !!helper.match(this.options.help.commandRegex!),
+				execute: async helper => {
+					helper.respond(
+						new HelpBuilder(
+							this.options.help.message(helper.cache),
+							this.options.help.icon,
+							this.options.cwd
+						).buildMinimum()
+					)
+				}
+			})
+		}
+
+		const [err, fileNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.cwd, "messages"))
+		)
+
+		if (err) return logger.error(`Failed to read messages directory`, err)
+
+		for (const fileName of fileNames) {
+			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
+			this.messageFiles.set(fileName.split(".ts").at(0)!, file)
 		}
 	}
 
@@ -323,43 +313,30 @@ export default class BotSetupHelper<
 		}
 	}
 
-	private async onCommandInteraction(cache: GC, interaction: CommandInteraction) {
-		const interactionEntity = this.interactionFiles.get(interaction.commandName)
-		if (!interactionEntity) return
+	private async onSlashInteraction(cache: GC, interaction: CommandInteraction) {
+		const slashEntity = this.slashFiles.get(interaction.commandName)
+		if (!slashEntity) return
 		logger.discord(
-			`Opening CommandInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
+			`Opening SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
 
-		const ephemeral = Object.keys(interactionEntity).includes("ephemeral")
-			? (interactionEntity as iInteractionFile<E, GC>).ephemeral
-			: (interactionEntity as iInteractionFolder<E, GC>).files.get(
-					interaction.options.getSubcommand(true)
-			  )!.ephemeral
+		const subcommand = interaction.options.getSubcommand(false)
+		const ephemeral = Object.keys(slashEntity).includes("ephemeral")
+			? (slashEntity as iSlashFile<E, GC>).ephemeral
+			: (slashEntity as iSlashFolder<E, GC>).files.get(subcommand!)!.ephemeral
 
 		await interaction
 			.deferReply({ ephemeral })
 			.catch(err => logger.error("Failed to defer command interaction", err))
 
-		const helper = new InteractionHelper(cache, interaction)
+		const helper = new SlashHelper(cache, interaction)
 		try {
-			const interactionFile = interactionEntity as iInteractionFile<E, GC>
-			if (interactionFile.execute) {
-				await interactionFile.execute(helper)
-				if (!interactionFile.defer) {
-					await interaction.deleteReply()
-				}
-			}
+			const slashFile =
+				"files" in slashEntity ? slashEntity.files.get(subcommand!)! : slashEntity
 
-			const interactionFolder = interactionEntity as iInteractionFolder<E, GC>
-			if (interactionFolder.files) {
-				const subcommand = interaction.options.getSubcommand(true)
-				const interactionFile = interactionFolder.files.get(subcommand)
-				if (!interactionFile) return
-
-				await interactionFile.execute(helper)
-				if (!interactionFile.defer) {
-					await interaction.deleteReply()
-				}
+			await slashFile.execute(helper)
+			if (!slashFile.defer) {
+				await interaction.deleteReply()
 			}
 		} catch (err) {
 			logger.error("Error executing command interaction", err)
@@ -368,7 +345,7 @@ export default class BotSetupHelper<
 			)
 		}
 		logger.discord(
-			`Closing CommandInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
+			`Closing SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
 	}
 
@@ -400,21 +377,21 @@ export default class BotSetupHelper<
 	}
 
 	private async onSelectMenuInteraction(cache: GC, interaction: SelectMenuInteraction) {
-		const menuFile = this.menuFiles.get(interaction.customId)
-		if (!menuFile) return
+		const selectMenuFile = this.selectMenuFiles.get(interaction.customId)
+		if (!selectMenuFile) return
 		logger.discord(
 			`Opening SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
 
-		if (menuFile.defer) {
+		if (selectMenuFile.defer) {
 			await interaction
-				.deferReply({ ephemeral: menuFile.ephemeral })
+				.deferReply({ ephemeral: selectMenuFile.ephemeral })
 				.catch(err => logger.error("Failed to defer select menu interaction", err))
 		}
 
-		const helper = new MenuHelper(cache, interaction)
+		const helper = new SelectMenuHelper(cache, interaction)
 		try {
-			await menuFile.execute(helper)
+			await selectMenuFile.execute(helper)
 		} catch (err) {
 			logger.error("Error executing select menu command", err)
 			helper.respond(
@@ -427,28 +404,23 @@ export default class BotSetupHelper<
 	}
 }
 
-export interface iMessageFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	condition: (helper: MessageHelper<E, GC>) => boolean
-	execute: (helper: MessageHelper<E, GC>) => Promise<void>
-}
-
-export interface iInteractionFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export interface iSlashFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	data: iInteractionData
-	execute: (helper: InteractionHelper<E, GC>) => Promise<any>
+	data: iSlashData
+	execute: (helper: SlashHelper<E, GC>) => Promise<any>
 }
 
-export interface iInteractionSubcommandFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export interface iSlashSubFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	data: iInteractionData
-	execute: (helper: InteractionHelper<E, GC>) => Promise<any>
+	data: iSlashData
+	execute: (helper: SlashHelper<E, GC>) => Promise<any>
 }
 
-export interface iInteractionFolder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export interface iSlashFolder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	data: SlashCommandBuilder
-	files: Collection<string, iInteractionSubcommandFile<E, GC>>
+	files: Collection<string, iSlashSubFile<E, GC>>
 }
 
 export interface iButtonFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
@@ -457,10 +429,15 @@ export interface iButtonFile<E extends BaseEntry, GC extends BaseGuildCache<E, G
 	execute: (helper: ButtonHelper<E, GC>) => Promise<any>
 }
 
-export interface iMenuFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export interface iSelectMenuFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	execute: (helpe3r: MenuHelper<E, GC>) => Promise<any>
+	execute: (helpe3r: SelectMenuHelper<E, GC>) => Promise<any>
+}
+
+export interface iMessageFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	condition: (helper: MessageHelper<E, GC>) => boolean
+	execute: (helper: MessageHelper<E, GC>) => Promise<void>
 }
 
 export interface iEventFile<

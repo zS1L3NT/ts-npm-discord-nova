@@ -32,8 +32,8 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			?.filter(i => i !== "")
 	}
 
-	public getNumber<T, U>(string: string | undefined, not_defined: T, nan: U) {
-		return string === undefined ? not_defined : isNaN(+string) ? nan : +string
+	public getNumber<T, U>(string: string | undefined, notDefined: T, nan: U) {
+		return string === undefined ? notDefined : isNaN(+string) ? nan : +string
 	}
 
 	public clearAfter(ms: number) {

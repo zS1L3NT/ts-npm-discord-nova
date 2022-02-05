@@ -1,7 +1,7 @@
 import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 import { InteractionReplyOptions, MessagePayload, SelectMenuInteraction } from "discord.js"
 
-export default class MenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly interaction: SelectMenuInteraction
 
@@ -14,11 +14,11 @@ export default class MenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.followUp({ embeds: [options.build()] })
-				.catch(err => logger.warn("Failed to follow up menu interaction", err))
+				.catch(err => logger.warn("Failed to follow up select menu interaction", err))
 		} else {
 			this.interaction
 				.followUp(options)
-				.catch(err => logger.warn("Failed to follow up menu interaction", err))
+				.catch(err => logger.warn("Failed to follow up select menu interaction", err))
 		}
 	}
 
@@ -26,11 +26,11 @@ export default class MenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.update({ embeds: [options.build()] })
-				.catch(err => logger.warn("Failed to update menu interaction", err))
+				.catch(err => logger.warn("Failed to update select menu interaction", err))
 		} else {
 			this.interaction
 				.update(options)
-				.catch(err => logger.warn("Failed to update menu interaction", err))
+				.catch(err => logger.warn("Failed to update select menu interaction", err))
 		}
 	}
 

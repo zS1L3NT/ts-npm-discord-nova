@@ -1,13 +1,7 @@
-import CommandBuilder from "./CommandBuilder"
 import fs from "fs"
 import path from "path"
-import {
-	BaseEntry,
-	BaseGuildCache,
-	iInteractionFile,
-	iInteractionFolder,
-	iInteractionSubcommandFile
-} from ".."
+import SlashBuilder from "./SlashBuilder"
+import { BaseEntry, BaseGuildCache, iSlashFile, iSlashFolder, iSlashSubFile } from ".."
 import {
 	Collection,
 	MessageActionRow,
@@ -16,7 +10,7 @@ import {
 	MessageOptions,
 	MessageSelectMenu
 } from "discord.js"
-import { iInteractionData } from "../helpers/InteractionHelper"
+import { iSlashData } from "../helpers/SlashHelper"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
@@ -34,7 +28,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	}
 
 	public buildMaximum(): MessageOptions {
-		const interactionFiles = this.getInteractionFiles()
+		const slashFiles = this.getSlashFiles()
 
 		const embed = new MessageEmbed()
 			.setAuthor({ name: "Help", iconURL: this.QUESTION })
@@ -48,24 +42,21 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			.setStyle("PRIMARY")
 			.setEmoji("➖")
 
-		for (const [entityName, entity] of interactionFiles) {
+		for (const [entityName, entity] of slashFiles) {
 			if (Object.keys(entity).includes("files")) {
-				for (const [fileName, file] of (entity as iInteractionFolder<E, GC>).files) {
+				for (const [fileName, file] of (entity as iSlashFolder<E, GC>).files) {
 					const name = `${entityName} ${fileName}`
 					embed.addField(name, file.data.description.help)
 				}
 			} else {
-				embed.addField(
-					entityName,
-					(entity as iInteractionFile<E, GC>).data.description.help
-				)
+				embed.addField(entityName, (entity as iSlashFile<E, GC>).data.description.help)
 			}
 		}
 
 		return {
 			embeds: [embed],
 			components: [
-				new MessageActionRow().addComponents(this.createMenu()),
+				new MessageActionRow().addComponents(this.createSelectMenu()),
 				new MessageActionRow().addComponents(button)
 			]
 		}
@@ -94,14 +85,14 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		return {
 			embeds: [embed],
 			components: [
-				new MessageActionRow().addComponents(this.createMenu()),
+				new MessageActionRow().addComponents(this.createSelectMenu()),
 				new MessageActionRow().addComponents(button)
 			]
 		}
 	}
 
 	public buildCommand(command: string): MessageOptions {
-		const interactionFiles = this.getInteractionFiles()
+		const slashFiles = this.getSlashFiles()
 
 		const embed = new MessageEmbed().setAuthor({ name: command, iconURL: this.QUESTION })
 		const button = new MessageButton()
@@ -110,23 +101,23 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			.setStyle("PRIMARY")
 			.setEmoji("⬅")
 
-		const data: iInteractionData = command.includes(" ")
-			? (interactionFiles.get(command.split(" ")[0]!) as iInteractionFolder<E, GC>).files.get(
+		const data: iSlashData = command.includes(" ")
+			? (slashFiles.get(command.split(" ")[0]!) as iSlashFolder<E, GC>).files.get(
 					command.split(" ")[1]!
 			  )!.data
-			: (interactionFiles.get(command) as iInteractionFile<E, GC>).data
+			: (slashFiles.get(command) as iSlashFile<E, GC>).data
 
-		const [ts_err] = useTry(() => {
+		const [tsErr] = useTry(() => {
 			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".ts"))
 		})
-		const [js_err] = useTry(() => {
+		const [jsErr] = useTry(() => {
 			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".js"))
 		})
 
 		const description = [
 			data.description.help,
 			"",
-			`__Message Commands__: **${ts_err && js_err ? "Unsupported" : "Supported"}**`
+			`__Message Commands__: **${tsErr && jsErr ? "Unsupported" : "Supported"}**`
 		]
 
 		if (data.options) {
@@ -151,65 +142,60 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		return {
 			embeds: [embed],
 			components: [
-				new MessageActionRow().addComponents(this.createMenu()),
+				new MessageActionRow().addComponents(this.createSelectMenu()),
 				new MessageActionRow().addComponents(button)
 			]
 		}
 	}
 
-	public createMenu(): MessageSelectMenu {
-		const interactionFiles = this.getInteractionFiles()
-		const menu = new MessageSelectMenu()
+	public createSelectMenu(): MessageSelectMenu {
+		const slashFiles = this.getSlashFiles()
+		const selectMenu = new MessageSelectMenu()
 			.setCustomId("help-item")
 			.setPlaceholder("Choose a command")
 
-		for (const [entityName, entity] of interactionFiles) {
+		for (const [entityName, entity] of slashFiles) {
 			if (Object.keys(entity).includes("files")) {
-				for (const [fileName] of (entity as iInteractionFolder<E, GC>).files) {
+				for (const [fileName] of (entity as iSlashFolder<E, GC>).files) {
 					const name = `${entityName} ${fileName}`
-					menu.addOptions({
+					selectMenu.addOptions({
 						label: name,
 						value: name
 					})
 				}
 			} else {
-				menu.addOptions({
+				selectMenu.addOptions({
 					label: entityName,
 					value: entityName
 				})
 			}
 		}
 
-		return menu
+		return selectMenu
 	}
 
-	private getInteractionFiles() {
-		const interactionFiles = new Collection<
-			string,
-			iInteractionFile<E, GC> | iInteractionFolder<E, GC>
-		>()
-		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "commands")))
+	private getSlashFiles() {
+		const slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
+		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "slashs")))
 
-		if (err) return interactionFiles
+		if (err) return slashFiles
 
 		// Slash subcommands
 		const folderNames = entitiyNames.filter(f => !HelpBuilder.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.cwd, `commands/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.cwd, `slashs/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iInteractionSubcommandFile<E, GC>> = new Collection()
+			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file = this.require<iInteractionSubcommandFile<E, GC>>(
-					`commands/${folderName}/${fileName}`
-				)
+				const file = this.require<iSlashSubFile<E, GC>>(`slashs/${folderName}/${fileName}`)
 				files.set(file.data.name, file)
-				builder.addSubcommand(new CommandBuilder(file.data).buildSubcommand())
+				builder.addSubcommand(new SlashBuilder(file.data).buildSubcommand())
 			}
 
-			interactionFiles.set(folderName, {
+			slashFiles.set(folderName, {
 				data: builder,
 				files
 			})
@@ -218,11 +204,11 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		// Slash commands
 		const fileNames = entitiyNames.filter(f => HelpBuilder.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iInteractionFile<E, GC>>(`commands/${filename}`)
-			interactionFiles.set(file.data.name, file)
+			const file = this.require<iSlashFile<E, GC>>(`slashs/${filename}`)
+			slashFiles.set(file.data.name, file)
 		}
 
-		return interactionFiles
+		return slashFiles
 	}
 
 	private require<T>(location: string): T {

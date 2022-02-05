@@ -1,10 +1,10 @@
-import { iInteractionData } from "../helpers/InteractionHelper"
+import { iSlashData } from "../helpers/SlashHelper"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 
-export default class CommandBuilder {
-	private data: iInteractionData
+export default class SlashBuilder {
+	private data: iSlashData
 
-	public constructor(data: iInteractionData) {
+	public constructor(data: iSlashData) {
 		this.data = data
 	}
 

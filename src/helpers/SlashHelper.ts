@@ -1,24 +1,16 @@
 import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
-import {
-	CommandInteraction,
-	GuildChannel,
-	GuildMember,
-	InteractionReplyOptions,
-	MessagePayload,
-	Role,
-	User
-} from "discord.js"
+import { CommandInteraction, GuildChannel, GuildMember, InteractionReplyOptions, MessagePayload, Role, User } from "discord.js"
 
-export interface iInteractionData {
+export interface iSlashData {
 	name: string
 	description: {
 		slash: string
 		help: string
 	}
-	options?: (iInteractionDefaultOption | iInteractionStringOption | iInteractionNumberOption)[]
+	options?: (iSlashDefaultOption | iSlashStringOption | iSlashNumberOption)[]
 }
 
-interface iInteractionOption {
+interface iSlashOption {
 	name: string
 	description: {
 		slash: string
@@ -29,11 +21,11 @@ interface iInteractionOption {
 	default?: string
 }
 
-interface iInteractionDefaultOption extends iInteractionOption {
+interface iSlashDefaultOption extends iSlashOption {
 	type: "boolean" | "user" | "role" | "channel" | "mentionable"
 }
 
-interface iInteractionStringOption extends iInteractionOption {
+interface iSlashStringOption extends iSlashOption {
 	type: "string"
 	choices?: {
 		name: string
@@ -41,7 +33,7 @@ interface iInteractionStringOption extends iInteractionOption {
 	}[]
 }
 
-interface iInteractionNumberOption extends iInteractionOption {
+interface iSlashNumberOption extends iSlashOption {
 	type: "number"
 	choices?: {
 		name: string
@@ -49,7 +41,7 @@ interface iInteractionNumberOption extends iInteractionOption {
 	}[]
 }
 
-export default class InteractionHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly interaction: CommandInteraction
 	private responded = false

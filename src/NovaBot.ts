@@ -97,7 +97,7 @@ export default class NovaBot<
 						new SlashCommandDeployer(
 							guild.id,
 							options.config,
-							botSetupHelper.interactionFiles
+							botSetupHelper.slashFiles
 						).deploy()
 					)
 					if (deployErr) {
