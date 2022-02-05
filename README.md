@@ -1,6 +1,6 @@
 # Nova Bot
 
-![nova-bot](https://img.shields.io/npm/v/nova-bot?label=nova-bot) ![License](https://img.shields.io/github/license/zS1L3NT/.github) ![Languages](https://img.shields.io/github/languages/count/zS1L3NT/ts-npm-nova-bot) ![Top Language](https://img.shields.io/github/languages/top/zS1L3NT/ts-npm-nova-bot) ![Commit Activity](https://img.shields.io/github/commit-activity/y/zS1L3NT/ts-npm-nova-bot) ![Last commit](https://img.shields.io/github/last-commit/zS1L3NT/ts-npm-nova-bot)
+![nova-bot](https://img.shields.io/npm/v/nova-bot?label=nova-bot&style=for-the-badge) ![License](https://img.shields.io/github/license/zS1L3NT/.github?style=for-the-badge) ![Languages](https://img.shields.io/github/languages/count/zS1L3NT/ts-npm-nova-bot?style=for-the-badge) ![Top Language](https://img.shields.io/github/languages/top/zS1L3NT/ts-npm-nova-bot?style=for-the-badge) ![Commit Activity](https://img.shields.io/github/commit-activity/y/zS1L3NT/ts-npm-nova-bot?style=for-the-badge) ![Last commit](https://img.shields.io/github/last-commit/zS1L3NT/ts-npm-nova-bot?style=for-the-badge)
 
 Nova Bot is a Discord Bot framework built mainly to make it easier for me to maintain all my discord bots. It provides very limited flexibility but allows building powerful and bug-free Discord bots very quickly.
 
