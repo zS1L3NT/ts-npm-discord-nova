@@ -17,14 +17,14 @@ import { useTry } from "no-try"
 class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private message: string
 	private icon: string
-	private cwd: string
+	private directory: string
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 
-	public constructor(message: string, icon: string, cwd: string) {
+	public constructor(message: string, icon: string, directory: string) {
 		this.message = message
 		this.icon = icon
-		this.cwd = cwd
+		this.directory = directory
 	}
 
 	public buildMaximum(): MessageOptions {
@@ -108,10 +108,10 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			: (slashFiles.get(command) as iSlashFile<E, GC>).data
 
 		const [tsErr] = useTry(() => {
-			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".ts"))
+			fs.readFileSync(path.join(this.directory, "messages", command.replaceAll(" ", "/") + ".ts"))
 		})
 		const [jsErr] = useTry(() => {
-			fs.readFileSync(path.join(this.cwd, "messages", command.replaceAll(" ", "/") + ".js"))
+			fs.readFileSync(path.join(this.directory, "messages", command.replaceAll(" ", "/") + ".js"))
 		})
 
 		const description = [
@@ -176,14 +176,14 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 	private getSlashFiles() {
 		const slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
-		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.cwd, "slashs")))
+		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.directory, "slashs")))
 
 		if (err) return slashFiles
 
 		// Slash subcommands
 		const folderNames = entitiyNames.filter(f => !HelpBuilder.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.cwd, `slashs/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.directory, `slashs/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
@@ -212,7 +212,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	}
 
 	private require<T>(location: string): T {
-		const file = require(path.join(this.cwd, location))
+		const file = require(path.join(this.directory, location))
 		if ("default" in file) {
 			return file.default
 		} else {

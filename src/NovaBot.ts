@@ -35,7 +35,7 @@ export type NovaOptions<
 > = {
 	intents: BitFieldResolvable<IntentsString, number>
 	name: string
-	cwd: string
+	directory: string
 	config: iConfig
 	updatesMinutely: boolean
 

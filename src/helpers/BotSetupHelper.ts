@@ -122,14 +122,14 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.cwd
+						this.options.directory
 					).buildMinimum()
 				)
 			}
 		})
 
 		const [err, entityNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "slashs"))
+			fs.readdirSync(path.join(this.options.directory, "slashs"))
 		)
 
 		if (err) return logger.error(`Failed to read slashs directory`, err)
@@ -137,7 +137,7 @@ export default class BotSetupHelper<
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.options.cwd, `slashs/${folderName}`))
+			const fileNames = fs.readdirSync(path.join(this.options.directory, `slashs/${folderName}`))
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
@@ -172,7 +172,7 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.cwd
+						this.options.directory
 					).buildMaximum()
 				)
 			}
@@ -185,14 +185,14 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.cwd
+						this.options.directory
 					).buildMinimum()
 				)
 			}
 		})
 
 		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "buttons"))
+			fs.readdirSync(path.join(this.options.directory, "buttons"))
 		)
 
 		if (err) return logger.error(`Failed to read buttons directory`, err)
@@ -213,14 +213,14 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.cwd
+						this.options.directory
 					).buildCommand(helper.value()!)
 				)
 			}
 		})
 
 		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "selectMenus"))
+			fs.readdirSync(path.join(this.options.directory, "selectMenus"))
 		)
 
 		if (err) return logger.error(`Failed to read selectMenus directory`, err)
@@ -241,7 +241,7 @@ export default class BotSetupHelper<
 						new HelpBuilder(
 							this.options.help.message(helper.cache),
 							this.options.help.icon,
-							this.options.cwd
+							this.options.directory
 						).buildMinimum()
 					)
 				}
@@ -249,7 +249,7 @@ export default class BotSetupHelper<
 		}
 
 		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.cwd, "messages"))
+			fs.readdirSync(path.join(this.options.directory, "messages"))
 		)
 
 		if (err) return logger.error(`Failed to read messages directory`, err)
@@ -261,7 +261,7 @@ export default class BotSetupHelper<
 	}
 
 	private setupEvents() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.cwd, "events")))
+		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.directory, "events")))
 
 		if (err) return logger.error(`Failed to read events directory`, err)
 
@@ -274,7 +274,7 @@ export default class BotSetupHelper<
 	}
 
 	private require<T>(location: string): T {
-		const file = require(path.join(this.options.cwd, location))
+		const file = require(path.join(this.options.directory, location))
 		if ("default" in file) {
 			return file.default
 		} else {
