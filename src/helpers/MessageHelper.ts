@@ -72,8 +72,11 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			if (ms) {
 				await time(ms)
 				temporary.delete().catch(err => logger.warn("Failed to delete message", err))
-				this.message.delete().catch(err => logger.warn("Failed to delete message", err))
 			}
 		})
+
+		time(5000)
+			.then(() => this.message.delete())
+			.catch(err => logger.warn("Failed to delete message", err))
 	}
 }
