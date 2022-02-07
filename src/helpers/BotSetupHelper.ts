@@ -132,12 +132,14 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.directory, "slashs"))
 		)
 
-		if (err) return logger.error(`Failed to read slashs directory`, err)
+		if (err) return
 
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
 		for (const folderName of folderNames) {
-			const fileNames = fs.readdirSync(path.join(this.options.directory, `slashs/${folderName}`))
+			const fileNames = fs.readdirSync(
+				path.join(this.options.directory, `slashs/${folderName}`)
+			)
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
@@ -195,7 +197,7 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.directory, "buttons"))
 		)
 
-		if (err) return logger.error(`Failed to read buttons directory`, err)
+		if (err) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
@@ -223,7 +225,7 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.directory, "selectMenus"))
 		)
 
-		if (err) return logger.error(`Failed to read selectMenus directory`, err)
+		if (err) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
@@ -252,7 +254,7 @@ export default class BotSetupHelper<
 			fs.readdirSync(path.join(this.options.directory, "messages"))
 		)
 
-		if (err) return logger.error(`Failed to read messages directory`, err)
+		if (err) return
 
 		for (const fileName of fileNames) {
 			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
@@ -261,9 +263,11 @@ export default class BotSetupHelper<
 	}
 
 	private setupEvents() {
-		const [err, fileNames] = useTry(() => fs.readdirSync(path.join(this.options.directory, "events")))
+		const [err, fileNames] = useTry(() =>
+			fs.readdirSync(path.join(this.options.directory, "events"))
+		)
 
-		if (err) return logger.error(`Failed to read events directory`, err)
+		if (err) return
 
 		for (const fileName of fileNames) {
 			const file = this.require<iEventFile<E, GC, BC, keyof ClientEvents>>(
