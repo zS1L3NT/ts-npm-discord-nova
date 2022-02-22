@@ -1,4 +1,4 @@
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, Emoji, ResponseBuilder } from ".."
 import { InteractionReplyOptions, Message, MessagePayload } from "discord.js"
 
 const time = (ms: number) => new Promise(res => setTimeout(res, ms))
@@ -61,6 +61,16 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 		let message: Promise<Message>
 
 		if (options instanceof ResponseBuilder) {
+			if (options.emoji === Emoji.GOOD) {
+				this.message
+					.react("✅")
+					.catch(err => logger.warn("Failed to react (✅) to message command", err))
+			} else {
+				this.message
+					.react("❌")
+					.catch(err => logger.warn("Failed to react (❌) to message command", err))
+			}
+
 			message = this.message.channel.send({
 				embeds: [options.build()]
 			})

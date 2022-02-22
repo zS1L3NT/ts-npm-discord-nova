@@ -6,7 +6,7 @@ export enum Emoji {
 }
 
 export default class ResponseBuilder {
-	private readonly emoji: Emoji
+	public readonly emoji: Emoji
 	private readonly content: string
 
 	public constructor(emoji: Emoji, content: string) {
