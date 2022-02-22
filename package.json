@@ -1,6 +1,6 @@
 {
 	"name": "nova-bot",
-	"version": "1.0.13",
+	"version": "1.0.14",
 	"description": "Nova Bot, a framework for building Discord Bots",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

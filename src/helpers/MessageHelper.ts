@@ -6,6 +6,8 @@ const time = (ms: number) => new Promise(res => setTimeout(res, ms))
 export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly cache: GC
 	public readonly message: Message
+	private response: Message | undefined
+	private timeout: NodeJS.Timeout | undefined
 
 	public constructor(cache: GC, message: Message) {
 		this.cache = cache
@@ -78,15 +80,53 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			message = this.message.channel.send(options as MessagePayload | InteractionReplyOptions)
 		}
 
-		message.then(async temporary => {
+		message.then(async response => {
+			this.response = response
 			if (ms) {
-				await time(ms)
-				temporary.delete().catch(err => logger.warn("Failed to delete message", err))
+				this.timeout = setTimeout(() => {
+					this.response
+						?.delete()
+						.catch(err => logger.warn("Failed to delete message", err))
+				}, ms)
 			}
 		})
 
 		time(5000)
 			.then(() => this.message.delete())
 			.catch(err => logger.warn("Failed to delete message", err))
+	}
+
+	public update(
+		options: MessagePayload | InteractionReplyOptions | ResponseBuilder,
+		ms?: number
+	) {
+		if (this.timeout) {
+			clearTimeout(this.timeout)
+		}
+
+		if (!this.response) {
+			throw new Error("Cannot update message that hasn't been responded to")
+		}
+
+		let message: Promise<Message>
+
+		if (options instanceof ResponseBuilder) {
+			message = this.response.edit({
+				embeds: [options.build()]
+			})
+		} else {
+			message = this.response.edit(options as MessagePayload | InteractionReplyOptions)
+		}
+
+		message.then(async response => {
+			this.response = response
+			if (ms) {
+				this.timeout = setTimeout(() => {
+					this.response
+						?.delete()
+						.catch(err => logger.warn("Failed to delete message", err))
+				}, ms)
+			}
+		})
 	}
 }
