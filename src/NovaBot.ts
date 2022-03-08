@@ -19,7 +19,6 @@ export type iConfig = {
 			clientEmail: string
 		}
 		collection: string
-		database_url: string
 	}
 	discord: {
 		token: string

@@ -18,10 +18,7 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 	public constructor(GCClass: iBaseGuildCache<E, GC>, config: iConfig, bot: Client) {
 		this.GCClass = GCClass
 
-		admin.initializeApp({
-			credential: admin.credential.cert(config.firebase.service_account),
-			databaseURL: config.firebase.database_url
-		})
+		admin.initializeApp({ credential: admin.credential.cert(config.firebase.service_account) })
 		this.bot = bot
 		this.ref = admin
 			.firestore()
