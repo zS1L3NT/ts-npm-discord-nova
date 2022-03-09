@@ -1,10 +1,11 @@
 {
 	"name": "nova-bot",
-	"version": "1.0.14",
+	"version": "1.0.15",
 	"description": "Nova Bot, a framework for building Discord Bots",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"author": "zS1L3NT <zechariahtan144@gmail.com> (https://www.zectan.com)",
+	"license": "GPL-3.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/zS1L3NT/ts-npm-nova-bot"
@@ -15,17 +16,16 @@
 	"dependencies": {
 		"@discordjs/builders": "^0.12.0",
 		"@discordjs/rest": "0.3.0",
-		"@types/luxon": "^2.0.9",
-		"@types/node": "^17.0.15",
-		"@types/node-fetch": "^3.0.3",
+		"@types/luxon": "^2.3.0",
+		"@types/node": "^17.0.21",
+		"@types/node-fetch": "^2.6.1",
 		"after-every": "^1.0.4",
-		"discord-api-types": "0.26.1",
+		"discord-api-types": "0.28.0",
 		"discord.js": "^13.6.0",
 		"firebase-admin": "^10.0.2",
-		"luxon": "^2.3.0",
+		"luxon": "^2.3.1",
 		"no-try": "^3.1.0",
-		"node-fetch": "^3.2.0",
-		"typescript": "^4.5.5"
-	},
-	"devDependencies": {}
+		"node-fetch": "^3.2.2",
+		"typescript": "^4.6.2"
+	}
 }
