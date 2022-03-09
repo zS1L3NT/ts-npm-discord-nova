@@ -465,7 +465,7 @@ export interface iButtonFile<E extends BaseEntry, GC extends BaseGuildCache<E, G
 export interface iSelectMenuFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	defer: boolean
 	ephemeral: boolean
-	execute: (helpe3r: SelectMenuHelper<E, GC>) => Promise<any>
+	execute: (helper: SelectMenuHelper<E, GC>) => Promise<any>
 }
 
 export interface iMessageFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
