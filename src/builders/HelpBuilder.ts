@@ -18,13 +18,15 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private message: string
 	private icon: string
 	private directory: string
+	private aliases: Record<string, string>
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 
-	public constructor(message: string, icon: string, directory: string) {
+	public constructor(message: string, icon: string, directory: string, aliases: Record<string, string>) {
 		this.message = message
 		this.icon = icon
 		this.directory = directory
+		this.aliases = aliases
 	}
 
 	public buildMaximum(): MessageOptions {
@@ -103,8 +105,8 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 		const data: iSlashData = command.includes(" ")
 			? (slashFiles.get(command.split(" ")[0]!) as iSlashFolder<E, GC>).files.get(
-					command.split(" ")[1]!
-			  )!.data
+				command.split(" ")[1]!
+			)!.data
 			: (slashFiles.get(command) as iSlashFile<E, GC>).data
 
 		const [tsErr] = useTry(() => {
@@ -119,6 +121,10 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			"",
 			`__Message Commands__: **${tsErr && jsErr ? "Unsupported" : "Supported"}**`
 		]
+
+		if (this.aliases[command]) {
+			description.push(`__Message Command Alias__: \`${this.aliases[command]}\``)
+		}
 
 		if (data.options) {
 			description.push("", "__Input Parameters__")

@@ -1,1 +1,3 @@
-export default interface BaseEntry {}
+export default interface BaseEntry {
+	aliases: Record<string, string>
+}

@@ -34,6 +34,10 @@ export default abstract class BaseGuildCache<
 		this.onConstruct()
 	}
 
+	public getAliases() {
+		return this.entry.aliases
+	}
+
 	public abstract onConstruct(): void
 	public abstract resolve(resolve: (cache: GC) => void): void
 	public abstract updateMinutely(debug: number): void

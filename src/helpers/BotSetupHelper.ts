@@ -3,6 +3,7 @@ import fs from "fs"
 import MessageHelper from "./MessageHelper"
 import path from "path"
 import SelectMenuHelper from "./SelectMenuHelper"
+import SetAliasSubSlash from "../utils/SetAliasSubSlash"
 import SlashBuilder from "../builders/SlashBuilder"
 import SlashHelper, { iSlashData } from "./SlashHelper"
 import {
@@ -122,7 +123,8 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.directory
+						this.options.directory,
+						helper.cache.getAliases()
 					).buildMinimum()
 				)
 			}
@@ -134,9 +136,13 @@ export default class BotSetupHelper<
 
 		if (err) return
 
+		const commands = fs.readdirSync(path.join(this.options.directory, `messages`))
+		const setAliasFile = commands.length > 0 ? SetAliasSubSlash(commands) : null
+
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
 		for (const folderName of folderNames) {
+			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
 			const fileNames = fs.readdirSync(
 				path.join(this.options.directory, `slashs/${folderName}`)
 			)
@@ -144,7 +150,11 @@ export default class BotSetupHelper<
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
+			if (folderName === "set" && setAliasFile) {
+				files.set("alias", setAliasFile)
+				builder.addSubcommand(new SlashBuilder(setAliasFile.data).buildSubcommand())
+			}
+
 			for (const fileName of fileNames) {
 				const file = this.require<iSlashSubFile<E, GC>>(`slashs/${folderName}/${fileName}`)
 				files.set(file.data.name, file)
@@ -163,6 +173,21 @@ export default class BotSetupHelper<
 			const file = this.require<iSlashFile<E, GC>>(`slashs/${filename}`)
 			this.slashFiles.set(file.data.name, file)
 		}
+
+		if (!this.slashFiles.get("set") && setAliasFile) {
+			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
+			const builder = new SlashCommandBuilder()
+				.setName("set")
+				.setDescription(`Commands for set`)
+
+			files.set("alias", setAliasFile)
+			builder.addSubcommand(new SlashBuilder(setAliasFile.data).buildSubcommand())
+
+			this.slashFiles.set("set", {
+				data: builder,
+				files
+			})
+		}
 	}
 
 	private setupButtons() {
@@ -174,7 +199,8 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.directory
+						this.options.directory,
+						helper.cache.getAliases()
 					).buildMaximum()
 				)
 			}
@@ -187,7 +213,8 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.directory
+						this.options.directory,
+						helper.cache.getAliases()
 					).buildMinimum()
 				)
 			}
@@ -215,7 +242,8 @@ export default class BotSetupHelper<
 					new HelpBuilder(
 						this.options.help.message(helper.cache),
 						this.options.help.icon,
-						this.options.directory
+						this.options.directory,
+						helper.cache.getAliases()
 					).buildCommand(helper.value()!)
 				)
 			}
@@ -243,7 +271,8 @@ export default class BotSetupHelper<
 						new HelpBuilder(
 							this.options.help.message(helper.cache),
 							this.options.help.icon,
-							this.options.directory
+							this.options.directory,
+							helper.cache.getAliases()
 						).buildMinimum()
 					)
 				}

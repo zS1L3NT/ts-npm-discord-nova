@@ -19,12 +19,18 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 		return regex ? regex.slice(1) : null
 	}
 
-	public matchOnly(command: string) {
-		return !!this.match(`^${command}(?:(?= *$)(?!\\w+))`)
-	}
+	public isMessageCommand(prefix: string, command: string, type: "only" | "more") {
+		const alias = this.cache.getAliases()[command]
+		const commandRegex = `\\${prefix}${alias ? `(${command}|${alias})` : command}`
 
-	public matchMore(command: string) {
-		return !!this.match(`^${command}(?:(?= *)(?!\\w+))`)
+		switch (type) {
+			case "only":
+				return !!this.match(`^${commandRegex}(?:(?= *$)(?!\\w+))`)
+			case "more":
+				return !!this.match(`^${commandRegex}(?:(?= *)(?!\\w+))`)
+			default:
+				throw new Error(`Unknown command type`)
+		}
 	}
 
 	public input() {
