@@ -6,24 +6,21 @@ export type iBaseBotCache<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
-> = new (GCClass: iBaseGuildCache<E, GC>, config: iConfig, bot: Client) => BC
+> = new (GCClass: iBaseGuildCache<E, GC>, bot: Client, config: iConfig) => BC
 
 export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private readonly GCClass: iBaseGuildCache<E, GC>
-
-	public readonly bot: Client
 	public readonly ref: admin.firestore.CollectionReference<E>
-	public readonly caches: Collection<string, GC>
+	public readonly caches = new Collection<string, GC>()
 
-	public constructor(GCClass: iBaseGuildCache<E, GC>, config: iConfig, bot: Client) {
-		this.GCClass = GCClass
-
+	public constructor(
+		private readonly GCClass: iBaseGuildCache<E, GC>,
+		public readonly bot: Client,
+		config: iConfig
+	) {
 		admin.initializeApp({ credential: admin.credential.cert(config.firebase.service_account) })
-		this.bot = bot
 		this.ref = admin
 			.firestore()
 			.collection(config.firebase.collection) as admin.firestore.CollectionReference<E>
-		this.caches = new Collection<string, GC>()
 		this.onConstruct()
 	}
 

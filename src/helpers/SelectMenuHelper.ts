@@ -2,13 +2,10 @@ import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 import { InteractionReplyOptions, MessagePayload, SelectMenuInteraction } from "discord.js"
 
 export default class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public readonly cache: GC
-	public readonly interaction: SelectMenuInteraction
-
-	constructor(cache: GC, interaction: SelectMenuInteraction) {
-		this.cache = cache
-		this.interaction = interaction
-	}
+	public constructor(
+		public readonly cache: GC,
+		public readonly interaction: SelectMenuInteraction
+	) {}
 
 	public respond(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
 		if (options instanceof ResponseBuilder) {

@@ -15,19 +15,15 @@ import { SlashCommandBuilder } from "@discordjs/builders"
 import { useTry } from "no-try"
 
 class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private message: string
-	private icon: string
-	private directory: string
-	private aliases: Record<string, string>
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 
-	public constructor(message: string, icon: string, directory: string, aliases: Record<string, string>) {
-		this.message = message
-		this.icon = icon
-		this.directory = directory
-		this.aliases = aliases
-	}
+	public constructor(
+		private readonly message: string,
+		private readonly icon: string,
+		private readonly directory: string,
+		private readonly aliases: Record<string, string>
+	) {}
 
 	public buildMaximum(): MessageOptions {
 		const slashFiles = this.getSlashFiles()
@@ -105,15 +101,19 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 		const data: iSlashData = command.includes(" ")
 			? (slashFiles.get(command.split(" ")[0]!) as iSlashFolder<E, GC>).files.get(
-				command.split(" ")[1]!
-			)!.data
+					command.split(" ")[1]!
+			  )!.data
 			: (slashFiles.get(command) as iSlashFile<E, GC>).data
 
 		const [tsErr] = useTry(() => {
-			fs.readFileSync(path.join(this.directory, "messages", command.replaceAll(" ", "/") + ".ts"))
+			fs.readFileSync(
+				path.join(this.directory, "messages", command.replaceAll(" ", "/") + ".ts")
+			)
 		})
 		const [jsErr] = useTry(() => {
-			fs.readFileSync(path.join(this.directory, "messages", command.replaceAll(" ", "/") + ".js"))
+			fs.readFileSync(
+				path.join(this.directory, "messages", command.replaceAll(" ", "/") + ".js")
+			)
 		})
 
 		const description = [
@@ -182,7 +182,9 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 
 	private getSlashFiles() {
 		const slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
-		const [err, entitiyNames] = useTry(() => fs.readdirSync(path.join(this.directory, "slashs")))
+		const [err, entitiyNames] = useTry(() =>
+			fs.readdirSync(path.join(this.directory, "slashs"))
+		)
 
 		if (err) return slashFiles
 

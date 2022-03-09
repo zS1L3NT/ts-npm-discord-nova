@@ -2,11 +2,7 @@ import { iSlashData } from "../helpers/SlashHelper"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 
 export default class SlashBuilder {
-	private data: iSlashData
-
-	public constructor(data: iSlashData) {
-		this.data = data
-	}
+	public constructor(private readonly data: iSlashData) {}
 
 	public buildCommand(): SlashCommandBuilder {
 		return this.build(SlashCommandBuilder)

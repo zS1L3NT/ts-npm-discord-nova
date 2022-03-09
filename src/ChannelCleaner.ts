@@ -3,21 +3,16 @@ import { Collection, Message, TextChannel } from "discord.js"
 
 type iFilter = (message: Message) => boolean
 export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private readonly channelId: string
-	private readonly cache: GC
-	private messageIds: string[]
 	private excluded: iFilter
-
 	private channel?: TextChannel
-	private messages: Collection<string, Message>
+	private messages = new Collection<string, Message>()
 
-	public constructor(cache: GC, channelId: string, messageIds: string[]) {
+	public constructor(
+		private readonly cache: GC,
+		private readonly channelId: string,
+		private readonly messageIds: string[]
+	) {
 		this.excluded = () => false
-		this.cache = cache
-		this.channelId = channelId
-		this.messageIds = messageIds
-
-		this.messages = new Collection<string, Message>()
 	}
 
 	/**
@@ -52,7 +47,10 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 			for (const messageId of this.messageIds) {
 				if (!channel.messages.cache.get(messageId)) {
 					logger.warn(`Channel(${channel.id}) has no Message(${messageId})`)
-					this.messageIds = this.messageIds.filter(m => m !== messageId)
+					this.messageIds.splice(
+						this.messageIds.findIndex(m => m === messageId),
+						1
+					)
 					removeCount++
 				}
 			}

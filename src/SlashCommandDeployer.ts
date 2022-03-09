@@ -6,13 +6,11 @@ import { Routes } from "discord-api-types/v9"
 import { SlashCommandBuilder } from "@discordjs/builders"
 
 export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private readonly guildId: string
-	private readonly config: iConfig
 	private readonly commands: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">[]
 
 	public constructor(
-		guildId: string,
-		config: iConfig,
+		private readonly guildId: string,
+		private readonly config: iConfig,
 		slashEntities: Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>
 	) {
 		this.guildId = guildId

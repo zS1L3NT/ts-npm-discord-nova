@@ -1,5 +1,13 @@
 import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
-import { CommandInteraction, GuildChannel, GuildMember, InteractionReplyOptions, MessagePayload, Role, User } from "discord.js"
+import {
+	CommandInteraction,
+	GuildChannel,
+	GuildMember,
+	InteractionReplyOptions,
+	MessagePayload,
+	Role,
+	User
+} from "discord.js"
 
 export interface iSlashData {
 	name: string
@@ -42,14 +50,12 @@ interface iSlashNumberOption extends iSlashOption {
 }
 
 export default class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public readonly cache: GC
-	public readonly interaction: CommandInteraction
 	private responded = false
 
-	public constructor(cache: GC, interaction: CommandInteraction) {
-		this.cache = cache
-		this.interaction = interaction
-	}
+	public constructor(
+		public readonly cache: GC,
+		public readonly interaction: CommandInteraction
+	) {}
 
 	public respond(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
 		if (this.responded) {

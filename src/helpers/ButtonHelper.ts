@@ -2,13 +2,7 @@ import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 import { ButtonInteraction, InteractionReplyOptions, MessagePayload } from "discord.js"
 
 export default class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public readonly cache: GC
-	public readonly interaction: ButtonInteraction
-
-	constructor(cache: GC, interaction: ButtonInteraction) {
-		this.cache = cache
-		this.interaction = interaction
-	}
+	public constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
 
 	public respond(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
 		if (options instanceof ResponseBuilder) {

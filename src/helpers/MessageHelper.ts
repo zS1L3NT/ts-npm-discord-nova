@@ -4,15 +4,10 @@ import { InteractionReplyOptions, Message, MessagePayload } from "discord.js"
 const time = (ms: number) => new Promise(res => setTimeout(res, ms))
 
 export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public readonly cache: GC
-	public readonly message: Message
 	private response: Message | undefined
 	private timeout: NodeJS.Timeout | undefined
 
-	public constructor(cache: GC, message: Message) {
-		this.cache = cache
-		this.message = message
-	}
+	public constructor(public readonly cache: GC, public readonly message: Message) {}
 
 	public match(regexp: string) {
 		const regex = this.message.content.match(new RegExp(regexp))

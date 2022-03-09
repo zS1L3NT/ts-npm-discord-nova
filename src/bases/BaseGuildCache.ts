@@ -14,22 +14,13 @@ export default abstract class BaseGuildCache<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > {
-	public readonly bot: Client
-	public readonly guild: Guild
-	public readonly ref: admin.firestore.DocumentReference<E>
-	public entry: E
-
 	public constructor(
-		bot: Client,
-		guild: Guild,
-		ref: admin.firestore.DocumentReference<E>,
-		entry: E,
+		public readonly bot: Client,
+		public readonly guild: Guild,
+		public readonly ref: admin.firestore.DocumentReference<E>,
+		public entry: E,
 		resolve: (cache: GC) => void
 	) {
-		this.bot = bot
-		this.guild = guild
-		this.ref = ref
-		this.entry = entry
 		this.resolve(resolve)
 		this.onConstruct()
 	}

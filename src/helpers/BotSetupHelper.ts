@@ -35,33 +35,20 @@ export default class BotSetupHelper<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	private readonly GCClass: iBaseGuildCache<E, GC>
-
-	private readonly bot: Client
-	public readonly options: NovaOptions<E, GC, BC>
 	public readonly botCache: BC
-	public readonly slashFiles: Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>
-	public readonly buttonFiles: Collection<string, iButtonFile<E, GC>>
-	public readonly selectMenuFiles: Collection<string, iSelectMenuFile<E, GC>>
-	public readonly messageFiles: Collection<string, iMessageFile<E, GC>>
-	public readonly eventFiles: iEventFile<E, GC, BC, keyof ClientEvents>[]
+	public readonly slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
+	public readonly buttonFiles = new Collection<string, iButtonFile<E, GC>>()
+	public readonly selectMenuFiles = new Collection<string, iSelectMenuFile<E, GC>>()
+	public readonly messageFiles = new Collection<string, iMessageFile<E, GC>>()
+	public readonly eventFiles: iEventFile<E, GC, BC, keyof ClientEvents>[] = []
 
-	constructor(
-		GCClass: iBaseGuildCache<E, GC>,
+	public constructor(
+		private readonly GCClass: iBaseGuildCache<E, GC>,
 		BCClass: iBaseBotCache<E, GC, BC>,
-		options: NovaOptions<E, GC, BC>,
-		bot: Client
+		public readonly options: NovaOptions<E, GC, BC>,
+		private readonly bot: Client
 	) {
-		this.GCClass = GCClass
-
-		this.options = options
-		this.bot = bot
-		this.botCache = new BCClass(this.GCClass, this.options.config, this.bot)
-		this.slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
-		this.buttonFiles = new Collection<string, iButtonFile<E, GC>>()
-		this.selectMenuFiles = new Collection<string, iSelectMenuFile<E, GC>>()
-		this.messageFiles = new Collection<string, iMessageFile<E, GC>>()
-		this.eventFiles = []
+		this.botCache = new BCClass(this.GCClass, this.bot, this.options.config)
 
 		this.setupSlashs()
 		this.setupButtons()

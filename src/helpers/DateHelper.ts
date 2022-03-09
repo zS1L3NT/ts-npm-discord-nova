@@ -1,7 +1,6 @@
 import { DateTime } from "luxon"
 
 export default class DateHelper {
-	private readonly time: number
 	public static readonly daysOfWeek: {
 		[day: string]: string
 	} = {
@@ -29,9 +28,7 @@ export default class DateHelper {
 	]
 	public static readonly longerMonths = [1, 3, 5, 7, 8, 10, 12]
 
-	public constructor(time: number) {
-		this.time = time
-	}
+	public constructor(private readonly time: number) {}
 
 	public static verify(day: number, month: number, year: number, hour: number, minute: number) {
 		const now = DateTime.now()
