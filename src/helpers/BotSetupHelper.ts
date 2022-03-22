@@ -123,8 +123,10 @@ export default class BotSetupHelper<
 
 		if (err) return
 
-		const commands = fs.readdirSync(path.join(this.options.directory, `messages`))
-		const setAliasFile = commands.length > 0 ? SetAliasSubSlash(commands) : null
+		const [, setAliasFile] = useTry(() => {
+			const commands = fs.readdirSync(path.join(this.options.directory, `messages`))
+			return commands.length > 0 ? SetAliasSubSlash(commands) : null
+		})
 
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
