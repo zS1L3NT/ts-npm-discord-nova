@@ -3,7 +3,6 @@ import fs from "fs"
 import MessageHelper from "./MessageHelper"
 import path from "path"
 import SelectMenuHelper from "./SelectMenuHelper"
-import SetAliasSubSlash from "../utils/SetAliasSubSlash"
 import SlashBuilder from "../builders/SlashBuilder"
 import SlashHelper from "./SlashHelper"
 import {
@@ -11,7 +10,6 @@ import {
 	BaseEntry,
 	BaseGuildCache,
 	Emoji,
-	HelpBuilder,
 	iBaseBotCache,
 	iBaseGuildCache,
 	iButtonFile,
@@ -22,8 +20,7 @@ import {
 	iSlashFolder,
 	iSlashSubFile,
 	NovaOptions,
-	ResponseBuilder,
-	SlashCommandDeployer
+	ResponseBuilder
 } from ".."
 import {
 	ButtonInteraction,
@@ -84,106 +81,24 @@ export default class BotSetupHelper<
 			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
 			if (interaction.isSelectMenu()) await this.onSelectMenuInteraction(cache, interaction)
 		})
-
-		this.bot.on("guildCreate", async guild => {
-			logger.info(`Added to Guild(${guild.name})`)
-			await this.botCache.registerGuildCache(guild.id)
-			await new SlashCommandDeployer(guild.id, this.options.config, this.slashFiles).deploy()
-		})
-
-		this.bot.on("guildDelete", async guild => {
-			logger.info(`Removed from Guild(${guild.name})`)
-			await this.botCache.eraseGuildCache(guild.id)
-			this.botCache.caches.delete(guild.id)
-		})
 	}
 
 	/**
 	 * Fill collections with default files
 	 */
 	private populateFiles() {
-		this.slashFiles.set("help", {
-			defer: false,
-			ephemeral: false,
-			data: {
-				name: "help",
-				description: {
-					slash: "Displays the help command",
-					help: "Shows you the help menu that you are looking at right now"
-				}
-			},
-			execute: async helper => {
-				helper.interaction.channel?.send(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildMinimum()
-				)
-			}
-		})
-
-		this.buttonFiles.set("help-maximum", {
-			defer: false,
-			ephemeral: true,
-			execute: async helper => {
-				await helper.interaction.update(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildMaximum()
-				)
-			}
-		})
-
-		this.buttonFiles.set("help-minimum", {
-			defer: false,
-			ephemeral: true,
-			execute: async helper => {
-				await helper.interaction.update(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildMinimum()
-				)
-			}
-		})
-
-		this.selectMenuFiles.set("help-item", {
-			defer: false,
-			ephemeral: true,
-			execute: async helper => {
-				helper.interaction.update(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildCommand(helper.value()!)
-				)
-			}
-		})
-
+		this.slashFiles.set("help", require("../interactions/slashs/help")(this))
+		this.buttonFiles.set("help-maximum", require("../interactions/buttons/help-maximum")(this))
+		this.buttonFiles.set("help-minimum", require("../interactions/buttons/help-minimum")(this))
+		this.selectMenuFiles.set(
+			"help-item",
+			require("../interactions/selectMenus/help-item")(this)
+		)
 		if (this.options.help.commandRegex) {
-			this.messageFiles.set("help", {
-				condition: helper => !!helper.match(this.options.help.commandRegex!),
-				execute: async helper => {
-					helper.respond(
-						new HelpBuilder(
-							this.options.help.message(helper.cache),
-							this.options.help.icon,
-							this.options.directory,
-							helper.cache.getAliases()
-						).buildMinimum()
-					)
-				}
-			})
+			this.messageFiles.set("help", require("../interactions/messages/help")(this))
 		}
+		this.eventFiles.push(require("../interactions/events/guildCreate")(this))
+		this.eventFiles.push(require("../interactions/events/guildDelete")())
 	}
 
 	private isFile(file: string): boolean {
@@ -214,7 +129,7 @@ export default class BotSetupHelper<
 		const messageCommands = this.readEntities("messages")
 		const setAliasFile = messageCommands
 			? messageCommands.length > 0
-				? SetAliasSubSlash(messageCommands)
+				? require("../interactions/slashs/set/alias")(messageCommands)
 				: null
 			: null
 

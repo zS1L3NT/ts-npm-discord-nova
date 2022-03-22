@@ -1,6 +1,6 @@
 import admin from "firebase-admin"
-import SlashHelper from "../helpers/SlashHelper"
-import { BaseEntry, BaseGuildCache, Emoji, iSlashSubFile, ResponseBuilder } from ".."
+import SlashHelper from "../../../helpers/SlashHelper"
+import { BaseEntry, BaseGuildCache, Emoji, iSlashSubFile, ResponseBuilder } from "../../.."
 
 const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(commands: string[]): iSlashSubFile<E, GC> => ({
 	defer: true,
