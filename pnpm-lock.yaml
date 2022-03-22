@@ -3,6 +3,8 @@ lockfileVersion: 5.3
 specifiers:
   '@discordjs/builders': ^0.12.0
   '@discordjs/rest': 0.3.0
+  '@firebase/app-compat': ^0.1.20
+  '@firebase/app-types': ^0.7.0
   '@types/luxon': ^2.3.1
   '@types/node': ^17.0.22
   '@types/node-fetch': ^2.6.1
@@ -18,13 +20,15 @@ specifiers:
 dependencies:
   '@discordjs/builders': 0.12.0
   '@discordjs/rest': 0.3.0
+  '@firebase/app-compat': 0.1.20
+  '@firebase/app-types': 0.7.0
   '@types/luxon': 2.3.1
   '@types/node': 17.0.22
   '@types/node-fetch': 2.6.1
   after-every: 1.0.4
   discord-api-types: 0.29.0
   discord.js: 13.6.0
-  firebase-admin: 10.0.2
+  firebase-admin: 10.0.2_2668787785cafa51f0d66ef4e88354f7
   luxon: 2.3.1
   no-try: 3.1.0
   node-fetch: 3.2.3
@@ -74,16 +78,36 @@ packages:
       - encoding
     dev: false
 
+  /@firebase/app-compat/0.1.20:
+    resolution: {integrity: sha512-s+MQQv5acNZ2Mx/TNyr+B0XaqATq14hkAL9247exIvV0RBwP28THuadPVw99kjrwkHilQtBMFJmmCm1S5ZoktQ==}
+    dependencies:
+      '@firebase/app': 0.7.19
+      '@firebase/component': 0.5.11
+      '@firebase/logger': 0.3.2
+      '@firebase/util': 1.5.0
+      tslib: 2.3.1
+    dev: false
+
   /@firebase/app-types/0.7.0:
     resolution: {integrity: sha512-6fbHQwDv2jp/v6bXhBw2eSRbNBpxHcd1NBF864UksSMVIqIyri9qpJB1Mn6sGZE+bnDsSQBC5j2TbMxYsJQkQg==}
     dev: false
 
-  /@firebase/auth-interop-types/0.1.6_@firebase+util@1.5.0:
+  /@firebase/app/0.7.19:
+    resolution: {integrity: sha512-Xs8s3OF4Tn7Ls833TOTAUSMDq/pDs1fDsLRprR1+B4wyxyWCYBisgDMnPx25z9wKJESOWoZTDjyBVHrn6sG92w==}
+    dependencies:
+      '@firebase/component': 0.5.11
+      '@firebase/logger': 0.3.2
+      '@firebase/util': 1.5.0
+      tslib: 2.3.1
+    dev: false
+
+  /@firebase/auth-interop-types/0.1.6_8d05954f5748666b17f36dcdd243eda6:
     resolution: {integrity: sha512-etIi92fW3CctsmR9e3sYM3Uqnoq861M0Id9mdOPF6PWIg38BXL5k4upCNBggGUpLIS0H1grMOvy/wn1xymwe2g==}
     peerDependencies:
       '@firebase/app-types': 0.x
       '@firebase/util': 1.x
     dependencies:
+      '@firebase/app-types': 0.7.0
       '@firebase/util': 1.5.0
     dev: false
 
@@ -94,13 +118,14 @@ packages:
       tslib: 2.3.1
     dev: false
 
-  /@firebase/database-compat/0.1.6:
+  /@firebase/database-compat/0.1.6_2668787785cafa51f0d66ef4e88354f7:
     resolution: {integrity: sha512-fDAJWI5ZdXPlS84NC87Et7pE6mJxF5uUoePCaQFpU56wrYVk58COomcSXtFrdX9U5/1FHjR3TaDWV5pJakv83g==}
     peerDependencies:
       '@firebase/app-compat': 0.x
     dependencies:
+      '@firebase/app-compat': 0.1.20
       '@firebase/component': 0.5.11
-      '@firebase/database': 0.12.6
+      '@firebase/database': 0.12.6_@firebase+app-types@0.7.0
       '@firebase/database-types': 0.9.5
       '@firebase/logger': 0.3.2
       '@firebase/util': 1.5.0
@@ -116,10 +141,10 @@ packages:
       '@firebase/util': 1.5.0
     dev: false
 
-  /@firebase/database/0.12.6:
+  /@firebase/database/0.12.6_@firebase+app-types@0.7.0:
     resolution: {integrity: sha512-vokGkgpk+4bvy1d/s0lsPP9GmC1nrAtctQwEEDH5ZO4WCYPj16Y6rKILsOjrWwJ+Ih21ORnekxSzfpKyd1KHEg==}
     dependencies:
-      '@firebase/auth-interop-types': 0.1.6_@firebase+util@1.5.0
+      '@firebase/auth-interop-types': 0.1.6_8d05954f5748666b17f36dcdd243eda6
       '@firebase/component': 0.5.11
       '@firebase/logger': 0.3.2
       '@firebase/util': 1.5.0
@@ -686,11 +711,11 @@ packages:
       web-streams-polyfill: 3.2.0
     dev: false
 
-  /firebase-admin/10.0.2:
+  /firebase-admin/10.0.2_2668787785cafa51f0d66ef4e88354f7:
     resolution: {integrity: sha512-MLH0SPmC4L0aCHvPjs1KThraru/T84T3hxiPY3uCH7NZEgE/T5n4GwecwU3RcM3X+br75BIBY7qhaR5uCxhdXA==}
     engines: {node: '>=12.7.0'}
     dependencies:
-      '@firebase/database-compat': 0.1.6
+      '@firebase/database-compat': 0.1.6_2668787785cafa51f0d66ef4e88354f7
       '@firebase/database-types': 0.9.5
       '@types/node': 17.0.22
       dicer: 0.3.1
