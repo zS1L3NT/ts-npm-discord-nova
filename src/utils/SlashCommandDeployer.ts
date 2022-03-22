@@ -1,5 +1,5 @@
-import SlashBuilder from "./builders/SlashBuilder"
-import { BaseEntry, BaseGuildCache, iConfig, iSlashFile, iSlashFolder } from "."
+import SlashBuilder from "../builders/SlashBuilder"
+import { BaseEntry, BaseGuildCache, iConfig, iSlashFile, iSlashFolder } from ".."
 import { Collection } from "discord.js"
 import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"

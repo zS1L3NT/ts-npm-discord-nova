@@ -1,4 +1,4 @@
-import { BaseEntry, BaseGuildCache } from "."
+import { BaseEntry, BaseGuildCache } from ".."
 import { Collection, Message, TextChannel } from "discord.js"
 
 type iFilter = (message: Message) => boolean
