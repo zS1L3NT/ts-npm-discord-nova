@@ -2,7 +2,7 @@ import {
 	BaseBotCache,
 	BaseEntry,
 	BaseGuildCache,
-	BotSetupHelper,
+	FilesSetupHelper,
 	HelpBuilder,
 	iSlashFile
 } from "../.."
@@ -12,7 +12,7 @@ const file = <
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 >(
-	bsh: BotSetupHelper<E, GC, BC>
+	fsh: FilesSetupHelper<E, GC, BC>
 ): iSlashFile<E, GC> => ({
 	defer: false,
 	ephemeral: false,
@@ -26,9 +26,9 @@ const file = <
 	execute: async helper => {
 		helper.interaction.channel?.send(
 			new HelpBuilder(
-				bsh.options.help.message(helper.cache),
-				bsh.options.help.icon,
-				bsh.options.directory,
+				fsh.options.help.message(helper.cache),
+				fsh.options.help.icon,
+				fsh.options.directory,
 				helper.cache.getAliases()
 			).buildMinimum()
 		)

@@ -3,7 +3,7 @@ import {
 	BaseBotCache,
 	BaseEntry,
 	BaseGuildCache,
-	BotSetupHelper,
+	EventSetupHelper,
 	iBaseBotCache,
 	iBaseGuildCache,
 	SlashCommandDeployer
@@ -66,8 +66,8 @@ export default class NovaBot<
 		global.logger = options.logger
 
 		const { GuildCache, BotCache } = options
-		const botSetupHelper = new BotSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
-		const { botCache } = botSetupHelper
+		const esh = new EventSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
+		const { botCache } = esh
 
 		bot.login(options.config.discord.token)
 		bot.on("ready", () => {
@@ -96,7 +96,7 @@ export default class NovaBot<
 						new SlashCommandDeployer(
 							guild.id,
 							options.config,
-							botSetupHelper.slashFiles
+							esh.fsh.slashFiles
 						).deploy()
 					)
 					if (deployErr) {
