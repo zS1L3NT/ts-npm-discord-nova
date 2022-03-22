@@ -53,3 +53,6 @@ I don't intend to write any documentation for this framework since the framework
     -   [![luxon](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/luxon?style=flat-square)](https://npmjs.com/package/luxon)
     -   [![no-try](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/no-try?style=flat-square)](https://npmjs.com/package/no-try)
     -   [![node-fetch](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/node-fetch?style=flat-square)](https://npmjs.com/package/node-fetch)
+- Peer Dependencies
+    -   [![@firebase/app-compat](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@firebase/app-compat?style=flat-square)](https://npmjs.com/package/@firebase/app-compat)
+    -   [![@firebase/app-types](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@firebase/app-types?style=flat-square)](https://npmjs.com/package/@firebase/app-types)
