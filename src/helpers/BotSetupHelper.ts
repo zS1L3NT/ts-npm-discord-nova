@@ -5,7 +5,7 @@ import path from "path"
 import SelectMenuHelper from "./SelectMenuHelper"
 import SetAliasSubSlash from "../utils/SetAliasSubSlash"
 import SlashBuilder from "../builders/SlashBuilder"
-import SlashHelper, { iSlashData } from "./SlashHelper"
+import SlashHelper from "./SlashHelper"
 import {
 	BaseBotCache,
 	BaseEntry,
@@ -14,6 +14,13 @@ import {
 	HelpBuilder,
 	iBaseBotCache,
 	iBaseGuildCache,
+	iButtonFile,
+	iEventFile,
+	iMessageFile,
+	iSelectMenuFile,
+	iSlashFile,
+	iSlashFolder,
+	iSlashSubFile,
 	NovaOptions,
 	ResponseBuilder,
 	SlashCommandDeployer
@@ -50,6 +57,7 @@ export default class BotSetupHelper<
 	) {
 		this.botCache = new BCClass(this.GCClass, this.bot, this.options.config)
 
+		this.populateFiles()
 		this.setupSlashs()
 		this.setupButtons()
 		this.setupSelectMenus()
@@ -90,11 +98,10 @@ export default class BotSetupHelper<
 		})
 	}
 
-	private static isFile(file: string): boolean {
-		return file.endsWith(".ts") || file.endsWith(".js")
-	}
-
-	private setupSlashs() {
+	/**
+	 * Fill collections with default files
+	 */
+	private populateFiles() {
 		this.slashFiles.set("help", {
 			defer: false,
 			ephemeral: false,
@@ -117,24 +124,105 @@ export default class BotSetupHelper<
 			}
 		})
 
-		const [err, entityNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.directory, "slashs"))
-		)
-
-		if (err) return
-
-		const [, setAliasFile] = useTry(() => {
-			const commands = fs.readdirSync(path.join(this.options.directory, `messages`))
-			return commands.length > 0 ? SetAliasSubSlash(commands) : null
+		this.buttonFiles.set("help-maximum", {
+			defer: false,
+			ephemeral: true,
+			execute: async helper => {
+				await helper.interaction.update(
+					new HelpBuilder(
+						this.options.help.message(helper.cache),
+						this.options.help.icon,
+						this.options.directory,
+						helper.cache.getAliases()
+					).buildMaximum()
+				)
+			}
 		})
 
+		this.buttonFiles.set("help-minimum", {
+			defer: false,
+			ephemeral: true,
+			execute: async helper => {
+				await helper.interaction.update(
+					new HelpBuilder(
+						this.options.help.message(helper.cache),
+						this.options.help.icon,
+						this.options.directory,
+						helper.cache.getAliases()
+					).buildMinimum()
+				)
+			}
+		})
+
+		this.selectMenuFiles.set("help-item", {
+			defer: false,
+			ephemeral: true,
+			execute: async helper => {
+				helper.interaction.update(
+					new HelpBuilder(
+						this.options.help.message(helper.cache),
+						this.options.help.icon,
+						this.options.directory,
+						helper.cache.getAliases()
+					).buildCommand(helper.value()!)
+				)
+			}
+		})
+
+		if (this.options.help.commandRegex) {
+			this.messageFiles.set("help", {
+				condition: helper => !!helper.match(this.options.help.commandRegex!),
+				execute: async helper => {
+					helper.respond(
+						new HelpBuilder(
+							this.options.help.message(helper.cache),
+							this.options.help.icon,
+							this.options.directory,
+							helper.cache.getAliases()
+						).buildMinimum()
+					)
+				}
+			})
+		}
+	}
+
+	private isFile(file: string): boolean {
+		return file.endsWith(".ts") || file.endsWith(".js")
+	}
+
+	private readEntities(name: string): string[] | null {
+		const [err, files] = useTry(() => fs.readdirSync(path.join(this.options.directory, name)))
+
+		if (err) return null
+
+		return files
+	}
+
+	private require<T>(location: string): T {
+		const file = require(path.join(this.options.directory, location))
+		if ("default" in file) {
+			return file.default
+		} else {
+			return file
+		}
+	}
+
+	private setupSlashs() {
+		const entityNames = this.readEntities("slashs")
+		if (entityNames === null) return
+
+		const messageCommands = this.readEntities("messages")
+		const setAliasFile = messageCommands
+			? messageCommands.length > 0
+				? SetAliasSubSlash(messageCommands)
+				: null
+			: null
+
 		// Slash subcommands
-		const folderNames = entityNames.filter(f => !BotSetupHelper.isFile(f))
+		const folderNames = entityNames.filter(f => !this.isFile(f))
 		for (const folderName of folderNames) {
-			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
-			const fileNames = fs.readdirSync(
-				path.join(this.options.directory, `slashs/${folderName}`)
-			)
+			const files = new Collection<string, iSlashSubFile<E, GC>>()
+			const fileNames = this.readEntities(`slashs/${folderName}`)!
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
@@ -157,14 +245,14 @@ export default class BotSetupHelper<
 		}
 
 		// Slash commands
-		const fileNames = entityNames.filter(f => BotSetupHelper.isFile(f))
+		const fileNames = entityNames.filter(f => this.isFile(f))
 		for (const filename of fileNames) {
 			const file = this.require<iSlashFile<E, GC>>(`slashs/${filename}`)
 			this.slashFiles.set(file.data.name, file)
 		}
 
 		if (!this.slashFiles.get("set") && setAliasFile) {
-			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
+			const files = new Collection<string, iSlashSubFile<E, GC>>()
 			const builder = new SlashCommandBuilder()
 				.setName("set")
 				.setDescription(`Commands for set`)
@@ -180,40 +268,8 @@ export default class BotSetupHelper<
 	}
 
 	private setupButtons() {
-		this.buttonFiles.set("help-maximum", {
-			defer: false,
-			ephemeral: true,
-			execute: async helper => {
-				await helper.interaction.update(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildMaximum()
-				)
-			}
-		})
-		this.buttonFiles.set("help-minimum", {
-			defer: false,
-			ephemeral: true,
-			execute: async helper => {
-				await helper.interaction.update(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildMinimum()
-				)
-			}
-		})
-
-		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.directory, "buttons"))
-		)
-
-		if (err) return
+		const fileNames = this.readEntities("buttons")
+		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
@@ -223,26 +279,8 @@ export default class BotSetupHelper<
 	}
 
 	private setupSelectMenus() {
-		this.selectMenuFiles.set("help-item", {
-			defer: false,
-			ephemeral: true,
-			execute: async helper => {
-				helper.interaction.update(
-					new HelpBuilder(
-						this.options.help.message(helper.cache),
-						this.options.help.icon,
-						this.options.directory,
-						helper.cache.getAliases()
-					).buildCommand(helper.value()!)
-				)
-			}
-		})
-
-		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.directory, "selectMenus"))
-		)
-
-		if (err) return
+		const fileNames = this.readEntities("selectMenus")
+		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
@@ -252,27 +290,8 @@ export default class BotSetupHelper<
 	}
 
 	private setupMessages() {
-		if (this.options.help.commandRegex) {
-			this.messageFiles.set("help", {
-				condition: helper => !!helper.match(this.options.help.commandRegex!),
-				execute: async helper => {
-					helper.respond(
-						new HelpBuilder(
-							this.options.help.message(helper.cache),
-							this.options.help.icon,
-							this.options.directory,
-							helper.cache.getAliases()
-						).buildMinimum()
-					)
-				}
-			})
-		}
-
-		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.directory, "messages"))
-		)
-
-		if (err) return
+		const fileNames = this.readEntities("messages")
+		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
 			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
@@ -281,26 +300,14 @@ export default class BotSetupHelper<
 	}
 
 	private setupEvents() {
-		const [err, fileNames] = useTry(() =>
-			fs.readdirSync(path.join(this.options.directory, "events"))
-		)
-
-		if (err) return
+		const fileNames = this.readEntities("events")
+		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
 			const file = this.require<iEventFile<E, GC, BC, keyof ClientEvents>>(
 				`events/${fileName}`
 			)
 			this.eventFiles.push(file)
-		}
-	}
-
-	private require<T>(location: string): T {
-		const file = require(path.join(this.options.directory, location))
-		if ("default" in file) {
-			return file.default
-		} else {
-			return file
 		}
 	}
 
@@ -424,50 +431,4 @@ export default class BotSetupHelper<
 			`Closing SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
 	}
-}
-
-export interface iSlashFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	defer: boolean
-	ephemeral: boolean
-	data: iSlashData
-	execute: (helper: SlashHelper<E, GC>) => Promise<any>
-}
-
-export interface iSlashSubFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	defer: boolean
-	ephemeral: boolean
-	data: iSlashData
-	execute: (helper: SlashHelper<E, GC>) => Promise<any>
-}
-
-export interface iSlashFolder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	data: SlashCommandBuilder
-	files: Collection<string, iSlashSubFile<E, GC>>
-}
-
-export interface iButtonFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	defer: boolean
-	ephemeral: boolean
-	execute: (helper: ButtonHelper<E, GC>) => Promise<any>
-}
-
-export interface iSelectMenuFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	defer: boolean
-	ephemeral: boolean
-	execute: (helper: SelectMenuHelper<E, GC>) => Promise<any>
-}
-
-export interface iMessageFile<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	condition: (helper: MessageHelper<E, GC>) => boolean
-	execute: (helper: MessageHelper<E, GC>) => Promise<void>
-}
-
-export interface iEventFile<
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>,
-	N extends keyof ClientEvents
-> {
-	name: N
-	execute: (botCache: BC, ...args: ClientEvents[N]) => Promise<any>
 }
