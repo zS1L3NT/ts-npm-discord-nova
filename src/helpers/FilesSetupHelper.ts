@@ -1,5 +1,5 @@
-import ButtonHelpeMaximum from "../interactions/buttons/help-maximum"
-import ButtonHelpeMinimum from "../interactions/buttons/help-minimum"
+import ButtonHelpMaximum from "../interactions/buttons/help-maximum"
+import ButtonHelpMinimum from "../interactions/buttons/help-minimum"
 import EventGuildCreate from "../interactions/events/guildCreate"
 import EventGuildDelete from "../interactions/events/guildDelete"
 import fs from "fs"
@@ -8,6 +8,7 @@ import path from "path"
 import SelectMenuHelpItem from "../interactions/selectMenus/help-item"
 import SlashBuilder from "../builders/SlashBuilder"
 import SlashHelp from "../interactions/slashs/help"
+import SlashSetAlias from "../interactions/slashs/set/alias"
 import {
 	BaseBotCache,
 	BaseEntry,
@@ -38,8 +39,8 @@ export default class FilesSetupHelper<
 
 	public constructor(public readonly options: NovaOptions<E, GC, BC>) {
 		this.slashFiles.set("help", SlashHelp(this))
-		this.buttonFiles.set("help-maximum", ButtonHelpeMaximum(this))
-		this.buttonFiles.set("help-minimum", ButtonHelpeMinimum(this))
+		this.buttonFiles.set("help-maximum", ButtonHelpMaximum(this))
+		this.buttonFiles.set("help-minimum", ButtonHelpMinimum(this))
 		this.selectMenuFiles.set("help-item", SelectMenuHelpItem(this))
 		if (this.options.help.commandRegex) {
 			this.messageFiles.set("help-item", MessageHelp(this))
@@ -79,7 +80,7 @@ export default class FilesSetupHelper<
 		const messageCommands = this.readEntities("messages")
 		const setAliasFile = messageCommands
 			? messageCommands.length > 0
-				? require("../interactions/slashs/set/alias")(messageCommands)
+				? SlashSetAlias(messageCommands)
 				: null
 			: null
 
