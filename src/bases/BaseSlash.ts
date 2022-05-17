@@ -13,6 +13,14 @@ export default abstract class BaseSlash<E extends BaseEntry, GC extends BaseGuil
 	abstract execute(helper: SlashHelper<E, GC>): Promise<any>
 }
 
+export abstract class BaseSlashSub<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract defer: boolean
+	abstract ephemeral: boolean
+	abstract data: iSlashData
+
+	abstract execute(helper: SlashHelper<E, GC>): Promise<any>
+}
+
 export class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private responded = false
 
