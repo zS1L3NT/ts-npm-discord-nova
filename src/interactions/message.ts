@@ -1,6 +1,6 @@
 import { Message, MessageEditOptions, MessageOptions } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 
 export default abstract class BaseMessage<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract condition(helper: MessageHelper<E, GC>): boolean

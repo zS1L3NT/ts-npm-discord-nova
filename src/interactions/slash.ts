@@ -3,7 +3,7 @@ import {
 	WebhookEditMessageOptions
 } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, iSlashData, ResponseBuilder } from "../"
+import { BaseEntry, BaseGuildCache, iSlashData, ResponseBuilder } from ".."
 
 export default abstract class BaseSlash<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract defer: boolean

@@ -1,6 +1,6 @@
 import { ClientEvents } from "discord.js"
 
-import { BaseBotCache, BaseEntry, BaseGuildCache } from "../"
+import { BaseBotCache, BaseEntry, BaseGuildCache } from ".."
 
 export default abstract class BaseEvent<
 	E extends BaseEntry,

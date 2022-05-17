@@ -2,7 +2,7 @@ import {
 	InteractionReplyOptions, InteractionUpdateOptions, SelectMenuInteraction
 } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 
 export default abstract class BaseSelectMenu<
 	E extends BaseEntry,

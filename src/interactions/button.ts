@@ -1,6 +1,6 @@
 import { ButtonInteraction, InteractionReplyOptions, InteractionUpdateOptions } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
 
 export default abstract class BaseButton<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract defer: boolean

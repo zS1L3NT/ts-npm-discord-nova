@@ -1,13 +1,13 @@
 import NovaBot from "./NovaBot"
 
 export { default as BaseBotCache, iBaseBotCache } from "./bases/BaseBotCache"
-export { default as BaseButton, ButtonHelper } from "./bases/BaseButton"
 export { default as BaseEntry } from "./bases/BaseEntry"
-export { default as BaseEvent } from "./bases/BaseEvent"
 export { default as BaseGuildCache, iBaseGuildCache } from "./bases/BaseGuildCache"
-export { default as BaseMessage, MessageHelper } from "./bases/BaseMessage"
-export { default as BaseSelectMenu, SelectMenuHelper } from "./bases/BaseSelectMenu"
-export { default as BaseSlash, BaseSlashSub, SlashHelper } from "./bases/BaseSlash"
+export { default as BaseButton, ButtonHelper } from "./interactions/button"
+export { default as BaseEvent } from "./interactions/event"
+export { default as BaseMessage, MessageHelper } from "./interactions/message"
+export { default as BaseSelectMenu, SelectMenuHelper } from "./interactions/selectMenu"
+export { default as BaseSlash, BaseSlashSub, SlashHelper } from "./interactions/slash"
 
 export { default as HelpBuilder } from "./builders/HelpBuilder"
 export { default as ResponseBuilder } from "./builders/ResponseBuilder"
