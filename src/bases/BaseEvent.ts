@@ -10,5 +10,5 @@ export default abstract class BaseEvent<
 > {
 	abstract name: N
 
-	abstract execute: (botCache: BC, ...args: ClientEvents[N]) => Promise<any>
+	abstract execute(botCache: BC, ...args: ClientEvents[N]): Promise<any>
 }

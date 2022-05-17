@@ -10,7 +10,7 @@ export default abstract class BaseSlash<E extends BaseEntry, GC extends BaseGuil
 	abstract ephemeral: boolean
 	abstract data: iSlashData
 
-	abstract execute: (helper: SlashHelper<E, GC>) => Promise<any>
+	abstract execute(helper: SlashHelper<E, GC>): Promise<any>
 }
 
 export class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

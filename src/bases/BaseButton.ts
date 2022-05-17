@@ -6,7 +6,7 @@ export default abstract class BaseButton<E extends BaseEntry, GC extends BaseGui
 	abstract defer: boolean
 	abstract ephemeral: boolean
 
-	abstract execute: (helper: ButtonHelper<E, GC>) => Promise<any>
+	abstract execute(helper: ButtonHelper<E, GC>): Promise<any>
 }
 
 export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

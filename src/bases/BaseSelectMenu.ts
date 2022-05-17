@@ -11,7 +11,7 @@ export default abstract class BaseSelectMenu<
 	abstract defer: boolean
 	abstract ephemeral: boolean
 
-	abstract execute: (helper: SelectMenuHelper<E, GC>) => Promise<any>
+	abstract execute(helper: SelectMenuHelper<E, GC>): Promise<any>
 }
 
 export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

@@ -3,8 +3,8 @@ import { Message, MessageEditOptions, MessageOptions } from "discord.js"
 import { BaseEntry, BaseGuildCache, Emoji, ResponseBuilder } from "../"
 
 export default abstract class BaseMessage<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	abstract condition: (helper: MessageHelper<E, GC>) => boolean
-	abstract execute: (helper: MessageHelper<E, GC>) => Promise<void>
+	abstract condition(helper: MessageHelper<E, GC>): boolean
+	abstract execute(helper: MessageHelper<E, GC>): Promise<void>
 }
 
 export class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

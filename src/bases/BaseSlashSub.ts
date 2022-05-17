@@ -5,5 +5,5 @@ export default abstract class BaseSlashSub<E extends BaseEntry, GC extends BaseG
 	abstract ephemeral: boolean
 	abstract data: iSlashData
 
-	abstract execute: (helper: SlashHelper<E, GC>) => Promise<any>
+	abstract execute(helper: SlashHelper<E, GC>): Promise<any>
 }
