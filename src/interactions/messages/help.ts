@@ -1,25 +1,29 @@
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, BaseMessage, FilesSetupHelper, HelpBuilder
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseMessage, FilesSetupHelper, HelpBuilder,
+	MessageHelper
 } from "../.."
 
-const file = <
+export default class MessageHelp<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
->(
-	fsh: FilesSetupHelper<E, GC, BC>
-): BaseMessage<E, GC> => ({
-	condition: helper => !!helper.match(fsh.options.help.commandRegex!),
-	execute: async helper => {
+> extends BaseMessage<E, GC> {
+	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
+		super()
+	}
+
+	override condition(helper: MessageHelper<E, GC>) {
+		return !!helper.match(this.fsh.options.help.commandRegex!)
+	}
+
+	override async execute(helper: MessageHelper<E, GC>) {
 		helper.respond(
 			new HelpBuilder(
-				fsh.options.help.message(helper.cache),
-				fsh.options.help.icon,
-				fsh.options.directory,
+				this.fsh.options.help.message(helper.cache),
+				this.fsh.options.help.icon,
+				this.fsh.options.directory,
 				helper.cache.getAliases()
 			).buildMinimum()
 		)
 	}
-})
-
-export default file
+}

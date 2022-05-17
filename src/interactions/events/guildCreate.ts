@@ -1,20 +1,23 @@
+import { Guild } from "discord.js"
+
 import {
 	BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache, FilesSetupHelper, SlashCommandDeployer
 } from "../.."
 
-const file = <
+export default class EventGuildCreate<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
->(
-	fsh: FilesSetupHelper<E, GC, BC>
-): BaseEvent<E, GC, BC, "guildCreate"> => ({
-	name: "guildCreate",
-	execute: async (botCache, guild) => {
+> extends BaseEvent<E, GC, BC, "guildCreate"> {
+	name = "guildCreate" as const
+
+	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
+		super()
+	}
+
+	override async execute(botCache: BC, guild: Guild) {
 		logger.info(`Added to Guild(${guild.name})`)
 		await botCache.registerGuildCache(guild.id)
-		await new SlashCommandDeployer(guild.id, fsh.slashFiles).deploy()
+		await new SlashCommandDeployer(guild.id, this.fsh.slashFiles).deploy()
 	}
-})
-
-export default file
+}

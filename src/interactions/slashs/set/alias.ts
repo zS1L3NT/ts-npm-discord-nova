@@ -1,15 +1,16 @@
 import admin from "firebase-admin"
 
 import {
-	BaseEntry, BaseGuildCache, BaseSlashSub, Emoji, ResponseBuilder, SlashHelper
+	BaseEntry, BaseGuildCache, BaseSlashSub, Emoji, iSlashStringOption, ResponseBuilder, SlashHelper
 } from "../../.."
 
-const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(
-	commands: string[]
-): BaseSlashSub<E, GC> => ({
-	defer: true,
-	ephemeral: true,
-	data: {
+export default class SlashsSubSetAlias<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>
+> extends BaseSlashSub<E, GC> {
+	defer = true
+	ephemeral = true
+	data = {
 		name: "alias",
 		description: {
 			slash: "Sets an alias for a message command",
@@ -22,8 +23,8 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(
 					slash: "The command you want to set the alias for",
 					help: "The command you want to set the alias for"
 				},
-				type: "string",
-				choices: commands.map(f => f.split(".")[0]!).map(c => ({ name: c, value: c })),
+				type: "string" as const,
+				choices: [],
 				requirements: "Valid message command",
 				required: true
 			},
@@ -36,13 +37,21 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(
 						"Leave empty to unset the alias for this command"
 					].join("\n")
 				},
-				type: "string",
+				type: "string" as const,
 				requirements: "Alphabetic text",
 				required: false
 			}
 		]
-	},
-	execute: async (helper: SlashHelper<E, GC>) => {
+	}
+
+	constructor(public commands: string[]) {
+		super()
+		;(this.data.options[0]! as iSlashStringOption).choices = commands
+			.map(f => f.split(".")[0]!)
+			.map(c => ({ name: c, value: c }))
+	}
+
+	override async execute(helper: SlashHelper<E, GC>) {
 		const command = helper.string("command")!
 		const alias = helper.string("alias")
 
@@ -52,7 +61,7 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(
 				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias must be alphabetical!"))
 			}
 
-			if (commands.includes(alias) || Object.values(aliases).includes(alias)) {
+			if (this.commands.includes(alias) || Object.values(aliases).includes(alias)) {
 				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias is already in use!"))
 			}
 
@@ -78,6 +87,4 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(
 			)
 		}
 	}
-})
-
-export default file
+}

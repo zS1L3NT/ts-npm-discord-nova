@@ -1,26 +1,28 @@
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, BaseSelectMenu, FilesSetupHelper, HelpBuilder
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseSelectMenu, FilesSetupHelper, HelpBuilder,
+	SelectMenuHelper
 } from "../.."
 
-const file = <
+export default class SelectMenuHelpItem<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
->(
-	fsh: FilesSetupHelper<E, GC, BC>
-): BaseSelectMenu<E, GC> => ({
-	defer: false,
-	ephemeral: true,
-	execute: async helper => {
+> extends BaseSelectMenu<E, GC> {
+	defer = false
+	ephemeral = true
+
+	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
+		super()
+	}
+
+	override async execute(helper: SelectMenuHelper<E, GC>) {
 		helper.interaction.update(
 			new HelpBuilder(
-				fsh.options.help.message(helper.cache),
-				fsh.options.help.icon,
-				fsh.options.directory,
+				this.fsh.options.help.message(helper.cache),
+				this.fsh.options.help.icon,
+				this.fsh.options.directory,
 				helper.cache.getAliases()
 			).buildCommand(helper.value()!)
 		)
 	}
-})
-
-export default file
+}
