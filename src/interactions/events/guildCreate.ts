@@ -1,5 +1,5 @@
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, FilesSetupHelper, iEventFile, SlashCommandDeployer
+	BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache, FilesSetupHelper, SlashCommandDeployer
 } from "../.."
 
 const file = <
@@ -8,7 +8,7 @@ const file = <
 	BC extends BaseBotCache<E, GC>
 >(
 	fsh: FilesSetupHelper<E, GC, BC>
-): iEventFile<E, GC, BC, "guildCreate"> => ({
+): BaseEvent<E, GC, BC, "guildCreate"> => ({
 	name: "guildCreate",
 	execute: async (botCache, guild) => {
 		logger.info(`Added to Guild(${guild.name})`)

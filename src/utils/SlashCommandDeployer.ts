@@ -4,7 +4,7 @@ import { Collection } from "discord.js"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { REST } from "@discordjs/rest"
 
-import { BaseEntry, BaseGuildCache, iSlashFile, iSlashFolder } from "../"
+import { BaseEntry, BaseGuildCache, BaseSlash, iSlashFolder } from "../"
 import SlashBuilder from "../builders/SlashBuilder"
 
 export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
@@ -12,7 +12,7 @@ export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGu
 
 	public constructor(
 		private readonly guildId: string,
-		slashEntities: Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>
+		slashEntities: Collection<string, BaseSlash<E, GC> | iSlashFolder<E, GC>>
 	) {
 		this.guildId = guildId
 		this.commands = slashEntities.map(file =>

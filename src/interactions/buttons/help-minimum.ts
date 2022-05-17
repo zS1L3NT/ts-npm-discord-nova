@@ -1,10 +1,5 @@
 import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	FilesSetupHelper,
-	HelpBuilder,
-	iButtonFile
+	BaseBotCache, BaseButton, BaseEntry, BaseGuildCache, FilesSetupHelper, HelpBuilder
 } from "../.."
 
 const file = <
@@ -13,7 +8,7 @@ const file = <
 	BC extends BaseBotCache<E, GC>
 >(
 	fsh: FilesSetupHelper<E, GC, BC>
-): iButtonFile<E, GC> => ({
+): BaseButton<E, GC> => ({
 	defer: false,
 	ephemeral: true,
 	execute: async helper => {

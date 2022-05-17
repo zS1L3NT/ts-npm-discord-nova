@@ -7,8 +7,7 @@ import path from "path"
 
 import { SlashCommandBuilder } from "@discordjs/builders"
 
-import { BaseEntry, BaseGuildCache, iSlashFile, iSlashFolder, iSlashSubFile } from "../"
-import { iSlashData } from "../helpers/SlashHelper"
+import { BaseEntry, BaseGuildCache, BaseSlash, BaseSlashSub, iSlashData, iSlashFolder } from "../"
 import SlashBuilder from "./SlashBuilder"
 
 class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
@@ -47,7 +46,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 					embed.addField(name, file.data.description.help)
 				}
 			} else {
-				embed.addField(entityName, (entity as iSlashFile<E, GC>).data.description.help)
+				embed.addField(entityName, (entity as BaseSlash<E, GC>).data.description.help)
 			}
 		}
 
@@ -109,7 +108,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 			? (slashFiles.get(command.split(" ")[0]!) as iSlashFolder<E, GC>).files.get(
 					command.split(" ")[1]!
 			  )!.data
-			: (slashFiles.get(command) as iSlashFile<E, GC>).data
+			: (slashFiles.get(command) as BaseSlash<E, GC>).data
 
 		const [tsErr] = useTry(() => {
 			fs.readFileSync(
@@ -187,7 +186,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	}
 
 	private getSlashFiles() {
-		const slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
+		const slashFiles = new Collection<string, BaseSlash<E, GC> | iSlashFolder<E, GC>>()
 		const [err, entitiyNames] = useTry(() =>
 			fs.readdirSync(path.join(this.directory, "slashs"))
 		)
@@ -202,9 +201,9 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 				.setName(folderName)
 				.setDescription(`Commands for ${folderName}`)
 
-			const files: Collection<string, iSlashSubFile<E, GC>> = new Collection()
+			const files: Collection<string, BaseSlashSub<E, GC>> = new Collection()
 			for (const fileName of fileNames) {
-				const file = this.require<iSlashSubFile<E, GC>>(`slashs/${folderName}/${fileName}`)
+				const file = this.require<BaseSlashSub<E, GC>>(`slashs/${folderName}/${fileName}`)
 				files.set(file.data.name, file)
 				builder.addSubcommand(new SlashBuilder(file.data).buildSubcommand())
 			}
@@ -218,7 +217,7 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		// Slash commands
 		const fileNames = entitiyNames.filter(f => HelpBuilder.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iSlashFile<E, GC>>(`slashs/${filename}`)
+			const file = this.require<BaseSlash<E, GC>>(`slashs/${filename}`)
 			slashFiles.set(file.data.name, file)
 		}
 

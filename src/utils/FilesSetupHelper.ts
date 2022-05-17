@@ -1,41 +1,34 @@
+import { Collection } from "discord.js"
+import fs from "fs"
+import { useTry } from "no-try"
+import path from "path"
+
+import { SlashCommandBuilder } from "@discordjs/builders"
+
+import {
+	BaseBotCache, BaseButton, BaseEntry, BaseEvent, BaseGuildCache, BaseMessage, BaseSelectMenu,
+	BaseSlash, BaseSlashSub, iSlashFolder, NovaOptions
+} from "../"
+import SlashBuilder from "../builders/SlashBuilder"
 import ButtonHelpMaximum from "../interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../interactions/buttons/help-minimum"
 import EventGuildCreate from "../interactions/events/guildCreate"
 import EventGuildDelete from "../interactions/events/guildDelete"
-import fs from "fs"
 import MessageHelp from "../interactions/messages/help"
-import path from "path"
 import SelectMenuHelpItem from "../interactions/selectMenus/help-item"
-import SlashBuilder from "../builders/SlashBuilder"
 import SlashHelp from "../interactions/slashs/help"
 import SlashSetAlias from "../interactions/slashs/set/alias"
-import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	iButtonFile,
-	iEventFile,
-	iMessageFile,
-	iSelectMenuFile,
-	iSlashFile,
-	iSlashFolder,
-	iSlashSubFile,
-	NovaOptions
-} from ".."
-import { Collection } from "discord.js"
-import { SlashCommandBuilder } from "@discordjs/builders"
-import { useTry } from "no-try"
 
 export default class FilesSetupHelper<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	public readonly slashFiles = new Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>()
-	public readonly buttonFiles = new Collection<string, iButtonFile<E, GC>>()
-	public readonly selectMenuFiles = new Collection<string, iSelectMenuFile<E, GC>>()
-	public readonly messageFiles = new Collection<string, iMessageFile<E, GC>>()
-	public readonly eventFiles: iEventFile<E, GC, BC, any>[] = []
+	public readonly slashFiles = new Collection<string, BaseSlash<E, GC> | iSlashFolder<E, GC>>()
+	public readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
+	public readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
+	public readonly messageFiles = new Collection<string, BaseMessage<E, GC>>()
+	public readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
 
 	public constructor(public readonly options: NovaOptions<E, GC, BC>) {
 		this.slashFiles.set("help", SlashHelp(this))
@@ -87,7 +80,7 @@ export default class FilesSetupHelper<
 		// Slash subcommands
 		const folderNames = entityNames.filter(f => !this.isFile(f))
 		for (const folderName of folderNames) {
-			const files = new Collection<string, iSlashSubFile<E, GC>>()
+			const files = new Collection<string, BaseSlashSub<E, GC>>()
 			const fileNames = this.readEntities(`slashs/${folderName}`)!
 			const builder = new SlashCommandBuilder()
 				.setName(folderName)
@@ -99,7 +92,7 @@ export default class FilesSetupHelper<
 			}
 
 			for (const fileName of fileNames) {
-				const file = this.require<iSlashSubFile<E, GC>>(`slashs/${folderName}/${fileName}`)
+				const file = this.require<BaseSlashSub<E, GC>>(`slashs/${folderName}/${fileName}`)
 				files.set(file.data.name, file)
 				builder.addSubcommand(new SlashBuilder(file.data).buildSubcommand())
 			}
@@ -113,12 +106,12 @@ export default class FilesSetupHelper<
 		// Slash commands
 		const fileNames = entityNames.filter(f => this.isFile(f))
 		for (const filename of fileNames) {
-			const file = this.require<iSlashFile<E, GC>>(`slashs/${filename}`)
+			const file = this.require<BaseSlash<E, GC>>(`slashs/${filename}`)
 			this.slashFiles.set(file.data.name, file)
 		}
 
 		if (!this.slashFiles.get("set") && setAliasFile) {
-			const files = new Collection<string, iSlashSubFile<E, GC>>()
+			const files = new Collection<string, BaseSlashSub<E, GC>>()
 			const builder = new SlashCommandBuilder()
 				.setName("set")
 				.setDescription(`Commands for set`)
@@ -139,7 +132,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<iButtonFile<E, GC>>(`buttons/${fileName}`)
+			const file = this.require<BaseButton<E, GC>>(`buttons/${fileName}`)
 			this.buttonFiles.set(name, file)
 		}
 	}
@@ -150,7 +143,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<iSelectMenuFile<E, GC>>(`selectMenus/${fileName}`)
+			const file = this.require<BaseSelectMenu<E, GC>>(`selectMenus/${fileName}`)
 			this.selectMenuFiles.set(name, file)
 		}
 	}
@@ -160,7 +153,7 @@ export default class FilesSetupHelper<
 		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
-			const file = this.require<iMessageFile<E, GC>>(`messages/${fileName}`)
+			const file = this.require<BaseMessage<E, GC>>(`messages/${fileName}`)
 			this.messageFiles.set(fileName.split(".ts").at(0)!, file)
 		}
 	}
@@ -170,7 +163,7 @@ export default class FilesSetupHelper<
 		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
-			const file = this.require<iEventFile<E, GC, BC, any>>(`events/${fileName}`)
+			const file = this.require<BaseEvent<E, GC, BC, any>>(`events/${fileName}`)
 			this.eventFiles.push(file)
 		}
 	}

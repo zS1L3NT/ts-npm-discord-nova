@@ -1,8 +1,12 @@
 import admin from "firebase-admin"
-import SlashHelper from "../../../helpers/SlashHelper"
-import { BaseEntry, BaseGuildCache, Emoji, iSlashSubFile, ResponseBuilder } from "../../.."
 
-const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(commands: string[]): iSlashSubFile<E, GC> => ({
+import {
+	BaseEntry, BaseGuildCache, BaseSlashSub, Emoji, ResponseBuilder, SlashHelper
+} from "../../.."
+
+const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(
+	commands: string[]
+): BaseSlashSub<E, GC> => ({
 	defer: true,
 	ephemeral: true,
 	data: {
@@ -27,7 +31,10 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(commands: s
 				name: "alias",
 				description: {
 					slash: "Leave empty to unset the alias for this command",
-					help: ["The alias you want to set", "Leave empty to unset the alias for this command"].join("\n")
+					help: [
+						"The alias you want to set",
+						"Leave empty to unset the alias for this command"
+					].join("\n")
 				},
 				type: "string",
 				requirements: "Alphabetic text",
@@ -42,15 +49,11 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(commands: s
 		const aliases = helper.cache.getAliases()
 		if (alias) {
 			if (!alias.match(/^[a-zA-Z]+$/)) {
-				return helper.respond(
-					new ResponseBuilder(Emoji.BAD, "Alias must be alphabetical!")
-				)
+				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias must be alphabetical!"))
 			}
 
 			if (commands.includes(alias) || Object.values(aliases).includes(alias)) {
-				return helper.respond(
-					new ResponseBuilder(Emoji.BAD, "Alias is already in use!")
-				)
+				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias is already in use!"))
 			}
 
 			//@ts-ignore
@@ -66,7 +69,10 @@ const file = <E extends BaseEntry, GC extends BaseGuildCache<E, GC>>(commands: s
 			}
 
 			//@ts-ignore
-			await helper.cache.ref.set({ aliases: { [command]: admin.firestore.FieldValue.delete() } }, { merge: true })
+			await helper.cache.ref.set(
+				{ aliases: { [command]: admin.firestore.FieldValue.delete() } },
+				{ merge: true }
+			)
 			return helper.respond(
 				new ResponseBuilder(Emoji.GOOD, `Removed Alias for \`${command}\``)
 			)

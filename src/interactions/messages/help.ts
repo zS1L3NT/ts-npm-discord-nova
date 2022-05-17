@@ -1,10 +1,5 @@
 import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	FilesSetupHelper,
-	HelpBuilder,
-	iMessageFile
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseMessage, FilesSetupHelper, HelpBuilder
 } from "../.."
 
 const file = <
@@ -13,7 +8,7 @@ const file = <
 	BC extends BaseBotCache<E, GC>
 >(
 	fsh: FilesSetupHelper<E, GC, BC>
-): iMessageFile<E, GC> => ({
+): BaseMessage<E, GC> => ({
 	condition: helper => !!helper.match(fsh.options.help.commandRegex!),
 	execute: async helper => {
 		helper.respond(

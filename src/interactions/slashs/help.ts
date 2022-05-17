@@ -1,10 +1,5 @@
 import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	FilesSetupHelper,
-	HelpBuilder,
-	iSlashFile
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, FilesSetupHelper, HelpBuilder
 } from "../.."
 
 const file = <
@@ -13,7 +8,7 @@ const file = <
 	BC extends BaseBotCache<E, GC>
 >(
 	fsh: FilesSetupHelper<E, GC, BC>
-): iSlashFile<E, GC> => ({
+): BaseSlash<E, GC> => ({
 	defer: false,
 	ephemeral: false,
 	data: {

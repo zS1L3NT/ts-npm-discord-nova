@@ -1,26 +1,12 @@
 import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	ButtonHelper,
-	Emoji,
-	FilesSetupHelper,
-	iBaseBotCache,
-	iBaseGuildCache,
-	iSlashFolder,
-	MessageHelper,
-	NovaOptions,
-	ResponseBuilder,
-	SelectMenuHelper,
-	SlashHelper
-} from ".."
-import {
-	ButtonInteraction,
-	Client,
-	CommandInteraction,
-	Message,
-	SelectMenuInteraction
+	ButtonInteraction, Client, CommandInteraction, Message, SelectMenuInteraction
 } from "discord.js"
+
+import {
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, ButtonHelper, Emoji, FilesSetupHelper,
+	iBaseBotCache, iBaseGuildCache, iSlashFolder, MessageHelper, NovaOptions, ResponseBuilder,
+	SelectMenuHelper, SlashHelper
+} from "../"
 
 export default class EventSetupHelper<
 	E extends BaseEntry,
@@ -101,7 +87,7 @@ export default class EventSetupHelper<
 
 		const subcommand = interaction.options.getSubcommand(false)
 		const ephemeral = Object.keys(slashEntity).includes("ephemeral")
-			? (slashEntity as iSlashFile<E, GC>).ephemeral
+			? (slashEntity as BaseSlash<E, GC>).ephemeral
 			: (slashEntity as iSlashFolder<E, GC>).files.get(subcommand!)!.ephemeral
 
 		await interaction
