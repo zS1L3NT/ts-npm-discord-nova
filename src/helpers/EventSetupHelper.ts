@@ -37,7 +37,7 @@ export default class EventSetupHelper<
 		public readonly options: NovaOptions<E, GC, BC>,
 		private readonly bot: Client
 	) {
-		this.botCache = new BCClass(this.GCClass, this.bot, this.options.config)
+		this.botCache = new BCClass(this.GCClass, this.bot)
 		this.fsh = new FilesSetupHelper(this.options)
 
 		for (const event of this.fsh.eventFiles) {

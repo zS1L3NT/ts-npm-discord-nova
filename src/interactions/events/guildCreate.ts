@@ -1,10 +1,5 @@
 import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	FilesSetupHelper,
-	iEventFile,
-	SlashCommandDeployer
+	BaseBotCache, BaseEntry, BaseGuildCache, FilesSetupHelper, iEventFile, SlashCommandDeployer
 } from "../.."
 
 const file = <
@@ -18,7 +13,7 @@ const file = <
 	execute: async (botCache, guild) => {
 		logger.info(`Added to Guild(${guild.name})`)
 		await botCache.registerGuildCache(guild.id)
-		await new SlashCommandDeployer(guild.id, fsh.options.config, fsh.slashFiles).deploy()
+		await new SlashCommandDeployer(guild.id, fsh.slashFiles).deploy()
 	}
 })
 

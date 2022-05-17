@@ -1,20 +1,20 @@
-import SlashBuilder from "../builders/SlashBuilder"
-import { BaseEntry, BaseGuildCache, iConfig, iSlashFile, iSlashFolder } from ".."
-import { Collection } from "discord.js"
-import { REST } from "@discordjs/rest"
 import { Routes } from "discord-api-types/v9"
+import { Collection } from "discord.js"
+
 import { SlashCommandBuilder } from "@discordjs/builders"
+import { REST } from "@discordjs/rest"
+
+import { BaseEntry, BaseGuildCache, iSlashFile, iSlashFolder } from "../"
+import SlashBuilder from "../builders/SlashBuilder"
 
 export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private readonly commands: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">[]
 
 	public constructor(
 		private readonly guildId: string,
-		private readonly config: iConfig,
 		slashEntities: Collection<string, iSlashFile<E, GC> | iSlashFolder<E, GC>>
 	) {
 		this.guildId = guildId
-		this.config = config
 		this.commands = slashEntities.map(file =>
 			file.data instanceof SlashCommandBuilder
 				? file.data
@@ -23,8 +23,8 @@ export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGu
 	}
 
 	public async deploy() {
-		const rest = new REST({ version: "9" }).setToken(this.config.discord.token)
-		await rest.put(Routes.applicationGuildCommands(this.config.discord.bot_id, this.guildId), {
+		const rest = new REST({ version: "9" }).setToken(process.env.DISCORD__TOKEN)
+		await rest.put(Routes.applicationGuildCommands(process.env.DISCORD__BOT_ID, this.guildId), {
 			body: this.commands.map(command => command.toJSON())
 		})
 	}

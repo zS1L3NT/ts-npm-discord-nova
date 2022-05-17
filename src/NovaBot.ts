@@ -1,31 +1,11 @@
 import AfterEvery from "after-every"
-import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	EventSetupHelper,
-	iBaseBotCache,
-	iBaseGuildCache,
-	SlashCommandDeployer
-} from "."
 import { BitFieldResolvable, Client, IntentsString } from "discord.js"
 import { useTryAsync } from "no-try"
 
-export type iConfig = {
-	firebase: {
-		service_account: {
-			projectId: string
-			privateKey: string
-			clientEmail: string
-		}
-		collection: string
-	}
-	discord: {
-		token: string
-		bot_id: string
-		dev_id: string
-	}
-}
+import {
+	BaseBotCache, BaseEntry, BaseGuildCache, EventSetupHelper, iBaseBotCache, iBaseGuildCache,
+	SlashCommandDeployer
+} from "./"
 
 export type NovaOptions<
 	E extends BaseEntry,
@@ -35,7 +15,6 @@ export type NovaOptions<
 	intents: BitFieldResolvable<IntentsString, number>
 	name: string
 	directory: string
-	config: iConfig
 	updatesMinutely: boolean
 
 	help: {
@@ -69,7 +48,7 @@ export default class NovaBot<
 		const esh = new EventSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
 		const { botCache } = esh
 
-		bot.login(options.config.discord.token)
+		bot.login(process.env.DISCORD__TOKEN)
 		bot.on("ready", () => {
 			logger.info(`Logged in as ${options.name}`)
 
@@ -93,11 +72,7 @@ export default class NovaBot<
 					}
 
 					const [deployErr] = await useTryAsync(() =>
-						new SlashCommandDeployer(
-							guild.id,
-							options.config,
-							esh.fsh.slashFiles
-						).deploy()
+						new SlashCommandDeployer(guild.id, esh.fsh.slashFiles).deploy()
 					)
 					if (deployErr) {
 						const tag = getTag()

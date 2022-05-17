@@ -1,12 +1,13 @@
-import admin from "firebase-admin"
-import { BaseEntry, BaseGuildCache, iBaseGuildCache, iConfig } from ".."
 import { Client, Collection, Guild } from "discord.js"
+import admin from "firebase-admin"
+
+import { BaseEntry, BaseGuildCache, iBaseGuildCache } from "../"
 
 export type iBaseBotCache<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
-> = new (GCClass: iBaseGuildCache<E, GC>, bot: Client, config: iConfig) => BC
+> = new (GCClass: iBaseGuildCache<E, GC>, bot: Client) => BC
 
 export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public readonly ref: admin.firestore.CollectionReference<E>
@@ -14,13 +15,18 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 
 	public constructor(
 		private readonly GCClass: iBaseGuildCache<E, GC>,
-		public readonly bot: Client,
-		config: iConfig
+		public readonly bot: Client
 	) {
-		admin.initializeApp({ credential: admin.credential.cert(config.firebase.service_account) })
+		admin.initializeApp({
+			credential: admin.credential.cert({
+				projectId: process.env.FIREBASE__SERVICE_ACCOUNT__PROJECT_ID,
+				privateKey: process.env.FIREBASE__SERVICE_ACCOUNT__PRIVATE_KEY,
+				clientEmail: process.env.FIREBASE__SERVICE_ACCOUNT__CLIENT_EMAIL
+			})
+		})
 		this.ref = admin
 			.firestore()
-			.collection(config.firebase.collection) as admin.firestore.CollectionReference<E>
+			.collection(process.env.FIREBASE__COLLECTION) as admin.firestore.CollectionReference<E>
 		this.onConstruct()
 	}
 
