@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
 
-import { iSlashData } from "../helpers/SlashHelper"
+import { iSlashData } from "../"
 
 export default class SlashBuilder {
 	public constructor(private readonly data: iSlashData) {}
