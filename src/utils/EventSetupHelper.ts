@@ -1,19 +1,18 @@
-import ButtonHelper from "./ButtonHelper"
-import MessageHelper from "./MessageHelper"
-import SelectMenuHelper from "./SelectMenuHelper"
-import SlashHelper from "./SlashHelper"
 import {
 	BaseBotCache,
 	BaseEntry,
 	BaseGuildCache,
+	ButtonHelper,
 	Emoji,
 	FilesSetupHelper,
 	iBaseBotCache,
 	iBaseGuildCache,
-	iSlashFile,
 	iSlashFolder,
+	MessageHelper,
 	NovaOptions,
-	ResponseBuilder
+	ResponseBuilder,
+	SelectMenuHelper,
+	SlashHelper
 } from ".."
 import {
 	ButtonInteraction,

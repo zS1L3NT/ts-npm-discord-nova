@@ -2,9 +2,12 @@ import { Message, MessageEditOptions, MessageOptions } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, Emoji, ResponseBuilder } from "../"
 
-const time = (ms: number) => new Promise(res => setTimeout(res, ms))
+export default abstract class BaseMessage<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract condition: (helper: MessageHelper<E, GC>) => boolean
+	abstract execute: (helper: MessageHelper<E, GC>) => Promise<void>
+}
 
-export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private response: Message | undefined
 	private timeout: NodeJS.Timeout | undefined
 
@@ -90,7 +93,7 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			}
 		})
 
-		time(5000)
+		new Promise(res => setTimeout(res, 5000))
 			.then(() => this.message.delete())
 			.catch(err => logger.warn("Failed to delete message", err))
 	}

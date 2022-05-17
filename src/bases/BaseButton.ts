@@ -2,7 +2,14 @@ import { ButtonInteraction, InteractionReplyOptions, InteractionUpdateOptions } 
 
 import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
 
-export default class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default abstract class BaseButton<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract defer: boolean
+	abstract ephemeral: boolean
+
+	abstract execute: (helper: ButtonHelper<E, GC>) => Promise<any>
+}
+
+export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
 
 	public respond(options: ResponseBuilder | InteractionReplyOptions) {

@@ -3,49 +3,17 @@ import {
 	WebhookEditMessageOptions
 } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
+import { BaseEntry, BaseGuildCache, iSlashData, ResponseBuilder } from "../"
 
-export interface iSlashData {
-	name: string
-	description: {
-		slash: string
-		help: string
-	}
-	options?: (iSlashDefaultOption | iSlashStringOption | iSlashNumberOption)[]
+export default abstract class BaseSlash<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract defer: boolean
+	abstract ephemeral: boolean
+	abstract data: iSlashData
+
+	abstract execute: (helper: SlashHelper<E, GC>) => Promise<any>
 }
 
-interface iSlashOption {
-	name: string
-	description: {
-		slash: string
-		help: string
-	}
-	requirements: string
-	required: boolean
-	default?: string
-}
-
-interface iSlashDefaultOption extends iSlashOption {
-	type: "boolean" | "user" | "role" | "channel" | "mentionable"
-}
-
-interface iSlashStringOption extends iSlashOption {
-	type: "string"
-	choices?: {
-		name: string
-		value: string
-	}[]
-}
-
-interface iSlashNumberOption extends iSlashOption {
-	type: "number"
-	choices?: {
-		name: string
-		value: number
-	}[]
-}
-
-export default class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private responded = false
 
 	public constructor(
