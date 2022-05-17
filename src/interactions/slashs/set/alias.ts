@@ -65,8 +65,7 @@ export default class SlashsSubSetAlias<
 				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias is already in use!"))
 			}
 
-			//@ts-ignore
-			await helper.cache.ref.set({ aliases: { [command]: alias } }, { merge: true })
+			await helper.cache.ref.update({ aliases: { [command]: alias } })
 			return helper.respond(
 				new ResponseBuilder(Emoji.GOOD, `Set Alias for \`${command}\` to \`${alias}\``)
 			)
@@ -77,11 +76,9 @@ export default class SlashsSubSetAlias<
 				)
 			}
 
-			//@ts-ignore
-			await helper.cache.ref.set(
-				{ aliases: { [command]: admin.firestore.FieldValue.delete() } },
-				{ merge: true }
-			)
+			await helper.cache.ref.update({
+				aliases: { [command]: admin.firestore.FieldValue.delete() }
+			})
 			return helper.respond(
 				new ResponseBuilder(Emoji.GOOD, `Removed Alias for \`${command}\``)
 			)

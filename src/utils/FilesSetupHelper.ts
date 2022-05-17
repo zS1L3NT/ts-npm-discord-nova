@@ -31,14 +31,14 @@ export default class FilesSetupHelper<
 	public readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
 
 	public constructor(public readonly options: NovaOptions<E, GC, BC>) {
-		this.slashFiles.set("help", SlashHelp(this))
-		this.buttonFiles.set("help-maximum", ButtonHelpMaximum(this))
-		this.buttonFiles.set("help-minimum", ButtonHelpMinimum(this))
-		this.selectMenuFiles.set("help-item", SelectMenuHelpItem(this))
+		this.slashFiles.set("help", new SlashHelp(this))
+		this.buttonFiles.set("help-maximum", new ButtonHelpMaximum(this))
+		this.buttonFiles.set("help-minimum", new ButtonHelpMinimum(this))
+		this.selectMenuFiles.set("help-item", new SelectMenuHelpItem(this))
 		if (this.options.help.commandRegex) {
-			this.messageFiles.set("help-item", MessageHelp(this))
+			this.messageFiles.set("help-item", new MessageHelp(this))
 		}
-		this.eventFiles.push(EventGuildCreate(this), EventGuildDelete())
+		this.eventFiles.push(new EventGuildCreate(this), new EventGuildDelete<E, GC, BC>())
 
 		this.setupSlashs()
 		this.setupButtons()
@@ -73,7 +73,7 @@ export default class FilesSetupHelper<
 		const messageCommands = this.readEntities("messages")
 		const setAliasFile = messageCommands
 			? messageCommands.length > 0
-				? SlashSetAlias(messageCommands)
+				? new SlashSetAlias(messageCommands)
 				: null
 			: null
 
