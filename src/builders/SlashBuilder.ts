@@ -16,9 +16,7 @@ export default class SlashBuilder {
 	private build<B extends SlashCommandBuilder | SlashCommandSubcommandBuilder>(
 		Builder: new () => B
 	): B {
-		const builder = new Builder()
-			.setName(this.data.name)
-			.setDescription(this.data.description.slash)
+		const builder = new Builder().setName(this.data.name).setDescription(this.data.description)
 
 		if (this.data.options) {
 			for (const option of this.data.options) {
@@ -27,7 +25,7 @@ export default class SlashBuilder {
 						builder.addStringOption(string => {
 							string
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 
 							if (option.choices) {
@@ -41,7 +39,7 @@ export default class SlashBuilder {
 						builder.addIntegerOption(number => {
 							number
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 
 							if (option.choices) {
@@ -55,7 +53,7 @@ export default class SlashBuilder {
 						builder.addBooleanOption(boolean =>
 							boolean
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 						)
 						break
@@ -63,7 +61,7 @@ export default class SlashBuilder {
 						builder.addUserOption(user =>
 							user
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 						)
 						break
@@ -71,7 +69,7 @@ export default class SlashBuilder {
 						builder.addRoleOption(role =>
 							role
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 						)
 						break
@@ -79,7 +77,7 @@ export default class SlashBuilder {
 						builder.addChannelOption(channel =>
 							channel
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 						)
 						break
@@ -87,7 +85,7 @@ export default class SlashBuilder {
 						builder.addMentionableOption(mentionable =>
 							mentionable
 								.setName(option.name)
-								.setDescription(option.description.slash)
+								.setDescription(option.description)
 								.setRequired(option.required)
 						)
 						break

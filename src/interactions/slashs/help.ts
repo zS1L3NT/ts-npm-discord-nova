@@ -11,10 +11,7 @@ export default class SlashsHelp<
 	ephemeral = false
 	data = {
 		name: "help",
-		description: {
-			slash: "Displays the help command",
-			help: "Shows you the help menu that you are looking at right now"
-		}
+		description: "Shows you this help message"
 	} as const
 
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {

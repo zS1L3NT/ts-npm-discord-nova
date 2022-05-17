@@ -12,17 +12,11 @@ export default class SlashsSubSetAlias<
 	ephemeral = true
 	data = {
 		name: "alias",
-		description: {
-			slash: "Sets an alias for a message command",
-			help: "Sets an alias for a specific message command in this guild"
-		},
+		description: "Sets an alias for a specific message command",
 		options: [
 			{
 				name: "command",
-				description: {
-					slash: "The command you want to set the alias for",
-					help: "The command you want to set the alias for"
-				},
+				description: "The command you want to set the alias for",
 				type: "string" as const,
 				choices: [],
 				requirements: "Valid message command",
@@ -30,13 +24,10 @@ export default class SlashsSubSetAlias<
 			},
 			{
 				name: "alias",
-				description: {
-					slash: "Leave empty to unset the alias for this command",
-					help: [
-						"The alias you want to set",
-						"Leave empty to unset the alias for this command"
-					].join("\n")
-				},
+				description: [
+					"The alias you want to set",
+					"Leave empty to unset the alias for this command"
+				].join("\n"),
 				type: "string" as const,
 				requirements: "Alphabetic text",
 				required: false

@@ -11,19 +11,13 @@ declare interface iSlashFolder<E extends BaseEntry, GC extends BaseGuildCache<E,
 
 declare interface iSlashData {
 	name: string
-	description: {
-		slash: string
-		help: string
-	}
+	description: string
 	options?: (iSlashDefaultOption | iSlashStringOption | iSlashNumberOption)[]
 }
 
 declare interface iSlashOption {
 	name: string
-	description: {
-		slash: string
-		help: string
-	}
+	description: string
 	requirements: string
 	required: boolean
 	default?: string
