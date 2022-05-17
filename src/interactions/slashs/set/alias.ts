@@ -1,4 +1,4 @@
-import admin from "firebase-admin"
+import { FieldValue } from "firebase-admin/firestore"
 
 import {
 	BaseEntry, BaseGuildCache, BaseSlashSub, iSlashStringOption, ResponseBuilder, SlashHelper
@@ -75,7 +75,7 @@ export default class SlashsSubSetAlias<
 			}
 
 			await helper.cache.ref.update({
-				aliases: { [command]: admin.firestore.FieldValue.delete() }
+				aliases: { [command]: FieldValue.delete() }
 			})
 			return helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
 		}

@@ -1,11 +1,12 @@
-import admin from "firebase-admin"
-import { BaseEntry } from ".."
 import { Client, Guild } from "discord.js"
+import { DocumentReference } from "firebase-admin/firestore"
+
+import { BaseEntry } from "../"
 
 export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> = new (
 	bot: Client,
 	guild: Guild,
-	ref: admin.firestore.DocumentReference<E>,
+	ref: DocumentReference<E>,
 	entry: E,
 	resolve: (cache: GC) => void
 ) => GC
@@ -17,7 +18,7 @@ export default abstract class BaseGuildCache<
 	public constructor(
 		public readonly bot: Client,
 		public readonly guild: Guild,
-		public readonly ref: admin.firestore.DocumentReference<E>,
+		public readonly ref: DocumentReference<E>,
 		public entry: E,
 		resolve: (cache: GC) => void
 	) {
