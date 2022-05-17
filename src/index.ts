@@ -11,7 +11,7 @@ export { default as BaseSlash, SlashHelper } from "./bases/BaseSlash"
 export { default as BaseSlashSub } from "./bases/BaseSlashSub"
 
 export { default as HelpBuilder } from "./builders/HelpBuilder"
-export { default as ResponseBuilder, Emoji } from "./builders/ResponseBuilder"
+export { default as ResponseBuilder } from "./builders/ResponseBuilder"
 
 export { default as DateHelper } from "./utils/DateHelper"
 export { default as ChannelCleaner } from "./utils/ChannelCleaner"

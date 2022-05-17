@@ -1,6 +1,6 @@
 import { Message, MessageEditOptions, MessageOptions } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, Emoji, ResponseBuilder } from "../"
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
 
 export default abstract class BaseMessage<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract condition(helper: MessageHelper<E, GC>): boolean
@@ -65,7 +65,7 @@ export class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		let message: Promise<Message>
 
 		if (options instanceof ResponseBuilder) {
-			if (options.emoji === Emoji.GOOD) {
+			if (options.emoji.includes("good.png")) {
 				this.message
 					.react("✅")
 					.catch(err => logger.warn("Failed to react (✅) to message command", err))

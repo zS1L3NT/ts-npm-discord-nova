@@ -1,12 +1,20 @@
 import { MessageEmbed } from "discord.js"
 
-export enum Emoji {
+enum Emoji {
 	GOOD = "https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/good.png?alt=media&token=4b833fc2-b8ff-4d5c-add2-f5a6029664fb",
 	BAD = "https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/bad.png?alt=media&token=cbd48c77-784c-4f86-8de1-7335b452a894"
 }
 
 export default class ResponseBuilder {
-	public constructor(public readonly emoji: Emoji, private readonly content: string) {}
+	private constructor(public readonly emoji: Emoji, private readonly content: string) {}
+
+	public static good(content: string) {
+		return new ResponseBuilder(Emoji.GOOD, content)
+	}
+
+	public static bad(content: string) {
+		return new ResponseBuilder(Emoji.BAD, content)
+	}
 
 	public build() {
 		return new MessageEmbed()

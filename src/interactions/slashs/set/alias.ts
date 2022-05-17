@@ -1,7 +1,7 @@
 import admin from "firebase-admin"
 
 import {
-	BaseEntry, BaseGuildCache, BaseSlashSub, Emoji, iSlashStringOption, ResponseBuilder, SlashHelper
+	BaseEntry, BaseGuildCache, BaseSlashSub, iSlashStringOption, ResponseBuilder, SlashHelper
 } from "../../.."
 
 export default class SlashsSubSetAlias<
@@ -58,30 +58,26 @@ export default class SlashsSubSetAlias<
 		const aliases = helper.cache.getAliases()
 		if (alias) {
 			if (!alias.match(/^[a-zA-Z]+$/)) {
-				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias must be alphabetical!"))
+				return helper.respond(ResponseBuilder.bad("Alias must be alphabetical!"))
 			}
 
 			if (this.commands.includes(alias) || Object.values(aliases).includes(alias)) {
-				return helper.respond(new ResponseBuilder(Emoji.BAD, "Alias is already in use!"))
+				return helper.respond(ResponseBuilder.bad("Alias is already in use!"))
 			}
 
 			await helper.cache.ref.update({ aliases: { [command]: alias } })
 			return helper.respond(
-				new ResponseBuilder(Emoji.GOOD, `Set Alias for \`${command}\` to \`${alias}\``)
+				ResponseBuilder.good(`Set Alias for \`${command}\` to \`${alias}\``)
 			)
 		} else {
 			if (!aliases[command]) {
-				return helper.respond(
-					new ResponseBuilder(Emoji.BAD, "There is no Alias for this command!")
-				)
+				return helper.respond(ResponseBuilder.bad("There is no Alias for this command!"))
 			}
 
 			await helper.cache.ref.update({
 				aliases: { [command]: admin.firestore.FieldValue.delete() }
 			})
-			return helper.respond(
-				new ResponseBuilder(Emoji.GOOD, `Removed Alias for \`${command}\``)
-			)
+			return helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
 		}
 	}
 }

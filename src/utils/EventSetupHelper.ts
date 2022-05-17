@@ -3,7 +3,7 @@ import {
 } from "discord.js"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, ButtonHelper, Emoji, FilesSetupHelper,
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, ButtonHelper, FilesSetupHelper,
 	iBaseBotCache, iBaseGuildCache, iSlashFolder, MessageHelper, NovaOptions, ResponseBuilder,
 	SelectMenuHelper, SlashHelper
 } from "../"
@@ -64,10 +64,7 @@ export default class EventSetupHelper<
 					logger.error("Error executing message command", err)
 					helper.reactFailure()
 					helper.respond(
-						new ResponseBuilder(
-							Emoji.BAD,
-							"There was an error while executing this command!"
-						)
+						ResponseBuilder.bad("There was an error while executing this command!")
 					)
 				}
 				logger.discord(
@@ -105,9 +102,7 @@ export default class EventSetupHelper<
 			}
 		} catch (err) {
 			logger.error("Error executing command interaction", err)
-			helper.respond(
-				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
-			)
+			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))
 		}
 		logger.discord(
 			`Closing SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
@@ -132,9 +127,7 @@ export default class EventSetupHelper<
 			await buttonFile.execute(helper)
 		} catch (err) {
 			logger.error("Error executing button interaction", err)
-			helper.respond(
-				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
-			)
+			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))
 		}
 		logger.discord(
 			`Closing ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`
@@ -159,9 +152,7 @@ export default class EventSetupHelper<
 			await selectMenuFile.execute(helper)
 		} catch (err) {
 			logger.error("Error executing select menu command", err)
-			helper.respond(
-				new ResponseBuilder(Emoji.BAD, "There was an error while executing this command!")
-			)
+			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))
 		}
 		logger.discord(
 			`Closing SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
