@@ -10,14 +10,14 @@ import {
 	BaseSlash, BaseSlashSub, iSlashFolder, NovaOptions
 } from "../"
 import SlashBuilder from "../builders/SlashBuilder"
-import ButtonHelpMaximum from "../interactions/buttons/help-maximum"
-import ButtonHelpMinimum from "../interactions/buttons/help-minimum"
-import EventGuildCreate from "../interactions/events/guildCreate"
-import EventGuildDelete from "../interactions/events/guildDelete"
-import MessageHelp from "../interactions/messages/help"
-import SelectMenuHelpItem from "../interactions/selectMenus/help-item"
-import SlashHelp from "../interactions/slashs/help"
-import SlashSetAlias from "../interactions/slashs/set/alias"
+import ButtonHelpMaximum from "../interactions/defaults/buttons/help-maximum"
+import ButtonHelpMinimum from "../interactions/defaults/buttons/help-minimum"
+import EventGuildCreate from "../interactions/defaults/events/guildCreate"
+import EventGuildDelete from "../interactions/defaults/events/guildDelete"
+import MessageHelp from "../interactions/defaults/messages/help"
+import SelectMenuHelpItem from "../interactions/defaults/selectMenus/help-item"
+import SlashHelp from "../interactions/defaults/slashs/help"
+import SlashSetAlias from "../interactions/defaults/slashs/set/alias"
 
 export default class FilesSetupHelper<
 	E extends BaseEntry,

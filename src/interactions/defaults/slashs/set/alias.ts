@@ -2,7 +2,7 @@ import { FieldValue } from "firebase-admin/firestore"
 
 import {
 	BaseEntry, BaseGuildCache, BaseSlashSub, iSlashStringOption, ResponseBuilder, SlashHelper
-} from "../../.."
+} from "../../../.."
 
 export default class SlashsSubSetAlias<
 	E extends BaseEntry,

@@ -1,7 +1,7 @@
 import {
 	BaseBotCache, BaseEntry, BaseGuildCache, BaseMessage, FilesSetupHelper, HelpBuilder,
 	MessageHelper
-} from "../.."
+} from "../../.."
 
 export default class MessageHelp<
 	E extends BaseEntry,

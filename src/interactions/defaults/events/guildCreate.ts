@@ -2,7 +2,7 @@ import { Guild } from "discord.js"
 
 import {
 	BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache, FilesSetupHelper, SlashCommandDeployer
-} from "../.."
+} from "../../.."
 
 export default class EventGuildCreate<
 	E extends BaseEntry,

@@ -1,6 +1,6 @@
 import { Guild } from "discord.js"
 
-import { BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache } from "../.."
+import { BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache } from "../../.."
 
 export default class GuildDelete<
 	E extends BaseEntry,
