@@ -1,5 +1,6 @@
-import { BaseEntry, BaseGuildCache, Emoji, ResponseBuilder } from ".."
-import { InteractionReplyOptions, Message, MessagePayload } from "discord.js"
+import { Message, MessageEditOptions, MessageOptions } from "discord.js"
+
+import { BaseEntry, BaseGuildCache, Emoji, ResponseBuilder } from "../"
 
 const time = (ms: number) => new Promise(res => setTimeout(res, ms))
 
@@ -57,10 +58,7 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			.catch(err => logger.warn("Failed to react (❌) to message command", err))
 	}
 
-	public respond(
-		options: MessagePayload | InteractionReplyOptions | ResponseBuilder,
-		ms?: number
-	) {
+	public respond(options: ResponseBuilder | MessageOptions, ms?: number) {
 		let message: Promise<Message>
 
 		if (options instanceof ResponseBuilder) {
@@ -78,7 +76,7 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 				embeds: [options.build()]
 			})
 		} else {
-			message = this.message.channel.send(options as MessagePayload | InteractionReplyOptions)
+			message = this.message.channel.send(options)
 		}
 
 		message.then(async response => {
@@ -97,10 +95,7 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 			.catch(err => logger.warn("Failed to delete message", err))
 	}
 
-	public update(
-		options: MessagePayload | InteractionReplyOptions | ResponseBuilder,
-		ms?: number
-	) {
+	public update(options: ResponseBuilder | MessageEditOptions, ms?: number) {
 		if (this.timeout) {
 			clearTimeout(this.timeout)
 		}
@@ -116,7 +111,7 @@ export default class MessageHelper<E extends BaseEntry, GC extends BaseGuildCach
 				embeds: [options.build()]
 			})
 		} else {
-			message = this.response.edit(options as MessagePayload | InteractionReplyOptions)
+			message = this.response.edit(options)
 		}
 
 		message.then(async response => {

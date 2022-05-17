@@ -1,5 +1,8 @@
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
-import { InteractionReplyOptions, MessagePayload, SelectMenuInteraction } from "discord.js"
+import {
+	InteractionReplyOptions, InteractionUpdateOptions, SelectMenuInteraction
+} from "discord.js"
+
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
 
 export default class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public constructor(
@@ -7,7 +10,7 @@ export default class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildC
 		public readonly interaction: SelectMenuInteraction
 	) {}
 
-	public respond(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
+	public respond(options: ResponseBuilder | InteractionReplyOptions) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.followUp({ embeds: [options.build()] })
@@ -19,7 +22,7 @@ export default class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildC
 		}
 	}
 
-	public update(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
+	public update(options: ResponseBuilder | InteractionUpdateOptions) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.update({ embeds: [options.build()] })

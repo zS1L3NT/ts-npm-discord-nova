@@ -1,10 +1,11 @@
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
-import { ButtonInteraction, InteractionReplyOptions, MessagePayload } from "discord.js"
+import { ButtonInteraction, InteractionReplyOptions, InteractionUpdateOptions } from "discord.js"
+
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
 
 export default class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	public constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
 
-	public respond(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
+	public respond(options: ResponseBuilder | InteractionReplyOptions) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.followUp({ embeds: [options.build()] })
@@ -16,7 +17,7 @@ export default class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache
 		}
 	}
 
-	public update(options: MessagePayload | InteractionReplyOptions | ResponseBuilder) {
+	public update(options: ResponseBuilder | InteractionUpdateOptions) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.update({ embeds: [options.build()] })

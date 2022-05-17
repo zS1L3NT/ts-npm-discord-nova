@@ -1,5 +1,6 @@
-import { iSlashData } from "../helpers/SlashHelper"
 import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
+
+import { iSlashData } from "../helpers/SlashHelper"
 
 export default class SlashBuilder {
 	public constructor(private readonly data: iSlashData) {}
@@ -30,9 +31,7 @@ export default class SlashBuilder {
 								.setRequired(option.required)
 
 							if (option.choices) {
-								string.addChoices(
-									option.choices?.map(choice => [choice.name, choice.value])
-								)
+								string.addChoices(...option.choices)
 							}
 
 							return string
@@ -46,9 +45,7 @@ export default class SlashBuilder {
 								.setRequired(option.required)
 
 							if (option.choices) {
-								number.addChoices(
-									option.choices?.map(choice => [choice.name, choice.value])
-								)
+								number.addChoices(...option.choices)
 							}
 
 							return number

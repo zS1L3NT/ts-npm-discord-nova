@@ -1,18 +1,15 @@
-import fs from "fs"
-import path from "path"
-import SlashBuilder from "./SlashBuilder"
-import { BaseEntry, BaseGuildCache, iSlashFile, iSlashFolder, iSlashSubFile } from ".."
 import {
-	Collection,
-	MessageActionRow,
-	MessageButton,
-	MessageEmbed,
-	MessageOptions,
-	MessageSelectMenu
+	Collection, MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu
 } from "discord.js"
-import { iSlashData } from "../helpers/SlashHelper"
-import { SlashCommandBuilder } from "@discordjs/builders"
+import fs from "fs"
 import { useTry } from "no-try"
+import path from "path"
+
+import { SlashCommandBuilder } from "@discordjs/builders"
+
+import { BaseEntry, BaseGuildCache, iSlashFile, iSlashFolder, iSlashSubFile } from "../"
+import { iSlashData } from "../helpers/SlashHelper"
+import SlashBuilder from "./SlashBuilder"
 
 class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private readonly QUESTION =
@@ -25,7 +22,10 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		private readonly aliases: Record<string, string>
 	) {}
 
-	public buildMaximum(): MessageOptions {
+	public buildMaximum(): {
+		embeds: MessageEmbed[]
+		components: MessageActionRow[]
+	} {
 		const slashFiles = this.getSlashFiles()
 
 		const embed = new MessageEmbed()
@@ -60,7 +60,10 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		}
 	}
 
-	public buildMinimum(): MessageOptions {
+	public buildMinimum(): {
+		embeds: MessageEmbed[]
+		components: MessageActionRow[]
+	} {
 		const embed = new MessageEmbed()
 			.setAuthor({ name: "Help", iconURL: this.QUESTION })
 			.setThumbnail(this.icon)
@@ -89,7 +92,10 @@ class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 		}
 	}
 
-	public buildCommand(command: string): MessageOptions {
+	public buildCommand(command: string): {
+		embeds: MessageEmbed[]
+		components: MessageActionRow[]
+	} {
 		const slashFiles = this.getSlashFiles()
 
 		const embed = new MessageEmbed().setAuthor({ name: command, iconURL: this.QUESTION })
