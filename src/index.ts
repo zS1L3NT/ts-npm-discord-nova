@@ -10,6 +10,7 @@ export { default as ResponseBuilder } from "./builders/ResponseBuilder"
 export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
 
 export { default as BaseButton, ButtonMiddleware, ButtonHelper } from "./interactions/button"
+export { default as BaseCommand, CommandMiddleware, CommandHelper } from "./interactions/command"
 export { default as BaseEvent, EventMiddleware } from "./interactions/event"
 export {
 	default as BaseSelectMenu,
