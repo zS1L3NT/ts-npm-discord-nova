@@ -34,5 +34,5 @@ export default abstract class BaseGuildCache<
 
 	public abstract onConstruct(): void
 	public abstract resolve(resolve: (cache: GC) => void): void
-	public abstract updateMinutely(debug: number): void
+	public abstract updateMinutely(): void
 }

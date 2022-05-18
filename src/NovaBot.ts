@@ -52,8 +52,6 @@ export default class NovaBot<
 		bot.on("ready", () => {
 			logger.info(`Logged in as ${options.name}`)
 
-			let debugCount = 0
-
 			let i = 0
 			let count = bot.guilds.cache.size
 			const getTag = () => `[${`${++i}`.padStart(`${count}`.length, "0")}/${count}]`
@@ -86,7 +84,7 @@ export default class NovaBot<
 					}
 
 					if (options.updatesMinutely) {
-						await cache.updateMinutely(debugCount)
+						await cache.updateMinutely()
 					}
 
 					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)
@@ -99,10 +97,9 @@ export default class NovaBot<
 
 			if (options.updatesMinutely) {
 				AfterEvery(1).minutes(async () => {
-					debugCount++
 					for (const guild of bot.guilds.cache.toJSON()) {
 						const cache = await botCache.getGuildCache(guild)
-						cache.updateMinutely(debugCount)
+						cache.updateMinutely()
 					}
 				})
 			}
