@@ -8,15 +8,15 @@ enum Emoji {
 export default class ResponseBuilder {
 	private constructor(public readonly emoji: Emoji, private readonly content: string) {}
 
-	public static good(content: string) {
+	static good(content: string) {
 		return new ResponseBuilder(Emoji.GOOD, content)
 	}
 
-	public static bad(content: string) {
+	static bad(content: string) {
 		return new ResponseBuilder(Emoji.BAD, content)
 	}
 
-	public build() {
+	build() {
 		return new MessageEmbed()
 			.setAuthor({ name: this.content, iconURL: this.emoji })
 			.setColor(this.emoji === Emoji.GOOD ? "#77B255" : "#DD2E44")

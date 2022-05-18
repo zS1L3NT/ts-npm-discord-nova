@@ -19,19 +19,16 @@ const firebaseApp = initializeApp({
 })
 
 export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public readonly ref = getFirestore(firebaseApp).collection(
+	readonly ref = getFirestore(firebaseApp).collection(
 		process.env.FIREBASE__COLLECTION
 	) as CollectionReference<E>
-	public readonly caches = new Collection<string, GC>()
+	readonly caches = new Collection<string, GC>()
 
-	public constructor(
-		private readonly GCClass: iBaseGuildCache<E, GC>,
-		public readonly bot: Client
-	) {
+	constructor(private readonly GCClass: iBaseGuildCache<E, GC>, public readonly bot: Client) {
 		this.onConstruct()
 	}
 
-	public getGuildCache(guild: Guild): Promise<GC> {
+	getGuildCache(guild: Guild): Promise<GC> {
 		return new Promise<GC>((resolve, reject) => {
 			const cache = this.caches.get(guild.id)
 			if (!cache) {
@@ -57,9 +54,9 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 		})
 	}
 
-	public abstract onConstruct(): void
-	public abstract onSetGuildCache(cache: GC): void
-	public abstract registerGuildCache(guildId: string): void
-	public abstract eraseGuildCache(guildId: string): void
-	public abstract getEmptyEntry(): E
+	abstract onConstruct(): void
+	abstract onSetGuildCache(cache: GC): void
+	abstract registerGuildCache(guildId: string): void
+	abstract eraseGuildCache(guildId: string): void
+	abstract getEmptyEntry(): E
 }

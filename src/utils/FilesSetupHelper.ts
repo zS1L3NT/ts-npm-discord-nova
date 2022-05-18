@@ -19,12 +19,12 @@ export default class FilesSetupHelper<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	public readonly commandFiles = new Collection<string, BaseCommand<E, GC>>()
-	public readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
-	public readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
-	public readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
+	readonly commandFiles = new Collection<string, BaseCommand<E, GC>>()
+	readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
+	readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
+	readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
 
-	public constructor(public readonly options: NovaOptions<E, GC, BC>) {
+	constructor(public readonly options: NovaOptions<E, GC, BC>) {
 		this.commandFiles.set("help", new CommandHelp(this))
 		this.buttonFiles.set("help-maximum", new ButtonHelpMaximum(this))
 		this.buttonFiles.set("help-minimum", new ButtonHelpMinimum(this))

@@ -12,12 +12,9 @@ class HelpBuilder<
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 
-	public constructor(
-		private readonly fsh: FilesSetupHelper<E, GC, BC>,
-		private readonly cache: GC
-	) {}
+	constructor(private readonly fsh: FilesSetupHelper<E, GC, BC>, private readonly cache: GC) {}
 
-	public buildMaximum(): CommandPayload {
+	buildMaximum(): CommandPayload {
 		return {
 			embeds: [
 				new MessageEmbed()
@@ -45,7 +42,7 @@ class HelpBuilder<
 		}
 	}
 
-	public buildMinimum(): CommandPayload {
+	buildMinimum(): CommandPayload {
 		return {
 			embeds: [
 				new MessageEmbed()
@@ -74,7 +71,7 @@ class HelpBuilder<
 		}
 	}
 
-	public buildCommand(command: string): CommandPayload {
+	buildCommand(command: string): CommandPayload {
 		const embed = new MessageEmbed().setAuthor({ name: command, iconURL: this.QUESTION })
 
 		const commandFile = this.fsh.commandFiles.get(command)!
@@ -130,7 +127,7 @@ class HelpBuilder<
 		}
 	}
 
-	public createSelectMenu(): MessageSelectMenu {
+	createSelectMenu(): MessageSelectMenu {
 		return new MessageSelectMenu()
 			.setCustomId("help-item")
 			.setPlaceholder("Choose a command")

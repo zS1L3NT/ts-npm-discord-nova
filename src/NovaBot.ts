@@ -39,7 +39,7 @@ export default class NovaBot<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	public constructor(options: NovaOptions<E, GC, BC>) {
+	constructor(options: NovaOptions<E, GC, BC>) {
 		const bot = new Client({ intents: options.intents })
 		global.logger = options.logger
 

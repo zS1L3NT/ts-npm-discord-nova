@@ -18,12 +18,9 @@ export abstract class SelectMenuMiddleware<E extends BaseEntry, GC extends BaseG
 }
 
 export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public constructor(
-		public readonly cache: GC,
-		public readonly interaction: SelectMenuInteraction
-	) {}
+	constructor(public readonly cache: GC, public readonly interaction: SelectMenuInteraction) {}
 
-	public respond(options: ResponseBuilder | CommandPayload) {
+	respond(options: ResponseBuilder | CommandPayload) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.followUp({ embeds: [options.build()] })
@@ -35,7 +32,7 @@ export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, 
 		}
 	}
 
-	public update(options: ResponseBuilder | CommandPayload) {
+	update(options: ResponseBuilder | CommandPayload) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.update({ embeds: [options.build()] })
@@ -47,7 +44,7 @@ export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, 
 		}
 	}
 
-	public value(): string | undefined {
+	value(): string | undefined {
 		return this.interaction.values[0]
 	}
 }

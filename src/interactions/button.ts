@@ -21,9 +21,9 @@ export abstract class ButtonMiddleware<E extends BaseEntry, GC extends BaseGuild
 }
 
 export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	public constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
+	constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
 
-	public respond(options: ResponseBuilder | CommandPayload) {
+	respond(options: ResponseBuilder | CommandPayload) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.followUp({ embeds: [options.build()] })
@@ -35,7 +35,7 @@ export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>>
 		}
 	}
 
-	public update(options: ResponseBuilder | CommandPayload) {
+	update(options: ResponseBuilder | CommandPayload) {
 		if (options instanceof ResponseBuilder) {
 			this.interaction
 				.update({ embeds: [options.build()] })

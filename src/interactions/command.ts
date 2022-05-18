@@ -26,26 +26,26 @@ export abstract class CommandMiddleware<E extends BaseEntry, GC extends BaseGuil
 export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private response: any
 	private timeout: NodeJS.Timeout | undefined
-	public data: Record<
+	data: Record<
 		string,
 		GuildChannel | GuildMember | User | Role | string | number | boolean | null
 	> = {}
 
-	public constructor(
+	constructor(
 		public readonly type: CommandType,
 		public readonly cache: GC,
 		public readonly interaction?: CommandInteraction,
 		public readonly message?: Message
 	) {}
 
-	public match(regexp: string) {
+	match(regexp: string) {
 		if (!this.message) throw new Error("CommandHelper.match() called on Slash command")
 
 		const regex = this.message.content.match(new RegExp(regexp))
 		return regex ? regex.slice(1) : null
 	}
 
-	public isMessageCommand(prefix: string, command: string, type: "only" | "more") {
+	isMessageCommand(prefix: string, command: string, type: "only" | "more") {
 		if (!this.message)
 			throw new Error("CommandHelper.isMessageCommand() called on Slash command")
 
@@ -62,7 +62,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		}
 	}
 
-	public input() {
+	input() {
 		if (!this.message) throw new Error("CommandHelper.input() called on Slash command")
 
 		return this.match(`^\\S* *(.*)`)?.[0]
@@ -71,7 +71,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 			?.filter(i => i !== "")
 	}
 
-	public respond(options: ResponseBuilder | CommandPayload | null, ms?: number) {
+	respond(options: ResponseBuilder | CommandPayload | null, ms?: number) {
 		if (this.message) {
 			if (options == null) {
 				this.message
@@ -127,7 +127,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		}
 	}
 
-	public update(options: ResponseBuilder | CommandPayload, ms?: number) {
+	update(options: ResponseBuilder | CommandPayload, ms?: number) {
 		if (this.interaction) throw new Error("CommandHelper.update() called on a Slash command")
 
 		if (this.timeout) {
@@ -153,7 +153,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		})
 	}
 
-	public mentionable(name: string) {
+	mentionable(name: string) {
 		return (this.interaction?.options.getMentionable(name) || this.data[name] || null) as
 			| GuildMember
 			| User
@@ -161,33 +161,33 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 			| null
 	}
 
-	public channel(name: string) {
+	channel(name: string) {
 		return (this.interaction?.options.getChannel(name) ||
 			this.data[name] ||
 			null) as GuildChannel | null
 	}
 
-	public role(name: string) {
+	role(name: string) {
 		return (this.interaction?.options.getRole(name) || this.data[name] || null) as Role | null
 	}
 
-	public user(name: string) {
+	user(name: string) {
 		return (this.interaction?.options.getUser(name) || this.data[name] || null) as User | null
 	}
 
-	public string(name: string) {
+	string(name: string) {
 		return (this.interaction?.options.getString(name) || this.data[name] || null) as
 			| string
 			| null
 	}
 
-	public integer(name: string) {
+	integer(name: string) {
 		return (this.interaction?.options.getInteger(name) || this.data[name] || null) as
 			| number
 			| null
 	}
 
-	public boolean(name: string) {
+	boolean(name: string) {
 		return (this.interaction?.options.getBoolean(name) || this.data[name] || null) as
 			| boolean
 			| null

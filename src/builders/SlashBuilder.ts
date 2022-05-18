@@ -3,9 +3,9 @@ import { SlashCommandBuilder } from "@discordjs/builders"
 import { iSlashData } from "../"
 
 export default class SlashBuilder {
-	public constructor(private readonly data: iSlashData) {}
+	constructor(private readonly data: iSlashData) {}
 
-	public buildCommand(): SlashCommandBuilder {
+	buildCommand(): SlashCommandBuilder {
 		return this.build(SlashCommandBuilder)
 	}
 

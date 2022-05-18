@@ -3,9 +3,8 @@ import {
 } from "discord.js"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, ButtonMiddleware, CommandHelper,
-	CommandType, EventMiddleware, FilesSetupHelper, iBaseBotCache, iBaseGuildCache, NovaOptions,
-	ResponseBuilder, SelectMenuHelper, SelectMenuMiddleware
+	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, CommandHelper, CommandType,
+	FilesSetupHelper, iBaseBotCache, iBaseGuildCache, NovaOptions, ResponseBuilder, SelectMenuHelper
 } from "../"
 
 export default class EventSetupHelper<
@@ -13,10 +12,10 @@ export default class EventSetupHelper<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	public readonly botCache: BC
-	public readonly fsh: FilesSetupHelper<E, GC, BC>
+	readonly botCache: BC
+	readonly fsh: FilesSetupHelper<E, GC, BC>
 
-	public constructor(
+	constructor(
 		private readonly GCClass: iBaseGuildCache<E, GC>,
 		BCClass: iBaseBotCache<E, GC, BC>,
 		public readonly options: NovaOptions<E, GC, BC>,

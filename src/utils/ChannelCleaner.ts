@@ -8,7 +8,7 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 	private channel?: TextChannel
 	private messages = new Collection<string, Message>()
 
-	public constructor(
+	constructor(
 		private readonly cache: GC,
 		private readonly channelId: string,
 		private readonly messageIds: string[]
@@ -22,12 +22,12 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 	 *
 	 * @param excluded Filter
 	 */
-	public setExcluded(excluded: iFilter) {
+	setExcluded(excluded: iFilter) {
 		this.excluded = excluded
 		return this
 	}
 
-	public async clean() {
+	async clean() {
 		const channel = this.cache.guild.channels.cache.get(this.channelId)
 		if (channel instanceof TextChannel) {
 			const messages = await channel.messages.fetch({ limit: 100 })
@@ -69,18 +69,18 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 		}
 	}
 
-	public getChannel() {
+	getChannel() {
 		if (!this.channel) {
 			throw new Error("Channel cleaning not done yet!")
 		}
 		return this.channel
 	}
 
-	public getMessageIds() {
+	getMessageIds() {
 		return this.messageIds
 	}
 
-	public getMessages(): Collection<string, Message> {
+	getMessages() {
 		return this.messages
 	}
 }

@@ -15,9 +15,9 @@ export default abstract class BaseGuildCache<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > {
-	public logger: LogManager<E, GC> = new LogManager(this)
+	logger: LogManager<E, GC> = new LogManager(this)
 
-	public constructor(
+	constructor(
 		public readonly bot: Client,
 		public readonly guild: Guild,
 		public readonly ref: DocumentReference<E>,
@@ -28,11 +28,11 @@ export default abstract class BaseGuildCache<
 		this.onConstruct()
 	}
 
-	public getAliases() {
+	getAliases() {
 		return this.entry.aliases
 	}
 
-	public abstract onConstruct(): void
-	public abstract resolve(resolve: (cache: GC) => void): void
-	public abstract updateMinutely(): void
+	abstract onConstruct(): void
+	abstract resolve(resolve: (cache: GC) => void): void
+	abstract updateMinutely(): void
 }
