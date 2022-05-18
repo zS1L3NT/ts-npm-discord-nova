@@ -1,10 +1,25 @@
 import { Message, MessageEditOptions, MessageOptions } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
 
-export default abstract class BaseMessage<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default abstract class BaseMessage<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	MMs extends MessageMiddleware<E, GC>[] = []
+> {
+	middleware: iMessageMiddleware<E, GC, MMs[number]>[] = []
 	abstract condition(helper: MessageHelper<E, GC>): boolean
 	abstract execute(helper: MessageHelper<E, GC>): Promise<void>
+}
+
+export type iMessageMiddleware<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	MM extends MessageMiddleware<E, GC>
+> = new () => MM
+
+export abstract class MessageMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract handler(helper: MessageHelper<E, GC>): Promise<boolean>
 }
 
 export class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

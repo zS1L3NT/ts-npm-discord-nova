@@ -3,9 +3,10 @@ import {
 } from "discord.js"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, ButtonHelper, FilesSetupHelper,
-	iBaseBotCache, iBaseGuildCache, iSlashFolder, MessageHelper, NovaOptions, ResponseBuilder,
-	SelectMenuHelper, SlashHelper
+	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, ButtonHelper, ButtonMiddleware,
+	EventMiddleware, FilesSetupHelper, iBaseBotCache, iBaseGuildCache, iSlashFolder, MessageHelper,
+	MessageMiddleware, NovaOptions, ResponseBuilder, SelectMenuHelper, SelectMenuMiddleware,
+	SlashHelper, SlashMiddleware
 } from "../"
 
 export default class EventSetupHelper<
@@ -25,8 +26,18 @@ export default class EventSetupHelper<
 		this.botCache = new BCClass(this.GCClass, this.bot)
 		this.fsh = new FilesSetupHelper(this.options)
 
-		for (const event of this.fsh.eventFiles) {
-			this.bot.on(event.name, (...args) => event.execute(this.botCache, ...args))
+		for (const eventFile of this.fsh.eventFiles) {
+			this.bot.on(eventFile.name, async (...args) => {
+				let broke = false
+				for (const middlewareClass of eventFile.middleware) {
+					const middleware = new middlewareClass() as EventMiddleware<E, GC, BC, any>
+					if (await middleware.handler(this.botCache, ...args)) continue
+					broke = true
+					break
+				}
+
+				if (!broke) await eventFile.execute(this.botCache, ...args)
+			})
 		}
 
 		this.bot.on("messageCreate", async message => {
@@ -59,7 +70,16 @@ export default class EventSetupHelper<
 					message
 						.react("⌛")
 						.catch(err => logger.warn("Failed to react (⌛) to message command", err))
-					await messageFile.execute(helper)
+
+					let broke = false
+					for (const middlewareClass of messageFile.middleware) {
+						const middleware = new middlewareClass() as MessageMiddleware<E, GC>
+						if (await middleware.handler(helper)) continue
+						broke = true
+						break
+					}
+
+					if (!broke) await messageFile.execute(helper)
 				} catch (err) {
 					logger.error("Error executing message command", err)
 					helper.reactFailure()
@@ -96,7 +116,16 @@ export default class EventSetupHelper<
 			const slashFile =
 				"files" in slashEntity ? slashEntity.files.get(subcommand!)! : slashEntity
 
-			await slashFile.execute(helper)
+			let broke = false
+			for (const middlewareClass of slashFile.middleware) {
+				const middleware = new middlewareClass() as SlashMiddleware<E, GC>
+				if (await middleware.handler(helper)) continue
+				broke = true
+				break
+			}
+
+			if (!broke) await slashFile.execute(helper)
+
 			if (!slashFile.defer) {
 				await interaction.deleteReply()
 			}
@@ -124,7 +153,15 @@ export default class EventSetupHelper<
 
 		const helper = new ButtonHelper(cache, interaction)
 		try {
-			await buttonFile.execute(helper)
+			let broke = false
+			for (const middlewareClass of buttonFile.middleware) {
+				const middleware = new middlewareClass() as ButtonMiddleware<E, GC>
+				if (await middleware.handler(helper)) continue
+				broke = true
+				break
+			}
+
+			if (!broke) await buttonFile.execute(helper)
 		} catch (err) {
 			logger.error("Error executing button interaction", err)
 			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))
@@ -149,7 +186,15 @@ export default class EventSetupHelper<
 
 		const helper = new SelectMenuHelper(cache, interaction)
 		try {
-			await selectMenuFile.execute(helper)
+			let broke = false
+			for (const middlewareClass of selectMenuFile.middleware) {
+				const middleware = new middlewareClass() as SelectMenuMiddleware<E, GC>
+				if (await middleware.handler(helper)) continue
+				broke = true
+				break
+			}
+
+			if (!broke) await selectMenuFile.execute(helper)
 		} catch (err) {
 			logger.error("Error executing select menu command", err)
 			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))

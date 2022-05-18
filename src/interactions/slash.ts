@@ -3,9 +3,14 @@ import {
 	WebhookEditMessageOptions
 } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, iSlashData, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, iSlashData, ResponseBuilder } from "../"
 
-export default abstract class BaseSlash<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default abstract class BaseSlash<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	SMs extends SlashMiddleware<E, GC>[] = []
+> {
+	middleware: iSlashMiddleware<E, GC, SMs[number]>[] = []
 	abstract defer: boolean
 	abstract ephemeral: boolean
 	abstract data: iSlashData
@@ -14,11 +19,22 @@ export default abstract class BaseSlash<E extends BaseEntry, GC extends BaseGuil
 }
 
 export abstract class BaseSlashSub<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	middleware: iSlashMiddleware<E, GC, any>[] = []
 	abstract defer: boolean
 	abstract ephemeral: boolean
 	abstract data: iSlashData
 
 	abstract execute(helper: SlashHelper<E, GC>): Promise<any>
+}
+
+export type iSlashMiddleware<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	SM extends SlashMiddleware<E, GC>
+> = new () => SM
+
+export abstract class SlashMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract handler(helper: SlashHelper<E, GC>): Promise<boolean>
 }
 
 export class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

@@ -2,16 +2,28 @@ import {
 	InteractionReplyOptions, InteractionUpdateOptions, SelectMenuInteraction
 } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from ".."
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../"
 
 export default abstract class BaseSelectMenu<
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
+	GC extends BaseGuildCache<E, GC>,
+	SMMs extends SelectMenuMiddleware<E, GC>[] = []
 > {
+	middleware: iSelectMenuMiddleware<E, GC, SMMs[number]>[] = []
 	abstract defer: boolean
 	abstract ephemeral: boolean
 
 	abstract execute(helper: SelectMenuHelper<E, GC>): Promise<any>
+}
+
+export type iSelectMenuMiddleware<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	SMM extends SelectMenuMiddleware<E, GC>
+> = new () => SMM
+
+export abstract class SelectMenuMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract handler(helper: SelectMenuHelper<E, GC>): Promise<boolean>
 }
 
 export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
