@@ -34,7 +34,7 @@ export type iSlashMiddleware<
 > = new () => SM
 
 export abstract class SlashMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	abstract handler(helper: SlashHelper<E, GC>): Promise<boolean>
+	abstract handler(helper: SlashHelper<E, GC>): boolean | Promise<boolean>
 }
 
 export class SlashHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

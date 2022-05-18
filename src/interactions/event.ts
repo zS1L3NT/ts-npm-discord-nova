@@ -29,5 +29,5 @@ export abstract class EventMiddleware<
 	BC extends BaseBotCache<E, GC>,
 	N extends keyof ClientEvents
 > {
-	abstract handler(botCache: BC, ...args: ClientEvents[N]): Promise<boolean>
+	abstract handler(botCache: BC, ...args: ClientEvents[N]): boolean | Promise<boolean>
 }

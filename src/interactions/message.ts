@@ -19,7 +19,7 @@ export type iMessageMiddleware<
 > = new () => MM
 
 export abstract class MessageMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	abstract handler(helper: MessageHelper<E, GC>): Promise<boolean>
+	abstract handler(helper: MessageHelper<E, GC>): boolean | Promise<boolean>
 }
 
 export class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

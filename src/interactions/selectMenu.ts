@@ -23,7 +23,7 @@ export type iSelectMenuMiddleware<
 > = new () => SMM
 
 export abstract class SelectMenuMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	abstract handler(helper: SelectMenuHelper<E, GC>): Promise<boolean>
+	abstract handler(helper: SelectMenuHelper<E, GC>): boolean | Promise<boolean>
 }
 
 export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

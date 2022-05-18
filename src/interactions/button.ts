@@ -21,7 +21,7 @@ export type iButtonMiddleware<
 > = new () => BM
 
 export abstract class ButtonMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	abstract handler(helper: ButtonHelper<E, GC>): Promise<boolean>
+	abstract handler(helper: ButtonHelper<E, GC>): boolean | Promise<boolean>
 }
 
 export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
