@@ -67,9 +67,11 @@ export default class EventSetupHelper<
 					`Opening MessageCommand(${fileName}) for User(${message.author.tag})`
 				)
 				try {
-					message
-						.react("⌛")
-						.catch(err => logger.warn("Failed to react (⌛) to message command", err))
+					message.channel
+						.sendTyping()
+						.catch(err =>
+							logger.warn("Failed to send typing after message command", err)
+						)
 
 					let broke = false
 					for (const middlewareClass of messageFile.middleware) {
@@ -82,11 +84,11 @@ export default class EventSetupHelper<
 					if (!broke) await messageFile.execute(helper)
 				} catch (err) {
 					logger.error("Error executing message command", err)
-					helper.reactFailure()
 					helper.respond(
 						ResponseBuilder.bad("There was an error while executing this command!")
 					)
 				}
+
 				logger.discord(
 					`Closing MessageCommand(${fileName}) for User(${message.author.tag})`
 				)

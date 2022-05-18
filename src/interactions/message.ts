@@ -65,32 +65,10 @@ export class MessageHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		}, ms)
 	}
 
-	public reactSuccess() {
-		this.message
-			.react("✅")
-			.catch(err => logger.warn("Failed to react (✅) to message command", err))
-	}
-
-	public reactFailure() {
-		this.message
-			.react("❌")
-			.catch(err => logger.warn("Failed to react (❌) to message command", err))
-	}
-
 	public respond(options: ResponseBuilder | MessageOptions, ms?: number) {
 		let message: Promise<Message>
 
 		if (options instanceof ResponseBuilder) {
-			if (options.emoji.includes("good.png")) {
-				this.message
-					.react("✅")
-					.catch(err => logger.warn("Failed to react (✅) to message command", err))
-			} else {
-				this.message
-					.react("❌")
-					.catch(err => logger.warn("Failed to react (❌) to message command", err))
-			}
-
 			message = this.message.channel.send({
 				embeds: [options.build()]
 			})
