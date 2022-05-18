@@ -3,11 +3,11 @@ import {
 } from "discord.js"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, BaseSlash, ButtonHelper, ButtonMiddleware,
-	EventMiddleware, FilesSetupHelper, iBaseBotCache, iBaseGuildCache, iSlashFolder, MessageHelper,
-	MessageMiddleware, NovaOptions, ResponseBuilder, SelectMenuHelper, SelectMenuMiddleware,
-	SlashHelper, SlashMiddleware
+	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, ButtonMiddleware, EventMiddleware,
+	FilesSetupHelper, iBaseBotCache, iBaseGuildCache, NovaOptions, ResponseBuilder,
+	SelectMenuHelper, SelectMenuMiddleware
 } from "../"
+import BaseCommand, { CommandHelper, CommandMiddleware, CommandType } from "../interactions/command"
 
 export default class EventSetupHelper<
 	E extends BaseEntry,
@@ -59,82 +59,75 @@ export default class EventSetupHelper<
 	}
 
 	private async onMessage(cache: GC, message: Message) {
-		const helper = new MessageHelper(cache, message)
+		const helper = new CommandHelper(CommandType.Message, cache, undefined, message)
 
-		for (const [fileName, messageFile] of this.fsh.messageFiles) {
-			if (messageFile.condition(helper)) {
-				logger.discord(
-					`Opening MessageCommand(${fileName}) for User(${message.author.tag})`
-				)
-				try {
-					message.channel
-						.sendTyping()
-						.catch(err =>
-							logger.warn("Failed to send typing after message command", err)
-						)
+		for (const [fileName, commandFile] of this.fsh.commandFiles) {
+			if (commandFile.only === CommandType.Slash) return
+			if (!commandFile.condition(helper)) return
 
-					let broke = false
-					for (const middlewareClass of messageFile.middleware) {
-						const middleware = new middlewareClass() as MessageMiddleware<E, GC>
-						if (await middleware.handler(helper)) continue
-						broke = true
-						break
-					}
+			logger.discord(`Opening MessageCommand(${fileName}) for User(${message.author.tag})`)
 
-					if (!broke) await messageFile.execute(helper)
-				} catch (err) {
-					logger.error("Error executing message command", err)
-					helper.respond(
-						ResponseBuilder.bad("There was an error while executing this command!")
-					)
+			try {
+				message.channel
+					.sendTyping()
+					.catch(err => logger.warn("Failed to send typing after message command", err))
+
+				let broke = false
+				for (const middlewareClass of commandFile.middleware) {
+					// prettier-ignore
+					const middleware = new middlewareClass() as CommandMiddleware<CommandType.Message, E, GC>
+					if (await middleware.handler(helper)) continue
+					broke = true
+					break
 				}
 
-				logger.discord(
-					`Closing MessageCommand(${fileName}) for User(${message.author.tag})`
+				if (!broke) await commandFile.execute(helper)
+			} catch (err) {
+				logger.error("Error executing message command", err)
+				helper.respond(
+					ResponseBuilder.bad("There was an error while executing this command!")
 				)
-				return
 			}
+
+			logger.discord(`Closing MessageCommand(${fileName}) for User(${message.author.tag})`)
+			break
 		}
 	}
 
 	private async onSlashInteraction(cache: GC, interaction: CommandInteraction) {
-		const slashEntity = this.fsh.slashFiles.get(interaction.commandName)
-		if (!slashEntity) return
+		const commandFile = this.fsh.commandFiles.get(interaction.commandName)
+		if (!commandFile) return
+
 		logger.discord(
 			`Opening SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
 
-		const subcommand = interaction.options.getSubcommand(false)
-		const ephemeral = Object.keys(slashEntity).includes("ephemeral")
-			? (slashEntity as BaseSlash<E, GC>).ephemeral
-			: (slashEntity as iSlashFolder<E, GC>).files.get(subcommand!)!.ephemeral
-
+		const helper = new CommandHelper(CommandType.Slash, cache, interaction, undefined)
 		await interaction
-			.deferReply({ ephemeral })
-			.catch(err => logger.error("Failed to defer command interaction", err))
+			.deferReply({ ephemeral: commandFile.ephemeral })
+			.catch(err => logger.error("Failed to defer slash interaction", err))
 
-		const helper = new SlashHelper(cache, interaction)
 		try {
-			const slashFile =
-				"files" in slashEntity ? slashEntity.files.get(subcommand!)! : slashEntity
-
 			let broke = false
-			for (const middlewareClass of slashFile.middleware) {
-				const middleware = new middlewareClass() as SlashMiddleware<E, GC>
+			for (const middlewareClass of commandFile.middleware) {
+				// prettier-ignore
+				const middleware = new middlewareClass() as CommandMiddleware<CommandType.Slash, E, GC>
 				if (await middleware.handler(helper)) continue
 				broke = true
 				break
 			}
 
-			if (!broke) await slashFile.execute(helper)
-
-			if (!slashFile.defer) {
-				await interaction.deleteReply()
+			if (!broke) {
+				await commandFile.execute(helper)
+				if (!commandFile.defer) {
+					await interaction.deleteReply()
+				}
 			}
 		} catch (err) {
-			logger.error("Error executing command interaction", err)
+			logger.error("Error executing slash interaction", err)
 			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))
 		}
+
 		logger.discord(
 			`Closing SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
