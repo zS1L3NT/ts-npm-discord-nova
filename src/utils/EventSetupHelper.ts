@@ -29,8 +29,7 @@ export default class EventSetupHelper<
 		for (const eventFile of this.fsh.eventFiles) {
 			this.bot.on(eventFile.name, async (...args) => {
 				let broke = false
-				for (const middlewareClass of eventFile.middleware) {
-					const middleware = new middlewareClass() as EventMiddleware<E, GC, BC, any>
+				for (const middleware of eventFile.middleware) {
 					if (await middleware.handler(this.botCache, ...args)) continue
 					broke = true
 					break
@@ -74,9 +73,7 @@ export default class EventSetupHelper<
 					.catch(err => logger.warn("Failed to send typing after message command", err))
 
 				let broke = false
-				for (const middlewareClass of commandFile.middleware) {
-					// prettier-ignore
-					const middleware = new middlewareClass() as CommandMiddleware<CommandType.Message, E, GC>
+				for (const middleware of commandFile.middleware) {
 					if (await middleware.handler(helper)) continue
 					broke = true
 					break
@@ -110,9 +107,7 @@ export default class EventSetupHelper<
 
 		try {
 			let broke = false
-			for (const middlewareClass of commandFile.middleware) {
-				// prettier-ignore
-				const middleware = new middlewareClass() as CommandMiddleware<CommandType.Slash, E, GC>
+			for (const middleware of commandFile.middleware) {
 				if (await middleware.handler(helper)) continue
 				broke = true
 				break
@@ -150,8 +145,7 @@ export default class EventSetupHelper<
 		const helper = new ButtonHelper(cache, interaction)
 		try {
 			let broke = false
-			for (const middlewareClass of buttonFile.middleware) {
-				const middleware = new middlewareClass() as ButtonMiddleware<E, GC>
+			for (const middleware of buttonFile.middleware) {
 				if (await middleware.handler(helper)) continue
 				broke = true
 				break
@@ -183,8 +177,7 @@ export default class EventSetupHelper<
 		const helper = new SelectMenuHelper(cache, interaction)
 		try {
 			let broke = false
-			for (const middlewareClass of selectMenuFile.middleware) {
-				const middleware = new middlewareClass() as SelectMenuMiddleware<E, GC>
+			for (const middleware of selectMenuFile.middleware) {
 				if (await middleware.handler(helper)) continue
 				broke = true
 				break

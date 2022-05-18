@@ -10,26 +10,18 @@ export enum CommandType {
 export default abstract class BaseCommand<
 	CT extends CommandType,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	CMs extends CommandMiddleware<CT, E, GC>[] = []
+	GC extends BaseGuildCache<E, GC>
 > {
 	abstract defer: boolean
 	abstract ephemeral: boolean
 	abstract data: iSlashData
 	only: CommandType | null = null
-	middleware: iCommandMiddleware<CT, E, GC, CMs[number]>[] = []
+	middleware: CommandMiddleware<CT, E, GC>[] = []
 
 	abstract condition(helper: CommandHelper<CT, E, GC>): boolean
-	abstract converter(message: string): any
+	abstract converter(helper: CommandHelper<CT, E, GC>): any
 	abstract execute(helper: CommandHelper<CT, E, GC>): Promise<any>
 }
-
-export type iCommandMiddleware<
-	CT extends CommandType,
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	CM extends CommandMiddleware<CT, E, GC>
-> = new () => CM
 
 export abstract class CommandMiddleware<
 	CT extends CommandType,
