@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, SlashCommandSubcommandBuilder } from "@discordjs/builders"
+import { SlashCommandBuilder } from "@discordjs/builders"
 
 import { iSlashData } from "../"
 
@@ -9,13 +9,7 @@ export default class SlashBuilder {
 		return this.build(SlashCommandBuilder)
 	}
 
-	public buildSubcommand(): SlashCommandSubcommandBuilder {
-		return this.build(SlashCommandSubcommandBuilder)
-	}
-
-	private build<B extends SlashCommandBuilder | SlashCommandSubcommandBuilder>(
-		Builder: new () => B
-	): B {
+	private build(Builder: new () => SlashCommandBuilder) {
 		const builder = new Builder().setName(this.data.name).setDescription(this.data.description)
 
 		if (this.data.options) {
@@ -93,6 +87,6 @@ export default class SlashBuilder {
 			}
 		}
 
-		return builder as B
+		return builder
 	}
 }
