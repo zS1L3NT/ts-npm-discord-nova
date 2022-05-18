@@ -3,11 +3,10 @@ import {
 } from "discord.js"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, ButtonMiddleware, EventMiddleware,
-	FilesSetupHelper, iBaseBotCache, iBaseGuildCache, NovaOptions, ResponseBuilder,
-	SelectMenuHelper, SelectMenuMiddleware
+	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, ButtonMiddleware, CommandHelper,
+	CommandType, EventMiddleware, FilesSetupHelper, iBaseBotCache, iBaseGuildCache, NovaOptions,
+	ResponseBuilder, SelectMenuHelper, SelectMenuMiddleware
 } from "../"
-import BaseCommand, { CommandHelper, CommandType } from "../interactions/command"
 
 export default class EventSetupHelper<
 	E extends BaseEntry,

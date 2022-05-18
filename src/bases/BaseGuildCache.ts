@@ -1,8 +1,7 @@
 import { Client, Guild } from "discord.js"
 import { DocumentReference } from "firebase-admin/firestore"
 
-import { BaseEntry } from "../"
-import LogManager from "../utils/LogManager"
+import { BaseEntry, LogManager } from "../"
 
 export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> = new (
 	bot: Client,

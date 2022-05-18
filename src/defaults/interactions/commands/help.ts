@@ -1,8 +1,7 @@
 import {
-	BaseBotCache, BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, FilesSetupHelper,
-	HelpBuilder
+	BaseBotCache, BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType,
+	FilesSetupHelper, HelpBuilder
 } from "../../.."
-import { CommandType } from "../../../interactions/command"
 
 export default class CommandHelp<
 	E extends BaseEntry,

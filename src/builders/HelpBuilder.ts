@@ -1,7 +1,8 @@
 import { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } from "discord.js"
 
-import { BaseBotCache, BaseEntry, BaseGuildCache, CommandPayload, FilesSetupHelper } from "../"
-import { CommandType } from "../interactions/command"
+import {
+	BaseBotCache, BaseEntry, BaseGuildCache, CommandPayload, CommandType, FilesSetupHelper
+} from "../"
 
 class HelpBuilder<
 	E extends BaseEntry,

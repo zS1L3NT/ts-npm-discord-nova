@@ -1,7 +1,6 @@
 import { ColorResolvable, MessageEmbed, TextChannel } from "discord.js"
 
-import BaseEntry from "../bases/BaseEntry"
-import BaseGuildCache from "../bases/BaseGuildCache"
+import { BaseEntry, BaseGuildCache } from "../"
 
 type LogData = {
 	avatar: string

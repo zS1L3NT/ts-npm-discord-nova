@@ -4,9 +4,7 @@ import { Collection } from "discord.js"
 import { SlashCommandBuilder } from "@discordjs/builders"
 import { REST } from "@discordjs/rest"
 
-import { BaseEntry, BaseGuildCache } from "../"
-import SlashBuilder from "../builders/SlashBuilder"
-import BaseCommand from "../interactions/command"
+import { BaseCommand, BaseEntry, BaseGuildCache, SlashBuilder } from "../"
 
 export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private readonly commands: SlashCommandBuilder[]

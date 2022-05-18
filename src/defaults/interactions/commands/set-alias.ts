@@ -1,9 +1,9 @@
 import { FieldValue } from "firebase-admin/firestore"
 
 import {
-	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, iSlashStringOption, ResponseBuilder
+	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, iSlashStringOption,
+	ResponseBuilder
 } from "../../.."
-import { CommandType } from "../../../interactions/command"
 
 export default class CommandSetAlias<
 	E extends BaseEntry,

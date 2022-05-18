@@ -1,8 +1,9 @@
 import { TextChannel } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../../.."
-import BaseCommand, { CommandHelper, CommandType } from "../../../interactions/command"
-import IsAdminMiddleware from "../../middleware/IsAdminMiddleware"
+import {
+	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
+	ResponseBuilder
+} from "../../.."
 
 export default class CommandSetLogChannel<
 	E extends BaseEntry,

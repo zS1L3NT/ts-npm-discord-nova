@@ -4,14 +4,14 @@ import { useTry } from "no-try"
 import path from "path"
 
 import {
-	BaseBotCache, BaseButton, BaseEntry, BaseEvent, BaseGuildCache, BaseSelectMenu, NovaOptions
+	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseSelectMenu,
+	NovaOptions
 } from "../"
 import ButtonHelpMaximum from "../defaults/interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../defaults/interactions/buttons/help-minimum"
 import EventGuildCreate from "../defaults/interactions/events/guildCreate"
 import EventGuildDelete from "../defaults/interactions/events/guildDelete"
 import SelectMenuHelpItem from "../defaults/interactions/selectMenus/help-item"
-import BaseCommand from "../interactions/command"
 
 export default class FilesSetupHelper<
 	E extends BaseEntry,
