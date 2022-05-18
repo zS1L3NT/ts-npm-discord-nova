@@ -7,7 +7,7 @@ import path from "path"
 
 import { SlashCommandBuilder } from "@discordjs/builders"
 
-import { BaseEntry, BaseGuildCache, BaseSlash, BaseSlashSub, iSlashData, iSlashFolder } from "../"
+import { BaseEntry, BaseGuildCache, iSlashData } from "../"
 import SlashBuilder from "./SlashBuilder"
 
 class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {

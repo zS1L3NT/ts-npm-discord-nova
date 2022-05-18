@@ -1,17 +1,8 @@
-import { Collection, MessageActionRow, MessageEmbed } from "discord.js"
-
-import { SlashCommandBuilder } from "@discordjs/builders"
-
-import { BaseEntry, BaseGuildCache, BaseSlashSub } from "../"
+import { MessageActionRow, MessageEmbed } from "discord.js"
 
 declare type CommandPayload = {
 	embed: MessageEmbed[]
 	components: MessageActionRow[]
-}
-
-declare interface iSlashFolder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	data: SlashCommandBuilder
-	files: Collection<string, BaseSlashSub<E, GC>>
 }
 
 declare interface iSlashData {
