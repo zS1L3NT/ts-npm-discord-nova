@@ -15,7 +15,6 @@ export type NovaOptions<
 	intents: BitFieldResolvable<IntentsString, number>
 	name: string
 	directory: string
-	updatesMinutely: boolean
 
 	help: {
 		message: (cache: GC) => string
@@ -83,9 +82,7 @@ export default class NovaBot<
 						return
 					}
 
-					if (options.updatesMinutely) {
-						await cache.updateMinutely()
-					}
+					await cache.updateMinutely()
 
 					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)
 				})
@@ -95,14 +92,12 @@ export default class NovaBot<
 
 			options.onSetup?.(botCache)
 
-			if (options.updatesMinutely) {
-				AfterEvery(1).minutes(async () => {
-					for (const guild of bot.guilds.cache.toJSON()) {
-						const cache = await botCache.getGuildCache(guild)
-						cache.updateMinutely()
-					}
-				})
-			}
+			AfterEvery(1).minutes(async () => {
+				for (const guild of bot.guilds.cache.toJSON()) {
+					const cache = await botCache.getGuildCache(guild)
+					cache.updateMinutely()
+				}
+			})
 		})
 	}
 }
