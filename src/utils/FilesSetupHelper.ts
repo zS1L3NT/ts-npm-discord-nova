@@ -9,6 +9,7 @@ import {
 } from "../"
 import ButtonHelpMaximum from "../defaults/interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../defaults/interactions/buttons/help-minimum"
+import CommandHelp from "../defaults/interactions/commands/help"
 import EventGuildCreate from "../defaults/interactions/events/guildCreate"
 import EventGuildDelete from "../defaults/interactions/events/guildDelete"
 import SelectMenuHelpItem from "../defaults/interactions/selectMenus/help-item"
@@ -24,13 +25,10 @@ export default class FilesSetupHelper<
 	public readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
 
 	public constructor(public readonly options: NovaOptions<E, GC, BC>) {
-		// this.slashFiles.set("help", new SlashHelp(this))
+		this.commandFiles.set("help", new CommandHelp(this))
 		this.buttonFiles.set("help-maximum", new ButtonHelpMaximum(this))
 		this.buttonFiles.set("help-minimum", new ButtonHelpMinimum(this))
 		this.selectMenuFiles.set("help-item", new SelectMenuHelpItem(this))
-		// if (this.options.help.commandRegex) {
-		// this.messageFiles.set("help-item", new MessageHelp(this))
-		// }
 		this.eventFiles.push(new EventGuildCreate(this), new EventGuildDelete<E, GC, BC>())
 
 		this.setupCommands()
