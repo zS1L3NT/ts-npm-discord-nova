@@ -1,11 +1,14 @@
-import { GuildMember, TextChannel } from "discord.js"
+import { TextChannel } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, BaseSlashSub, ResponseBuilder, SlashHelper } from "../../../.."
+import IsAdminMiddleware from "../../../../middleware/IsAdminMiddleware"
 
 export default class SlashsSubLogChannel<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > extends BaseSlashSub<E, GC> {
+	override middleware = [IsAdminMiddleware]
+
 	defer = true
 	ephemeral = true
 	data = {
@@ -26,11 +29,6 @@ export default class SlashsSubLogChannel<
 	}
 
 	override async execute(helper: SlashHelper<E, GC>) {
-		const member = helper.interaction.member as GuildMember
-		if (!member.permissions.has("ADMINISTRATOR") && member.id !== process.env.DISCORD__DEV_ID) {
-			return helper.respond(ResponseBuilder.bad("Only administrators can set bot channels"))
-		}
-
 		const channel = helper.channel("channel")
 		if (channel instanceof TextChannel) {
 			if (channel.id === helper.cache.entry.log_channel_id) {
