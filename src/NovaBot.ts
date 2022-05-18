@@ -72,7 +72,7 @@ export default class NovaBot<
 					}
 
 					const [deployErr] = await useTryAsync(() =>
-						new SlashCommandDeployer(guild.id, esh.fsh.slashFiles).deploy()
+						new SlashCommandDeployer(guild.id, esh.fsh.commandFiles).deploy()
 					)
 					if (deployErr) {
 						const tag = getTag()

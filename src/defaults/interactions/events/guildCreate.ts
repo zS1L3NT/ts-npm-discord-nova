@@ -18,6 +18,6 @@ export default class EventGuildCreate<
 	override async execute(botCache: BC, guild: Guild) {
 		logger.info(`Added to Guild(${guild.name})`)
 		await botCache.registerGuildCache(guild.id)
-		await new SlashCommandDeployer(guild.id, this.fsh.slashFiles).deploy()
+		await new SlashCommandDeployer(guild.id, this.fsh.commandFiles).deploy()
 	}
 }
