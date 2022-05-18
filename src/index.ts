@@ -11,18 +11,11 @@ export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddl
 
 export { default as BaseButton, ButtonMiddleware, ButtonHelper } from "./interactions/button"
 export { default as BaseEvent, EventMiddleware } from "./interactions/event"
-export { default as BaseMessage, MessageMiddleware, MessageHelper } from "./interactions/message"
 export {
 	default as BaseSelectMenu,
 	SelectMenuMiddleware,
 	SelectMenuHelper
 } from "./interactions/selectMenu"
-export {
-	default as BaseSlash,
-	BaseSlashSub,
-	SlashMiddleware,
-	SlashHelper
-} from "./interactions/slash"
 
 export { default as DateHelper } from "./utils/DateHelper"
 export { default as ChannelCleaner } from "./utils/ChannelCleaner"
