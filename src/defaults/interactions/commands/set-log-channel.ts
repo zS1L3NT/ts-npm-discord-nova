@@ -1,16 +1,17 @@
 import { TextChannel } from "discord.js"
 
-import { BaseEntry, BaseGuildCache, BaseSlashSub, ResponseBuilder, SlashHelper } from "../../../.."
-import IsAdminMiddleware from "../../../middleware/IsAdminMiddleware"
+import { BaseEntry, BaseGuildCache, ResponseBuilder } from "../../.."
+import BaseCommand, { CommandHelper, CommandType } from "../../../interactions/command"
+import IsAdminMiddleware from "../../middleware/IsAdminMiddleware"
 
-export default class SlashsSubLogChannel<
+export default class CommandSetLogChannel<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
-> extends BaseSlashSub<E, GC> {
+> extends BaseCommand<CommandType.Slash, E, GC> {
 	defer = true
 	ephemeral = true
 	data = {
-		name: "log-channel",
+		name: "set-log-channel",
 		description: "Set the channel where the bot sends event logs to",
 		options: [
 			{
@@ -26,9 +27,16 @@ export default class SlashsSubLogChannel<
 		]
 	}
 
-	override middleware = [IsAdminMiddleware]
+	override only = CommandType.Slash
+	override middleware = [new IsAdminMiddleware()]
 
-	override async execute(helper: SlashHelper<E, GC>) {
+	override condition(helper: CommandHelper<any, E, GC>): boolean {
+		return false
+	}
+
+	override converter(helper: CommandHelper<any, E, GC>) {}
+
+	override async execute(helper: CommandHelper<any, E, GC>) {
 		const channel = helper.channel("channel")
 		if (channel instanceof TextChannel) {
 			if (channel.id === helper.cache.entry.log_channel_id) {

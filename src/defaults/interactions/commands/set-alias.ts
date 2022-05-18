@@ -1,17 +1,18 @@
 import { FieldValue } from "firebase-admin/firestore"
 
 import {
-	BaseEntry, BaseGuildCache, BaseSlashSub, iSlashStringOption, ResponseBuilder, SlashHelper
-} from "../../../.."
+	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, iSlashStringOption, ResponseBuilder
+} from "../../.."
+import { CommandType } from "../../../interactions/command"
 
-export default class SlashsSubSetAlias<
+export default class CommandSetAlias<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
-> extends BaseSlashSub<E, GC> {
+> extends BaseCommand<any, E, GC> {
 	defer = true
 	ephemeral = true
 	data = {
-		name: "alias",
+		name: "set-alias",
 		description: "Sets an alias for a specific message command",
 		options: [
 			{
@@ -35,6 +36,8 @@ export default class SlashsSubSetAlias<
 		]
 	}
 
+	override only = CommandType.Slash
+
 	constructor(public commands: string[]) {
 		super()
 		;(this.data.options[0]! as iSlashStringOption).choices = commands
@@ -42,7 +45,13 @@ export default class SlashsSubSetAlias<
 			.map(c => ({ name: c, value: c }))
 	}
 
-	override async execute(helper: SlashHelper<E, GC>) {
+	override condition(helper: CommandHelper<any, E, GC>): boolean {
+		return false
+	}
+
+	override converter(helper: CommandHelper<any, E, GC>) {}
+
+	override async execute(helper: CommandHelper<any, E, GC>) {
 		const command = helper.string("command")!
 		const alias = helper.string("alias")
 
