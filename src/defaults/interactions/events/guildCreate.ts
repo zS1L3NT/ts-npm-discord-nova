@@ -9,7 +9,7 @@ export default class EventGuildCreate<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > extends BaseEvent<E, GC, BC, "guildCreate"> {
-	name = "guildCreate" as const
+	override name = "guildCreate" as const
 
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()

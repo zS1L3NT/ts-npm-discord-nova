@@ -8,12 +8,12 @@ export default class CommandHelp<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > extends BaseCommand<E, GC> {
-	defer = false
-	ephemeral = false
-	data = {
+	override defer = false
+	override ephemeral = false
+	override data = {
 		name: "help",
 		description: "Shows you this help message"
-	} as const
+	}
 
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()

@@ -7,8 +7,8 @@ export default class ButtonHelpMaximum<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > extends BaseButton<E, GC> {
-	defer = false
-	ephemeral = true
+	override defer = false
+	override ephemeral = true
 
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()

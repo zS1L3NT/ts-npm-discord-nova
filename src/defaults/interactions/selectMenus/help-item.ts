@@ -8,8 +8,8 @@ export default class SelectMenuHelpItem<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > extends BaseSelectMenu<E, GC> {
-	defer = false
-	ephemeral = true
+	override defer = false
+	override ephemeral = true
 
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()

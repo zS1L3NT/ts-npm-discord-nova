@@ -9,9 +9,9 @@ export default class CommandSetLogChannel<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > extends BaseCommand<E, GC> {
-	defer = true
-	ephemeral = true
-	data = {
+	override defer = true
+	override ephemeral = true
+	override data = {
 		name: "set-log-channel",
 		description: "Set the channel where the bot sends event logs to",
 		options: [

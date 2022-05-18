@@ -7,7 +7,7 @@ export default class GuildDelete<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > extends BaseEvent<E, GC, BC, "guildDelete"> {
-	name = "guildDelete" as const
+	override name = "guildDelete" as const
 
 	override async execute(botCache: BC, guild: Guild) {
 		logger.info(`Removed from Guild(${guild.name})`)

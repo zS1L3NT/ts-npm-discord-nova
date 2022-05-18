@@ -9,9 +9,9 @@ export default class CommandSetAlias<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > extends BaseCommand<E, GC> {
-	defer = true
-	ephemeral = true
-	data = {
+	override defer = true
+	override ephemeral = true
+	override data = {
 		name: "set-alias",
 		description: "Sets an alias for a specific message command",
 		options: [
