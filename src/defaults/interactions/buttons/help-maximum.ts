@@ -15,13 +15,6 @@ export default class ButtonHelpMaximum<
 	}
 
 	override async execute(helper: ButtonHelper<E, GC>) {
-		await helper.interaction.update(
-			new HelpBuilder(
-				this.fsh.options.help.message(helper.cache),
-				this.fsh.options.help.icon,
-				this.fsh.options.directory,
-				helper.cache.getAliases()
-			).buildMaximum()
-		)
+		await helper.interaction.update(new HelpBuilder(this.fsh, helper.cache).buildMaximum())
 	}
 }

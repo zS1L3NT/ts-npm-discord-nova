@@ -7,18 +7,20 @@ import path from "path"
 
 import { SlashCommandBuilder } from "@discordjs/builders"
 
-import { BaseEntry, BaseGuildCache, iSlashData } from "../"
+import { BaseBotCache, BaseEntry, BaseGuildCache, FilesSetupHelper, iSlashData } from "../"
 import SlashBuilder from "./SlashBuilder"
 
-class HelpBuilder<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+class HelpBuilder<
+	E extends BaseEntry,
+	GC extends BaseGuildCache<E, GC>,
+	BC extends BaseBotCache<E, GC>
+> {
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 
 	public constructor(
-		private readonly message: string,
-		private readonly icon: string,
-		private readonly directory: string,
-		private readonly aliases: Record<string, string>
+		private readonly fsh: FilesSetupHelper<E, GC, BC>,
+		private readonly cache: GC
 	) {}
 
 	public buildMaximum(): {

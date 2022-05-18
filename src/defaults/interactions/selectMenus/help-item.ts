@@ -17,12 +17,7 @@ export default class SelectMenuHelpItem<
 
 	override async execute(helper: SelectMenuHelper<E, GC>) {
 		helper.interaction.update(
-			new HelpBuilder(
-				this.fsh.options.help.message(helper.cache),
-				this.fsh.options.help.icon,
-				this.fsh.options.directory,
-				helper.cache.getAliases()
-			).buildCommand(helper.value()!)
+			new HelpBuilder(this.fsh, helper.cache).buildCommand(helper.value()!)
 		)
 	}
 }
