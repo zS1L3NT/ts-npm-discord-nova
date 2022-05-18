@@ -4,21 +4,14 @@ import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
 export default abstract class BaseSelectMenu<
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	SMMs extends SelectMenuMiddleware<E, GC>[] = []
+	GC extends BaseGuildCache<E, GC>
 > {
 	abstract defer: boolean
 	abstract ephemeral: boolean
-	middleware: iSelectMenuMiddleware<E, GC, SMMs[number]>[] = []
+	middleware: SelectMenuMiddleware<E, GC>[] = []
 
 	abstract execute(helper: SelectMenuHelper<E, GC>): Promise<any>
 }
-
-export type iSelectMenuMiddleware<
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	SMM extends SelectMenuMiddleware<E, GC>
-> = new () => SMM
 
 export abstract class SelectMenuMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract handler(helper: SelectMenuHelper<E, GC>): boolean | Promise<boolean>

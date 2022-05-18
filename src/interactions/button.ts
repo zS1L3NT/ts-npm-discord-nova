@@ -2,14 +2,10 @@ import { ButtonInteraction } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
-export default abstract class BaseButton<
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BMs extends ButtonMiddleware<E, GC>[] = []
-> {
+export default abstract class BaseButton<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract defer: boolean
 	abstract ephemeral: boolean
-	middleware: iButtonMiddleware<E, GC, BMs[number]>[] = []
+	middleware: ButtonMiddleware<E, GC>[] = []
 
 	abstract execute(helper: ButtonHelper<E, GC>): Promise<any>
 }
