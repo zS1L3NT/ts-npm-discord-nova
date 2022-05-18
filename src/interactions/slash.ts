@@ -19,10 +19,10 @@ export default abstract class BaseSlash<
 }
 
 export abstract class BaseSlashSub<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	middleware: iSlashMiddleware<E, GC, any>[] = []
 	abstract defer: boolean
 	abstract ephemeral: boolean
 	abstract data: iSlashData
+	middleware: iSlashMiddleware<E, GC, any>[] = []
 
 	abstract execute(helper: SlashHelper<E, GC>): Promise<any>
 }

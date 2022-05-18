@@ -7,8 +7,6 @@ export default class SlashsSubLogChannel<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > extends BaseSlashSub<E, GC> {
-	override middleware = [IsAdminMiddleware]
-
 	defer = true
 	ephemeral = true
 	data = {
@@ -27,6 +25,8 @@ export default class SlashsSubLogChannel<
 			}
 		]
 	}
+
+	override middleware = [IsAdminMiddleware]
 
 	override async execute(helper: SlashHelper<E, GC>) {
 		const channel = helper.channel("channel")

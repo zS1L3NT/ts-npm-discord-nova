@@ -7,9 +7,9 @@ export default abstract class BaseButton<
 	GC extends BaseGuildCache<E, GC>,
 	BMs extends ButtonMiddleware<E, GC>[] = []
 > {
-	middleware: iButtonMiddleware<E, GC, BMs[number]>[] = []
 	abstract defer: boolean
 	abstract ephemeral: boolean
+	middleware: iButtonMiddleware<E, GC, BMs[number]>[] = []
 
 	abstract execute(helper: ButtonHelper<E, GC>): Promise<any>
 }

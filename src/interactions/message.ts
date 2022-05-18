@@ -8,6 +8,7 @@ export default abstract class BaseMessage<
 	MMs extends MessageMiddleware<E, GC>[] = []
 > {
 	middleware: iMessageMiddleware<E, GC, MMs[number]>[] = []
+
 	abstract condition(helper: MessageHelper<E, GC>): boolean
 	abstract execute(helper: MessageHelper<E, GC>): Promise<void>
 }

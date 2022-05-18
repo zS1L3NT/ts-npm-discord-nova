@@ -9,9 +9,9 @@ export default abstract class BaseSelectMenu<
 	GC extends BaseGuildCache<E, GC>,
 	SMMs extends SelectMenuMiddleware<E, GC>[] = []
 > {
-	middleware: iSelectMenuMiddleware<E, GC, SMMs[number]>[] = []
 	abstract defer: boolean
 	abstract ephemeral: boolean
+	middleware: iSelectMenuMiddleware<E, GC, SMMs[number]>[] = []
 
 	abstract execute(helper: SelectMenuHelper<E, GC>): Promise<any>
 }

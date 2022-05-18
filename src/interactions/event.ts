@@ -9,8 +9,8 @@ export default abstract class BaseEvent<
 	N extends keyof ClientEvents,
 	EMs extends EventMiddleware<E, GC, BC, N>[] = []
 > {
-	middleware: iEventMiddleware<E, GC, BC, N, EMs[number]>[] = []
 	abstract name: N
+	middleware: iEventMiddleware<E, GC, BC, N, EMs[number]>[] = []
 
 	abstract execute(botCache: BC, ...args: ClientEvents[N]): Promise<any>
 }
