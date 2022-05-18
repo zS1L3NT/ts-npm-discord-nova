@@ -2,6 +2,7 @@ import { Client, Guild } from "discord.js"
 import { DocumentReference } from "firebase-admin/firestore"
 
 import { BaseEntry } from "../"
+import LogManager from "../utils/LogManager"
 
 export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> = new (
 	bot: Client,
@@ -15,6 +16,8 @@ export default abstract class BaseGuildCache<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > {
+	public logger: LogManager<E, GC> = new LogManager(this)
+
 	public constructor(
 		public readonly bot: Client,
 		public readonly guild: Guild,
