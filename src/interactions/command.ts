@@ -46,14 +46,14 @@ export class CommandHelper<
 > {
 	private response: any
 	private timeout: NodeJS.Timeout | undefined
+	public data: Record<
+		string,
+		GuildChannel | GuildMember | User | Role | string | number | boolean | null
+	> = {}
 
 	public constructor(
 		public readonly type: CT,
 		public readonly cache: GC,
-		private readonly data: Record<
-			string,
-			GuildChannel | GuildMember | User | Role | string | number | boolean | null
-		>,
 		public readonly interaction: CT extends CommandType.Slash ? CommandInteraction : undefined,
 		public readonly message: CT extends CommandType.Message ? Message : undefined
 	) {}

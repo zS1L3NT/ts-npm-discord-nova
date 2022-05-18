@@ -18,12 +18,14 @@ import MessageHelp from "../defaults/interactions/messages/help"
 import SelectMenuHelpItem from "../defaults/interactions/selectMenus/help-item"
 import SlashHelp from "../defaults/interactions/slashs/help"
 import SlashSetAlias from "../defaults/interactions/slashs/set/alias"
+import BaseCommand from "../interactions/command"
 
 export default class FilesSetupHelper<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
+	public readonly commandFiles = new Collection<string, BaseCommand<any, E, GC>>()
 	public readonly slashFiles = new Collection<string, BaseSlash<E, GC> | iSlashFolder<E, GC>>()
 	public readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
 	public readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
@@ -40,6 +42,7 @@ export default class FilesSetupHelper<
 		}
 		this.eventFiles.push(new EventGuildCreate(this), new EventGuildDelete<E, GC, BC>())
 
+		this.setupCommands()
 		this.setupSlashs()
 		this.setupButtons()
 		this.setupSelectMenus()
@@ -63,6 +66,17 @@ export default class FilesSetupHelper<
 			return file.default
 		} else {
 			return file
+		}
+	}
+
+	private setupCommands() {
+		const fileNames = this.readEntities("commands")
+		if (fileNames === null) return
+
+		for (const fileName of fileNames) {
+			const name = fileName.split(".")[0]!
+			const file = this.require<BaseCommand<any, E, GC>>(`commands/${fileName}`)
+			this.commandFiles.set(name, file)
 		}
 	}
 
