@@ -1,31 +1,11 @@
 import AfterEvery from "after-every"
-import {
-	BaseBotCache,
-	BaseEntry,
-	BaseGuildCache,
-	EventSetupHelper,
-	iBaseBotCache,
-	iBaseGuildCache,
-	SlashCommandDeployer
-} from "."
 import { BitFieldResolvable, Client, IntentsString } from "discord.js"
 import { useTryAsync } from "no-try"
 
-export type iConfig = {
-	firebase: {
-		service_account: {
-			projectId: string
-			privateKey: string
-			clientEmail: string
-		}
-		collection: string
-	}
-	discord: {
-		token: string
-		bot_id: string
-		dev_id: string
-	}
-}
+import {
+	BaseBotCache, BaseEntry, BaseGuildCache, EventSetupHelper, iBaseBotCache, iBaseGuildCache,
+	SlashCommandDeployer
+} from "./"
 
 export type NovaOptions<
 	E extends BaseEntry,
@@ -35,8 +15,6 @@ export type NovaOptions<
 	intents: BitFieldResolvable<IntentsString, number>
 	name: string
 	directory: string
-	config: iConfig
-	updatesMinutely: boolean
 
 	help: {
 		message: (cache: GC) => string
@@ -61,7 +39,7 @@ export default class NovaBot<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	public constructor(options: NovaOptions<E, GC, BC>) {
+	constructor(options: NovaOptions<E, GC, BC>) {
 		const bot = new Client({ intents: options.intents })
 		global.logger = options.logger
 
@@ -69,11 +47,9 @@ export default class NovaBot<
 		const esh = new EventSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
 		const { botCache } = esh
 
-		bot.login(options.config.discord.token)
+		bot.login(process.env.DISCORD__TOKEN)
 		bot.on("ready", () => {
 			logger.info(`Logged in as ${options.name}`)
-
-			let debugCount = 0
 
 			let i = 0
 			let count = bot.guilds.cache.size
@@ -93,11 +69,7 @@ export default class NovaBot<
 					}
 
 					const [deployErr] = await useTryAsync(() =>
-						new SlashCommandDeployer(
-							guild.id,
-							options.config,
-							esh.fsh.slashFiles
-						).deploy()
+						new SlashCommandDeployer(guild.id, esh.fsh.commandFiles).deploy()
 					)
 					if (deployErr) {
 						const tag = getTag()
@@ -110,9 +82,7 @@ export default class NovaBot<
 						return
 					}
 
-					if (options.updatesMinutely) {
-						await cache.updateMinutely(debugCount)
-					}
+					await cache.updateMinutely()
 
 					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)
 				})
@@ -122,15 +92,12 @@ export default class NovaBot<
 
 			options.onSetup?.(botCache)
 
-			if (options.updatesMinutely) {
-				AfterEvery(1).minutes(async () => {
-					debugCount++
-					for (const guild of bot.guilds.cache.toJSON()) {
-						const cache = await botCache.getGuildCache(guild)
-						cache.updateMinutely(debugCount)
-					}
-				})
-			}
+			AfterEvery(1).minutes(async () => {
+				for (const guild of bot.guilds.cache.toJSON()) {
+					const cache = await botCache.getGuildCache(guild)
+					cache.updateMinutely()
+				}
+			})
 		})
 	}
 }

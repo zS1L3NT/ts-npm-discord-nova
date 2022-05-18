@@ -1,7 +1,7 @@
 import { DateTime } from "luxon"
 
 export default class DateHelper {
-	public static readonly daysOfWeek: {
+	static readonly daysOfWeek: {
 		[day: string]: string
 	} = {
 		Mon: "Monday",
@@ -12,7 +12,7 @@ export default class DateHelper {
 		Sat: "Saturday",
 		Sun: "Sunday"
 	}
-	public static nameOfMonths = [
+	static nameOfMonths = [
 		"January",
 		"February",
 		"March",
@@ -26,11 +26,11 @@ export default class DateHelper {
 		"November",
 		"December"
 	]
-	public static readonly longerMonths = [1, 3, 5, 7, 8, 10, 12]
+	static readonly longerMonths = [1, 3, 5, 7, 8, 10, 12]
 
-	public constructor(private readonly time: number) {}
+	constructor(private readonly time: number) {}
 
-	public static verify(day: number, month: number, year: number, hour: number, minute: number) {
+	static verify(day: number, month: number, year: number, hour: number, minute: number) {
 		const now = DateTime.now()
 
 		if (this.longerMonths.includes(month)) {
@@ -79,7 +79,7 @@ export default class DateHelper {
 		)
 	}
 
-	public getTimeLeft() {
+	getTimeLeft() {
 		const ms = this.time - Date.now() + 30000
 
 		if (ms < 1000) {
@@ -113,7 +113,7 @@ export default class DateHelper {
 		return w + "w " + dr + "d " + hr + "h " + mr + "m"
 	}
 
-	public getDate() {
+	getDate() {
 		const date = DateTime.fromMillis(this.time).setZone("Asia/Singapore")
 		return date.toFormat("cccc, dd LLLL yyyy 'at' t")
 	}
