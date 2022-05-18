@@ -1,7 +1,7 @@
 import { MessageActionRow, MessageEmbed } from "discord.js"
 
 declare type CommandPayload = {
-	embed: MessageEmbed[]
+	embeds: MessageEmbed[]
 	components: MessageActionRow[]
 }
 
