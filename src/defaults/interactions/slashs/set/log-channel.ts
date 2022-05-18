@@ -1,7 +1,7 @@
 import { TextChannel } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, BaseSlashSub, ResponseBuilder, SlashHelper } from "../../../.."
-import IsAdminMiddleware from "../../../../middleware/IsAdminMiddleware"
+import IsAdminMiddleware from "../../../middleware/IsAdminMiddleware"
 
 export default class SlashsSubLogChannel<
 	E extends BaseEntry,

@@ -1,9 +1,9 @@
 import { GuildMember } from "discord.js"
 
-import BaseEntry from "../bases/BaseEntry"
-import BaseGuildCache from "../bases/BaseGuildCache"
-import ResponseBuilder from "../builders/ResponseBuilder"
-import { SlashHelper, SlashMiddleware } from "../interactions/slash"
+import BaseEntry from "../../bases/BaseEntry"
+import BaseGuildCache from "../../bases/BaseGuildCache"
+import ResponseBuilder from "../../builders/ResponseBuilder"
+import { SlashHelper, SlashMiddleware } from "../../interactions/slash"
 
 export default class IsAdminMiddleware<
 	E extends BaseEntry,
