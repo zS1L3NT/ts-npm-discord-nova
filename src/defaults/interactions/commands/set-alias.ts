@@ -8,7 +8,7 @@ import { CommandType } from "../../../interactions/command"
 export default class CommandSetAlias<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
-> extends BaseCommand<any, E, GC> {
+> extends BaseCommand<E, GC> {
 	defer = true
 	ephemeral = true
 	data = {
@@ -45,13 +45,13 @@ export default class CommandSetAlias<
 			.map(c => ({ name: c, value: c }))
 	}
 
-	override condition(helper: CommandHelper<any, E, GC>): boolean {
+	override condition(helper: CommandHelper<E, GC>): boolean {
 		return false
 	}
 
-	override converter(helper: CommandHelper<any, E, GC>) {}
+	override converter(helper: CommandHelper<E, GC>) {}
 
-	override async execute(helper: CommandHelper<any, E, GC>) {
+	override async execute(helper: CommandHelper<E, GC>) {
 		const command = helper.string("command")!
 		const alias = helper.string("alias")
 

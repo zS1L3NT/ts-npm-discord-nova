@@ -8,7 +8,7 @@ export default class CommandHelp<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
-> extends BaseCommand<any, E, GC> {
+> extends BaseCommand<E, GC> {
 	defer = false
 	ephemeral = false
 	data = {
@@ -20,13 +20,13 @@ export default class CommandHelp<
 		super()
 	}
 
-	override condition(helper: CommandHelper<any, E, GC>): boolean {
+	override condition(helper: CommandHelper<E, GC>): boolean {
 		return !!helper.match(this.fsh.options.help.commandRegex!)
 	}
 
-	override converter(helper: CommandHelper<any, E, GC>) {}
+	override converter(helper: CommandHelper<E, GC>) {}
 
-	override async execute(helper: CommandHelper<any, E, GC>) {
+	override async execute(helper: CommandHelper<E, GC>) {
 		const helpMenu = new HelpBuilder(this.fsh, helper.cache).buildMinimum()
 
 		if (helper.type === CommandType.Slash) {

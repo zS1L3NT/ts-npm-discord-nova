@@ -18,7 +18,7 @@ export default class FilesSetupHelper<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	public readonly commandFiles = new Collection<string, BaseCommand<any, E, GC>>()
+	public readonly commandFiles = new Collection<string, BaseCommand<E, GC>>()
 	public readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
 	public readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
 	public readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
@@ -60,7 +60,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<BaseCommand<any, E, GC>>(`commands/${fileName}`)
+			const file = this.require<BaseCommand<E, GC>>(`commands/${fileName}`)
 			this.commandFiles.set(name, file)
 		}
 	}

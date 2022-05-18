@@ -7,35 +7,23 @@ export enum CommandType {
 	Message = "message"
 }
 
-export default abstract class BaseCommand<
-	CT extends CommandType,
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
-> {
+export default abstract class BaseCommand<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	abstract defer: boolean
 	abstract ephemeral: boolean
 	abstract data: iSlashData
 	only: CommandType | null = null
-	middleware: CommandMiddleware<CT, E, GC>[] = []
+	middleware: CommandMiddleware<E, GC>[] = []
 
-	abstract condition(helper: CommandHelper<CT, E, GC>): boolean
-	abstract converter(helper: CommandHelper<CT, E, GC>): any
-	abstract execute(helper: CommandHelper<CT, E, GC>): Promise<any>
+	abstract condition(helper: CommandHelper<E, GC>): boolean
+	abstract converter(helper: CommandHelper<E, GC>): any
+	abstract execute(helper: CommandHelper<E, GC>): Promise<any>
 }
 
-export abstract class CommandMiddleware<
-	CT extends CommandType,
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
-> {
-	abstract handler(helper: CommandHelper<CT, E, GC>): boolean | Promise<boolean>
+export abstract class CommandMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	abstract handler(helper: CommandHelper<E, GC>): boolean | Promise<boolean>
 }
 
-export class CommandHelper<
-	CT extends CommandType,
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
-> {
+export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private response: any
 	private timeout: NodeJS.Timeout | undefined
 	public data: Record<
@@ -44,10 +32,10 @@ export class CommandHelper<
 	> = {}
 
 	public constructor(
-		public readonly type: CT,
+		public readonly type: CommandType,
 		public readonly cache: GC,
-		public readonly interaction: CT extends CommandType.Slash ? CommandInteraction : undefined,
-		public readonly message: CT extends CommandType.Message ? Message : undefined
+		public readonly interaction?: CommandInteraction,
+		public readonly message?: Message
 	) {}
 
 	public match(regexp: string) {

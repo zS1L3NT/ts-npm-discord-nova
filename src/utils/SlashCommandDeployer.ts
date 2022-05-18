@@ -13,7 +13,7 @@ export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGu
 
 	public constructor(
 		private readonly guildId: string,
-		commandFiles: Collection<string, BaseCommand<any, E, GC>>
+		commandFiles: Collection<string, BaseCommand<E, GC>>
 	) {
 		this.guildId = guildId
 		this.commands = commandFiles.map(file =>

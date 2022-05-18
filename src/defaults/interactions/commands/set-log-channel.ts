@@ -7,7 +7,7 @@ import IsAdminMiddleware from "../../middleware/IsAdminMiddleware"
 export default class CommandSetLogChannel<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
-> extends BaseCommand<CommandType.Slash, E, GC> {
+> extends BaseCommand<E, GC> {
 	defer = true
 	ephemeral = true
 	data = {
@@ -30,13 +30,13 @@ export default class CommandSetLogChannel<
 	override only = CommandType.Slash
 	override middleware = [new IsAdminMiddleware()]
 
-	override condition(helper: CommandHelper<any, E, GC>): boolean {
+	override condition(helper: CommandHelper<E, GC>): boolean {
 		return false
 	}
 
-	override converter(helper: CommandHelper<any, E, GC>) {}
+	override converter(helper: CommandHelper<E, GC>) {}
 
-	override async execute(helper: CommandHelper<any, E, GC>) {
+	override async execute(helper: CommandHelper<E, GC>) {
 		const channel = helper.channel("channel")
 		if (channel instanceof TextChannel) {
 			if (channel.id === helper.cache.entry.log_channel_id) {
