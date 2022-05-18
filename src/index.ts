@@ -4,6 +4,11 @@ export { default as BaseBotCache, iBaseBotCache } from "./bases/BaseBotCache"
 export { default as BaseEntry } from "./bases/BaseEntry"
 export { default as BaseGuildCache, iBaseGuildCache } from "./bases/BaseGuildCache"
 
+export { default as HelpBuilder } from "./builders/HelpBuilder"
+export { default as ResponseBuilder } from "./builders/ResponseBuilder"
+
+export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
+
 export { default as BaseButton, ButtonMiddleware, ButtonHelper } from "./interactions/button"
 export { default as BaseEvent, EventMiddleware } from "./interactions/event"
 export { default as BaseMessage, MessageMiddleware, MessageHelper } from "./interactions/message"
@@ -14,13 +19,10 @@ export {
 } from "./interactions/selectMenu"
 export {
 	default as BaseSlash,
-	SlashMiddleware,
 	BaseSlashSub,
+	SlashMiddleware,
 	SlashHelper
 } from "./interactions/slash"
-
-export { default as HelpBuilder } from "./builders/HelpBuilder"
-export { default as ResponseBuilder } from "./builders/ResponseBuilder"
 
 export { default as DateHelper } from "./utils/DateHelper"
 export { default as ChannelCleaner } from "./utils/ChannelCleaner"
