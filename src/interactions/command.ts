@@ -71,7 +71,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 			?.filter(i => i !== "")
 	}
 
-	respond(options: ResponseBuilder | CommandPayload | null, ms?: number) {
+	respond(options: ResponseBuilder | CommandPayload | null, ms: number | null = 5000) {
 		if (this.message) {
 			if (options == null) {
 				this.message
@@ -83,7 +83,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 					: this.message.channel.send(options)
 				).then(async response => {
 					this.response = response
-					if (ms) {
+					if (ms !== null) {
 						this.timeout = setTimeout(() => {
 							;(this.response as Message)
 								?.delete()
