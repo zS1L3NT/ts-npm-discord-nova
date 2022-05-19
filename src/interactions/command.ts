@@ -38,6 +38,10 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		public readonly message?: Message
 	) {}
 
+	get member() {
+		return (this.interaction || this.message)!.member as GuildMember
+	}
+
 	match(regexp: string) {
 		if (!this.message) throw new Error("CommandHelper.match() called on Slash command")
 

@@ -7,8 +7,7 @@ export default class IsAdminMiddleware<
 	GC extends BaseGuildCache<E, GC>
 > extends CommandMiddleware<E, GC> {
 	override handler(helper: CommandHelper<E, GC>): boolean | Promise<boolean> {
-		const member = (helper.interaction || helper.message)!.member as GuildMember
-		if (!member.permissions.has("ADMINISTRATOR") && member.id !== process.env.DISCORD__DEV_ID) {
+		if (!helper.member.permissions.has("ADMINISTRATOR") && helper.member.id !== process.env.DISCORD__DEV_ID) {
 			helper.respond(ResponseBuilder.bad("Only administrators can use this slash command"))
 			return false
 		}
