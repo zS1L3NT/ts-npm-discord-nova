@@ -36,8 +36,8 @@ export { default as SlashCommandDeployer } from "./utils/SlashCommandDeployer"
 export * from "./NovaBot"
 
 export type CommandPayload = {
-	embeds: MessageEmbed[]
-	components: MessageActionRow[]
+	embeds?: MessageEmbed[]
+	components?: MessageActionRow[]
 }
 
 export interface iSlashData {
