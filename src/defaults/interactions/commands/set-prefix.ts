@@ -10,7 +10,7 @@ export default class CommandSetPrefix<
 	override defer = true
 	override ephemeral = true
 	override data = {
-		name: "prefix",
+		name: "set-prefix",
 		description: "Changes the prefix for message commands in this server",
 		options: [
 			{
