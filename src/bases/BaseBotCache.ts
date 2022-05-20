@@ -28,7 +28,7 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 		this.onConstruct()
 	}
 
-	getGuildCache(guild: Guild): Promise<GC> {
+	getGuildCache(guild: Guild) {
 		return new Promise<GC>((resolve, reject) => {
 			const cache = this.caches.get(guild.id)
 			if (!cache) {

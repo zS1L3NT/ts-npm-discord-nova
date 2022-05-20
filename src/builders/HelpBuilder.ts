@@ -127,7 +127,7 @@ class HelpBuilder<
 		}
 	}
 
-	createSelectMenu(): MessageSelectMenu {
+	createSelectMenu() {
 		return new MessageSelectMenu()
 			.setCustomId("help-item")
 			.setPlaceholder("Choose a command")

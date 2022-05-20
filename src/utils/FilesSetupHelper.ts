@@ -37,7 +37,7 @@ export default class FilesSetupHelper<
 		this.setupEvents()
 	}
 
-	private readEntities(name: string): string[] | null {
+	private readEntities(name: string) {
 		const [err, files] = useTry(() => fs.readdirSync(path.join(this.options.directory, name)))
 		if (err) return null
 		return files

@@ -5,7 +5,7 @@ import { iSlashData } from "../"
 export default class SlashBuilder {
 	constructor(private readonly data: iSlashData) {}
 
-	buildCommand(): SlashCommandBuilder {
+	buildCommand() {
 		return this.build(SlashCommandBuilder)
 	}
 

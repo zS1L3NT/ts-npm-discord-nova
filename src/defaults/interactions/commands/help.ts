@@ -24,7 +24,7 @@ export default class CommandHelp<
 		}
 	}
 
-	override condition(helper: CommandHelper<E, GC>): boolean {
+	override condition(helper: CommandHelper<E, GC>) {
 		return !!helper.match(this.fsh.options.help.commandRegex!)
 	}
 
