@@ -64,8 +64,8 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<BaseCommand<E, GC>>(`commands/${fileName}`)
-			this.commandFiles.set(name, file)
+			const Command = this.require<new () => BaseCommand<E, GC>>(`commands/${fileName}`)
+			this.commandFiles.set(name, new Command())
 		}
 	}
 
@@ -75,8 +75,8 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<BaseButton<E, GC>>(`buttons/${fileName}`)
-			this.buttonFiles.set(name, file)
+			const Button = this.require<new () => BaseButton<E, GC>>(`buttons/${fileName}`)
+			this.buttonFiles.set(name, new Button())
 		}
 	}
 
@@ -86,8 +86,10 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const file = this.require<BaseSelectMenu<E, GC>>(`selectMenus/${fileName}`)
-			this.selectMenuFiles.set(name, file)
+			const SelectMenu = this.require<new () => BaseSelectMenu<E, GC>>(
+				`selectMenus/${fileName}`
+			)
+			this.selectMenuFiles.set(name, new SelectMenu())
 		}
 	}
 
@@ -96,8 +98,8 @@ export default class FilesSetupHelper<
 		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
-			const file = this.require<BaseEvent<E, GC, BC, any>>(`events/${fileName}`)
-			this.eventFiles.push(file)
+			const Event = this.require<new () => BaseEvent<E, GC, BC, any>>(`events/${fileName}`)
+			this.eventFiles.push(new Event())
 		}
 	}
 }
