@@ -1,11 +1,12 @@
 {
 	"name": "nova-bot",
-	"version": "2.0.0-alpha.10",
+	"version": "2.0.0-alpha.11",
 	"description": "Nova Bot, a framework for building Discord Bots",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"author": "zS1L3NT <zechariahtan144@gmail.com> (https://www.zectan.com)",
 	"license": "GPL-3.0",
+	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/zS1L3NT/ts-npm-nova-bot"
