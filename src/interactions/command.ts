@@ -24,9 +24,10 @@ export abstract class CommandMiddleware<E extends BaseEntry, GC extends BaseGuil
 }
 
 export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private response: any
+	private data: any
+	private responded = false
 	private timeout: NodeJS.Timeout | undefined
-	data: Record<
+	params: Record<
 		string,
 		GuildChannel | GuildMember | User | Role | string | number | boolean | null
 	> = {}
@@ -76,20 +77,26 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	}
 
 	respond(options: ResponseBuilder | CommandPayload | null, ms: number | null = 5000) {
+		const payload = options instanceof ResponseBuilder ? { embeds: [options.build()] } : options
+
 		if (this.message) {
-			if (options == null) {
+			if (options === null) {
 				this.message
 					.react("✅")
 					.catch(err => logger.warn("Failed to react to message command", err))
 			} else {
-				;(options instanceof ResponseBuilder
-					? this.message.channel.send({ embeds: [options.build()] })
-					: this.message.channel.send(options)
-				).then(async response => {
-					this.response = response
+				if (this.timeout) clearTimeout(this.timeout)
+
+				const promise: Promise<Message> = this.responded
+					? this.data.edit(payload!)
+					: this.message.channel.send(payload!)
+
+				this.responded = true
+				promise.then(async response => {
+					this.data = response
 					if (ms !== null) {
 						this.timeout = setTimeout(() => {
-							;(this.response as Message)
+							;(this.data as Message)
 								?.delete()
 								.catch(err => logger.warn("Failed to delete message", err))
 						}, ms)
@@ -103,62 +110,20 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		}
 
 		if (this.interaction) {
-			if (options === null)
+			if (payload === null)
 				throw new Error("CommandHelper.respond(null) called on a Slash command")
 
-			if (this.response) {
-				if (options instanceof ResponseBuilder) {
-					this.interaction
-						.editReply({ embeds: [options.build()] })
-						.catch(err => logger.warn("Failed to edit command interaction", err))
-				} else {
-					this.interaction
-						.editReply(options)
-						.catch(err => logger.warn("Failed to edit command interaction", err))
-				}
-			} else {
-				if (options instanceof ResponseBuilder) {
-					this.interaction
-						.followUp({ embeds: [options.build()] })
-						.catch(err => logger.warn("Failed to follow up command interaction", err))
-				} else {
-					this.interaction
-						.followUp(options)
-						.catch(err => logger.warn("Failed to follow up command interaction", err))
-				}
-				this.response = true
-			}
+			const promise = this.responded
+				? this.interaction.editReply(payload)
+				: this.interaction.followUp(payload)
+
+			this.responded = true
+			promise.catch(err => logger.warn("Failed to follow up / edit interaction", err))
 		}
-	}
-
-	update(options: ResponseBuilder | CommandPayload, ms?: number) {
-		if (this.interaction) throw new Error("CommandHelper.update() called on a Slash command")
-
-		if (this.timeout) {
-			clearTimeout(this.timeout)
-		}
-
-		if (!(this.response instanceof Message)) {
-			throw new Error("Cannot update message that hasn't been responded to")
-		}
-
-		;(options instanceof ResponseBuilder
-			? this.response.edit({ embeds: [options.build()] })
-			: this.response.edit(options)
-		).then(async response => {
-			this.response = response
-			if (ms) {
-				this.timeout = setTimeout(() => {
-					;(this.response as Message)
-						?.delete()
-						.catch(err => logger.warn("Failed to delete message", err))
-				}, ms)
-			}
-		})
 	}
 
 	mentionable(name: string) {
-		return (this.interaction?.options.getMentionable(name) || this.data[name] || null) as
+		return (this.interaction?.options.getMentionable(name) || this.params[name] || null) as
 			| GuildMember
 			| User
 			| Role
@@ -167,32 +132,32 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 
 	channel(name: string) {
 		return (this.interaction?.options.getChannel(name) ||
-			this.data[name] ||
+			this.params[name] ||
 			null) as GuildChannel | null
 	}
 
 	role(name: string) {
-		return (this.interaction?.options.getRole(name) || this.data[name] || null) as Role | null
+		return (this.interaction?.options.getRole(name) || this.params[name] || null) as Role | null
 	}
 
 	user(name: string) {
-		return (this.interaction?.options.getUser(name) || this.data[name] || null) as User | null
+		return (this.interaction?.options.getUser(name) || this.params[name] || null) as User | null
 	}
 
 	string(name: string) {
-		return (this.interaction?.options.getString(name) || this.data[name] || null) as
+		return (this.interaction?.options.getString(name) || this.params[name] || null) as
 			| string
 			| null
 	}
 
 	integer(name: string) {
-		return (this.interaction?.options.getInteger(name) || this.data[name] || null) as
+		return (this.interaction?.options.getInteger(name) || this.params[name] || null) as
 			| number
 			| null
 	}
 
 	boolean(name: string) {
-		return (this.interaction?.options.getBoolean(name) || this.data[name] || null) as
+		return (this.interaction?.options.getBoolean(name) || this.params[name] || null) as
 			| boolean
 			| null
 	}
