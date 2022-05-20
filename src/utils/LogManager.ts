@@ -6,6 +6,7 @@ type LogData = {
 	member: GuildMember
 	title: string
 	description: string
+	command: string
 	color?: ColorResolvable
 }
 
@@ -33,7 +34,10 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 					title: data.title,
 					description: data.description,
 					color: data.color,
-					timestamp: new Date()
+					timestamp: new Date(),
+					footer: {
+						text: `Command: ${data.command}`
+					}
 				})
 			]
 		})
