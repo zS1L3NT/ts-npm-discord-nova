@@ -46,9 +46,7 @@ export default class CommandSetAlias<
 			.map(c => ({ name: c, value: c }))
 	}
 
-	override condition(helper: CommandHelper<E, GC>): boolean {
-		return false
-	}
+	override condition(helper: CommandHelper<E, GC>) {}
 
 	override converter(helper: CommandHelper<E, GC>) {}
 

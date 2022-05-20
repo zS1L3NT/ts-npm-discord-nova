@@ -15,7 +15,7 @@ export default abstract class BaseCommand<E extends BaseEntry, GC extends BaseGu
 	only: CommandType | null = null
 	middleware: CommandMiddleware<E, GC>[] = []
 
-	abstract condition(helper: CommandHelper<E, GC>): boolean
+	abstract condition(helper: CommandHelper<E, GC>): boolean | void
 	abstract converter(helper: CommandHelper<E, GC>): any
 	abstract execute(helper: CommandHelper<E, GC>): Promise<any>
 }

@@ -31,9 +31,7 @@ export default class CommandSetLogChannel<
 	override only = CommandType.Slash
 	override middleware = [new IsAdminMiddleware()]
 
-	override condition(helper: CommandHelper<E, GC>): boolean {
-		return false
-	}
+	override condition(helper: CommandHelper<E, GC>) {}
 
 	override converter(helper: CommandHelper<E, GC>) {}
 
