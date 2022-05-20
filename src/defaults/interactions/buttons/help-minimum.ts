@@ -10,6 +10,8 @@ export default class<
 	override defer = false
 	override ephemeral = true
 
+	override middleware = []
+
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()
 	}

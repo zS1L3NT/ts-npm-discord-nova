@@ -14,6 +14,8 @@ export default class<
 		description: "Shows you this help message"
 	}
 
+	override middleware = []
+
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()
 

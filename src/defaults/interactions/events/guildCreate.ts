@@ -11,6 +11,8 @@ export default class<
 > extends BaseEvent<E, GC, BC, "guildCreate"> {
 	override name = "guildCreate" as const
 
+	override middleware = []
+
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()
 	}
