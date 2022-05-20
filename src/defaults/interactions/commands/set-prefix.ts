@@ -3,7 +3,7 @@ import {
 	ResponseBuilder
 } from "../../.."
 
-export default class CommandSetAlias<
+export default class CommandSetPrefix<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > extends BaseCommand<E, GC> {

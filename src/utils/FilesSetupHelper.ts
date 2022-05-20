@@ -10,6 +10,9 @@ import {
 import ButtonHelpMaximum from "../defaults/interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../defaults/interactions/buttons/help-minimum"
 import CommandHelp from "../defaults/interactions/commands/help"
+import CommandSetAlias from "../defaults/interactions/commands/set-alias"
+import CommandSetLogChannel from "../defaults/interactions/commands/set-log-channel"
+import CommandSetPrefix from "../defaults/interactions/commands/set-prefix"
 import EventGuildCreate from "../defaults/interactions/events/guildCreate"
 import EventGuildDelete from "../defaults/interactions/events/guildDelete"
 import SelectMenuHelpItem from "../defaults/interactions/selectMenus/help-item"
@@ -26,6 +29,9 @@ export default class FilesSetupHelper<
 
 	constructor(public readonly options: NovaOptions<E, GC, BC>) {
 		this.commandFiles.set("help", new CommandHelp(this))
+		this.commandFiles.set("set-alias", new CommandSetAlias(this.readEntities("messages") || []))
+		this.commandFiles.set("set-log-channel", new CommandSetLogChannel())
+		this.commandFiles.set("set-prefix", new CommandSetPrefix())
 		this.buttonFiles.set("help-maximum", new ButtonHelpMaximum(this))
 		this.buttonFiles.set("help-minimum", new ButtonHelpMinimum(this))
 		this.selectMenuFiles.set("help-item", new SelectMenuHelpItem(this))
