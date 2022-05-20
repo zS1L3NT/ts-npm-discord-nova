@@ -72,10 +72,12 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	input() {
 		if (!this.message) throw new Error("CommandHelper.input() called on Slash command")
 
-		return this.match(`^\\S* *(.*)`)?.[0]
-			?.replaceAll("  ", " ")
-			?.split(" ")
-			?.filter(i => i !== "")
+		return (
+			this.match(`^\\S* *(.*)`)?.[0]
+				?.replaceAll("  ", " ")
+				?.split(" ")
+				?.filter(i => i !== "") || []
+		)
 	}
 
 	respond(options: ResponseBuilder | CommandPayload | null, ms: number | null = 5000) {
