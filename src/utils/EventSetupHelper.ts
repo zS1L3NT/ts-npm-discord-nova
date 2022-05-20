@@ -66,7 +66,7 @@ export default class EventSetupHelper<
 
 			try {
 				helper.params = commandFile.converter(helper)
-				message.channel
+				await message.channel
 					.sendTyping()
 					.catch(err => logger.warn("Failed to send typing after message command", err))
 
