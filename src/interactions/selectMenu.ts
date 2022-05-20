@@ -44,7 +44,11 @@ export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, 
 		}
 	}
 
-	value(): string | undefined {
+	get values() {
+		return this.interaction.values
+	}
+
+	get value() {
 		return this.interaction.values[0]
 	}
 }
