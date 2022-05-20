@@ -1,14 +1,12 @@
-import { ColorResolvable, MessageEmbed, TextChannel } from "discord.js"
+import { ColorResolvable, GuildMember, MessageEmbed, TextChannel } from "discord.js"
 
 import { BaseEntry, BaseGuildCache } from "../"
 
 type LogData = {
-	avatar: string
-	username: string
+	member: GuildMember
 	title: string
 	description: string
 	color?: ColorResolvable
-	date: Date
 }
 
 export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
@@ -29,14 +27,14 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 			embeds: [
 				new MessageEmbed({
 					author: {
-						name: data.username,
-						url: data.avatar
+						name: data.member.user.tag,
+						iconURL: data.member.user.displayAvatarURL()
 					},
 					title: data.title,
-					description: data.title,
+					description: data.description,
 					color: data.color,
 					footer: {
-						text: data.date.toISOString()
+						text: new Date().toLocaleDateString()
 					}
 				})
 			]
