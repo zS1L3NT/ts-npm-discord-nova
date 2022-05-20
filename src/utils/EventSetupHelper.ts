@@ -59,8 +59,8 @@ export default class EventSetupHelper<
 		const helper = new CommandHelper(CommandType.Message, cache, undefined, message)
 
 		for (const [fileName, commandFile] of this.fsh.commandFiles) {
-			if (commandFile.only === CommandType.Slash) return
-			if (!commandFile.condition(helper)) return
+			if (commandFile.only === CommandType.Slash) break
+			if (!commandFile.condition(helper)) break
 
 			logger.discord(`Opening MessageCommand(${fileName}) for User(${message.author.tag})`)
 
