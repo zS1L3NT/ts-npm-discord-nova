@@ -3,14 +3,14 @@ import { SlashCommandBuilder } from "@discordjs/builders"
 import { iSlashData } from "../"
 
 export default class SlashBuilder {
-	constructor(private readonly data: iSlashData) {}
+	constructor(private readonly name: string, private readonly data: iSlashData) {}
 
 	buildCommand() {
 		return this.build(SlashCommandBuilder)
 	}
 
 	private build(Builder: new () => SlashCommandBuilder) {
-		const builder = new Builder().setName(this.data.name).setDescription(this.data.description)
+		const builder = new Builder().setName(this.name).setDescription(this.data.description)
 
 		if (this.data.options) {
 			for (const option of this.data.options) {

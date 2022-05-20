@@ -11,7 +11,6 @@ export default class<
 	override defer = false
 	override ephemeral = false
 	override data = {
-		name: "help",
 		description: "Shows you this help message"
 	}
 

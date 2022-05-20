@@ -23,8 +23,8 @@ class HelpBuilder<
 					.setColor("#C7D1D8")
 					.setDescription("Overview of all commands")
 					.addFields(
-						this.fsh.commandFiles.map(commandFile => ({
-							name: commandFile.data.name,
+						Array.from(this.fsh.commandFiles.entries()).map(([name, commandFile]) => ({
+							name,
 							value: commandFile.data.description
 						}))
 					)
@@ -132,9 +132,9 @@ class HelpBuilder<
 			.setCustomId("help-item")
 			.setPlaceholder("Choose a command")
 			.addOptions(
-				this.fsh.commandFiles.map(commandFile => ({
-					label: commandFile.data.name,
-					value: commandFile.data.name
+				Array.from(this.fsh.commandFiles.entries()).map(([name, commandFile]) => ({
+					label: name,
+					value: commandFile.data.description
 				}))
 			)
 	}

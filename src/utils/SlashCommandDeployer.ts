@@ -14,10 +14,10 @@ export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGu
 		commandFiles: Collection<string, BaseCommand<E, GC>>
 	) {
 		this.guildId = guildId
-		this.commands = commandFiles.map(file =>
+		this.commands = Array.from(commandFiles.entries()).map(([name, file]) =>
 			file.data instanceof SlashCommandBuilder
 				? file.data
-				: new SlashBuilder(file.data).buildCommand()
+				: new SlashBuilder(name, file.data).buildCommand()
 		)
 	}
 

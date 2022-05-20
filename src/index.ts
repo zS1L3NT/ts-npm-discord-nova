@@ -41,7 +41,6 @@ export type CommandPayload = {
 }
 
 export interface iSlashData {
-	name: string
 	description: string
 	options?: (iSlashDefaultOption | iSlashStringOption | iSlashNumberOption)[]
 }

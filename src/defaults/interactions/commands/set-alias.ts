@@ -12,7 +12,6 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 	override defer = true
 	override ephemeral = true
 	override data = {
-		name: "set-alias",
 		description: "Sets an alias for a specific message command",
 		options: [
 			{

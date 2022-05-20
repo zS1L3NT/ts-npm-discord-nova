@@ -10,7 +10,6 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 	override defer = true
 	override ephemeral = true
 	override data = {
-		name: "set-prefix",
 		description: "Changes the prefix for message commands in this server",
 		options: [
 			{
