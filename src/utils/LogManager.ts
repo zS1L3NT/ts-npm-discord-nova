@@ -33,9 +33,7 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 					title: data.title,
 					description: data.description,
 					color: data.color,
-					footer: {
-						text: new Date().toLocaleDateString()
-					}
+					timestamp: new Date()
 				})
 			]
 		})
