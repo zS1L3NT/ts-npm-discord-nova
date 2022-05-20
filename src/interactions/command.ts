@@ -25,8 +25,8 @@ export abstract class CommandMiddleware<E extends BaseEntry, GC extends BaseGuil
 }
 
 export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private data: any
 	private responded = false
+	private response: Message | undefined
 	private timeout: NodeJS.Timeout | undefined
 	params: Record<
 		string,
@@ -80,33 +80,29 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		)
 	}
 
-	respond(options: ResponseBuilder | CommandPayload | null, ms: number | null = 5000) {
+	respond(options: ResponseBuilder | CommandPayload, ms: number | null = 5000) {
 		const payload = options instanceof ResponseBuilder ? { embeds: [options.build()] } : options
+		this.responded = true
 
 		if (this.message) {
-			if (options === null) {
-				this.message
-					.react("✅")
-					.catch(err => logger.warn("Failed to react to message command", err))
-			} else {
-				if (this.timeout) clearTimeout(this.timeout)
+			if (this.timeout) clearTimeout(this.timeout)
 
-				const promise: Promise<Message> = this.responded
-					? this.data.edit(payload!)
-					: this.message.channel.send(payload!)
+			const promise = this.responded
+				? this.response!.edit(payload!)
+				: this.message.channel.send(payload!)
 
-				this.responded = true
-				promise.then(async response => {
-					this.data = response
+			promise
+				.then(async response => {
+					this.response = response
 					if (ms !== null) {
 						this.timeout = setTimeout(() => {
-							;(this.data as Message)
+							this.response
 								?.delete()
-								.catch(err => logger.warn("Failed to delete message", err))
+								.catch(err => logger.warn("Failed to delete response", err))
 						}, ms)
 					}
 				})
-			}
+				.catch(err => logger.warn("Failed to send / edit response", err))
 
 			new Promise(res => setTimeout(res, 5000))
 				.then(() => this.message?.delete())
@@ -114,14 +110,10 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		}
 
 		if (this.interaction) {
-			if (payload === null)
-				throw new Error("CommandHelper.respond(null) called on a Slash command")
-
 			const promise = this.responded
 				? this.interaction.editReply(payload)
 				: this.interaction.followUp(payload)
 
-			this.responded = true
 			promise.catch(err => logger.warn("Failed to follow up / edit interaction", err))
 		}
 	}
