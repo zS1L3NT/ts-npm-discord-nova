@@ -1,4 +1,5 @@
 import { CommandInteraction, GuildChannel, GuildMember, Message, Role, User } from "discord.js"
+import escapeStringRegexp from "escape-string-regexp"
 
 import { BaseEntry, BaseGuildCache, CommandPayload, iSlashData, ResponseBuilder } from "../"
 
@@ -50,12 +51,13 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		return regex ? regex.slice(1) : null
 	}
 
-	isMessageCommand(prefix: string, command: string, type: "only" | "more") {
+	isMessageCommand(command: string, type: "only" | "more") {
 		if (!this.message)
 			throw new Error("CommandHelper.isMessageCommand() called on Slash command")
 
-		const alias = this.cache.getAliases()[command]
-		const commandRegex = `\\${prefix}${alias ? `(${command}|${alias})` : command}`
+		const alias = this.cache.aliases[command]
+		const commandRegex =
+			escapeStringRegexp(this.cache.prefix) + alias ? `(${command}|${alias})` : command
 
 		switch (type) {
 			case "only":

@@ -1,8 +1,8 @@
 import { FieldValue } from "firebase-admin/firestore"
 
 import {
-	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, iSlashStringOption,
-	ResponseBuilder
+	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
+	iSlashStringOption, ResponseBuilder
 } from "../../.."
 
 export default class CommandSetAlias<
@@ -37,6 +37,7 @@ export default class CommandSetAlias<
 	}
 
 	override only = CommandType.Slash
+	override middleware = [new IsAdminMiddleware()]
 
 	constructor(public commands: string[]) {
 		super()
@@ -55,7 +56,7 @@ export default class CommandSetAlias<
 		const command = helper.string("command")!
 		const alias = helper.string("alias")
 
-		const aliases = helper.cache.getAliases()
+		const aliases = helper.cache.aliases
 		if (alias) {
 			if (!alias.match(/^[a-zA-Z]+$/)) {
 				return helper.respond(ResponseBuilder.bad("Alias must be alphabetical!"))

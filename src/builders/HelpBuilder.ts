@@ -75,7 +75,7 @@ class HelpBuilder<
 		const embed = new MessageEmbed().setAuthor({ name: command, iconURL: this.QUESTION })
 
 		const commandFile = this.fsh.commandFiles.get(command)!
-		const aliases = this.cache.getAliases()
+		const aliases = this.cache.aliases
 
 		const description = [
 			commandFile.data.description,

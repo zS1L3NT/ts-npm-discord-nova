@@ -28,8 +28,12 @@ export default abstract class BaseGuildCache<
 		this.onConstruct()
 	}
 
-	getAliases() {
+	get aliases() {
 		return this.entry.aliases
+	}
+
+	get prefix() {
+		return this.entry.prefix
 	}
 
 	abstract onConstruct(): void
