@@ -57,7 +57,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 
 		const alias = this.cache.aliases[command]
 		const commandRegex =
-			escapeStringRegexp(this.cache.prefix) + alias ? `(${command}|${alias})` : command
+			escapeStringRegexp(this.cache.prefix) + (alias ? `(${command}|${alias})` : command)
 
 		switch (type) {
 			case "only":
