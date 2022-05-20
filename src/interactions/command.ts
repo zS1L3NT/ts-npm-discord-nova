@@ -82,7 +82,6 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 
 	respond(options: ResponseBuilder | CommandPayload, ms: number | null = 5000) {
 		const payload = options instanceof ResponseBuilder ? { embeds: [options.build()] } : options
-		this.responded = true
 
 		if (this.message) {
 			if (this.timeout) clearTimeout(this.timeout)
@@ -116,6 +115,8 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 
 			promise.catch(err => logger.warn("Failed to follow up / edit interaction", err))
 		}
+
+		this.responded = true
 	}
 
 	mentionable(name: string) {
