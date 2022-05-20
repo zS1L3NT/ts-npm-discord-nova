@@ -3,7 +3,7 @@ import {
 	SelectMenuHelper
 } from "../../.."
 
-export default class SelectMenuHelpItem<
+export default class<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>

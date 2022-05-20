@@ -4,7 +4,7 @@ import {
 	BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache, FilesSetupHelper, SlashCommandDeployer
 } from "../../.."
 
-export default class EventGuildCreate<
+export default class<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>

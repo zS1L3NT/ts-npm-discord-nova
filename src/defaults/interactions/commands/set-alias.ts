@@ -5,10 +5,10 @@ import {
 	iSlashStringOption, ResponseBuilder
 } from "../../.."
 
-export default class CommandSetAlias<
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
-> extends BaseCommand<E, GC> {
+export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> extends BaseCommand<
+	E,
+	GC
+> {
 	override defer = true
 	override ephemeral = true
 	override data = {

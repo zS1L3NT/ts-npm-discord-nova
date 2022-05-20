@@ -2,7 +2,7 @@ import {
 	BaseBotCache, BaseButton, BaseEntry, BaseGuildCache, ButtonHelper, FilesSetupHelper, HelpBuilder
 } from "../../.."
 
-export default class ButtonHelpMaximum<
+export default class<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
