@@ -8,7 +8,7 @@ export default abstract class BaseSelectMenu<
 > {
 	abstract defer: boolean
 	abstract ephemeral: boolean
-	middleware: SelectMenuMiddleware<E, GC>[] = []
+	abstract middleware: SelectMenuMiddleware<E, GC>[]
 
 	abstract execute(helper: SelectMenuHelper<E, GC>): Promise<any>
 }
