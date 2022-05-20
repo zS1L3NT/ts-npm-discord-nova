@@ -3,10 +3,10 @@ import { ColorResolvable, GuildMember, MessageEmbed, TextChannel } from "discord
 import { BaseEntry, BaseGuildCache } from "../"
 
 type LogData = {
-	member: GuildMember
+	member?: GuildMember
 	title: string
 	description: string
-	command: string
+	command?: string
 	color?: ColorResolvable
 }
 
@@ -27,17 +27,21 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 		logChannel.send({
 			embeds: [
 				new MessageEmbed({
-					author: {
-						name: data.member.user.tag,
-						iconURL: data.member.user.displayAvatarURL()
-					},
+					author: data.member
+						? {
+								name: data.member.user.tag,
+								iconURL: data.member.user.displayAvatarURL()
+						  }
+						: undefined,
 					title: data.title,
 					description: data.description,
 					color: data.color,
 					timestamp: new Date(),
-					footer: {
-						text: `Command: ${data.command}`
-					}
+					footer: data.command
+						? {
+								text: `Command: ${data.command}`
+						  }
+						: undefined
 				})
 			]
 		})
