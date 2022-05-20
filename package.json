@@ -1,12 +1,11 @@
 {
 	"name": "nova-bot",
-	"version": "2.0.0-alpha.11",
+	"version": "2.0.0-alpha.12",
 	"description": "Nova Bot, a framework for building Discord Bots",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"author": "zS1L3NT <zechariahtan144@gmail.com> (https://www.zectan.com)",
 	"license": "GPL-3.0",
-	"type": "module",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/zS1L3NT/ts-npm-nova-bot"
@@ -25,7 +24,7 @@
 		"after-every": "^1.0.4",
 		"discord-api-types": "0.33.0",
 		"discord.js": "^13.7.0",
-		"escape-string-regexp": "^5.0.0",
+		"escape-string-regexp": "4.0.0",
 		"firebase-admin": "^10.2.0",
 		"luxon": "^2.4.0",
 		"no-try": "^3.1.0",

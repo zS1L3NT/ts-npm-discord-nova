@@ -3,7 +3,7 @@
 		/** Transpiler */
 		"target": "esnext",
 		"lib": ["esnext"],
-		"module": "esnext", // commonjs
+		"module": "commonjs", // esnext
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
