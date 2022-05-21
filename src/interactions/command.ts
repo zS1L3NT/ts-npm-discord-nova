@@ -57,7 +57,7 @@ export default abstract class BaseCommand<E extends BaseEntry, GC extends BaseGu
 	 *
 	 * This can be left empty is {@link only} is set to {@link CommandType.Slash}
 	 *
-	 * @example helper.isMessageCommand("play", "more")
+	 * @example helper.isMessageCommand(true)
 	 *
 	 * @param helper The CommandHelper containing information about the message or slash interaction
 	 */
@@ -140,11 +140,14 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * If the command is **loop**, the prefix is **!** and `isMessageCommand(false)` is passed,
 	 * **!loop** with or without trailing spaces will trigger this command while **!loop again** will not.
 	 *
+	 * If the command is **repeat**, the prefix is **!** and `isMessageCommand(null)` is passed,
+	 * **!repeat 5** and **!repeat** with or without trailing spaces will trigger this command.
+	 *
 	 * @param hasArgs If the command is expecting arguments
 	 * @throws Error if the command is a slash command
 	 * @returns If the message content matches the command
 	 */
-	isMessageCommand(hasArgs: boolean) {
+	isMessageCommand(hasArgs: boolean | null) {
 		if (!this.message)
 			throw new Error("CommandHelper.isMessageCommand() called on Slash command")
 
@@ -152,7 +155,11 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		const commandRegex =
 			escapeStringRegexp(this.cache.prefix) + (alias ? `(${this.name}|${alias})` : this.name)
 
-		return !!this.match(`^${commandRegex}(?:(?= *${hasArgs ? "" : "$"})(?!\\w+))`)
+		return !!this.match(
+			hasArgs === null
+				? `^${commandRegex}`
+				: `^${commandRegex}(?:(?= *${hasArgs ? "" : "$"})(?!\\w+))`
+		)
 	}
 
 	/**
@@ -162,7 +169,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns The arguments passed in the message
 	 */
 	args() {
-		if (!this.message) throw new Error("CommandHelper.input() called on Slash command")
+		if (!this.message) throw new Error("Commandhelper.args() called on Slash command")
 
 		return (
 			this.match(`^\\S* *(.*)`)?.[0]
