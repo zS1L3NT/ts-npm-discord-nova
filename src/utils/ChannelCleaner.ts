@@ -2,15 +2,26 @@ import { Collection, Message, TextChannel } from "discord.js"
 
 import { BaseEntry, BaseGuildCache } from "../"
 
-type iFilter = (message: Message) => boolean
+/**
+ * A class that assists in the cleaning of a Discord TextChannel.
+ */
 export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	private excluded: iFilter
+	private excluded: (message: Message) => boolean
 	private channel?: TextChannel
 	private readonly messages = new Collection<string, Message>()
 
 	constructor(
+		/**
+		 * The GuildCache of the channel's Guild
+		 */
 		private readonly cache: GC,
+		/**
+		 * The id of the Channel to clean
+		 */
 		private readonly channelId: string,
+		/**
+		 * The only messages that should be in the Channel
+		 */
 		private readonly messageIds: string[]
 	) {
 		this.excluded = () => false
@@ -22,11 +33,14 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 	 *
 	 * @param excluded Filter
 	 */
-	setExcluded(excluded: iFilter) {
+	setExcluded(excluded: (message: Message) => boolean) {
 		this.excluded = excluded
 		return this
 	}
 
+	/**
+	 * Begins the cleaning of the channel
+	 */
 	async clean() {
 		const channel = this.cache.guild.channels.cache.get(this.channelId)
 		if (channel instanceof TextChannel) {
@@ -69,6 +83,12 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 		}
 	}
 
+	/**
+	 * Gets the TextChannel that was cleaned
+	 *
+	 * @throws Error if the {@link clean}	method has not been called and awaited yet
+	 * @returns The Channel that was cleaned
+	 */
 	getChannel() {
 		if (!this.channel) {
 			throw new Error("Channel cleaning not done yet!")
@@ -76,10 +96,20 @@ export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCac
 		return this.channel
 	}
 
+	/**
+	 * Gets the messageIds before or after the cleaning
+	 *
+	 * @returns The messageIds before or after the cleaning
+	 */
 	getMessageIds() {
 		return this.messageIds
 	}
 
+	/**
+	 * Gets the collection of messages before or after the cleaning
+	 *
+	 * @returns The collection of messages before or after the cleaning
+	 */
 	getMessages() {
 		return this.messages
 	}

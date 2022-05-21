@@ -13,6 +13,11 @@ type LogData = {
 export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	constructor(private readonly cache: BaseGuildCache<E, GC>) {}
 
+	/**
+	 * Log the data to the log channel if the log_channel_id is set.
+	 *
+	 * @param data Payload to log to the log channel if it is set
+	 */
 	async log(data: LogData) {
 		const logChannelId = this.cache.entry.log_channel_id
 		if (!logChannelId) return

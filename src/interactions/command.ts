@@ -9,18 +9,82 @@ export enum CommandType {
 }
 
 export default abstract class BaseCommand<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	/**
+	 * If the slash command should be deferred
+	 *
+	 * @example true
+	 */
 	abstract defer: boolean
+	/**
+	 * If the slash command should be ephemeral
+	 *
+	 * @example true
+	 */
 	abstract ephemeral: boolean
+	/**
+	 * Metadata about the command that will be showed in the help command and the slash command description
+	 *
+	 * @example
+	 * {
+	 *     "description": "Plays a song",
+	 *     "options": [
+	 *         {
+	 *             name: "query",
+	 *             description: "The link of the song to play",
+	 *             type: "string" as const,
+	 *             requirements: "Text or URL",
+	 *             required: true
+	 *         }
+	 *     ]
+	 * }
+	 */
 	abstract data: iSlashData
+	/**
+	 * Enter this field if you want this command to only with either Message or Slash commands
+	 * If not set, this command will work for both.
+	 *
+	 * @example
+	 * CommandType.Slash
+	 */
 	only: CommandType | null = null
+	/**
+	 * Middleware to run before the {@link execute} method is called
+	 */
 	abstract middleware: CommandMiddleware<E, GC>[]
 
+	/**
+	 * The condition under which a message send will trigger this command.
+	 *
+	 * This can be left empty is {@link only} is set to {@link CommandType.Slash}
+	 *
+	 * @example helper.isMessageCommand("play", "more")
+	 *
+	 * @param helper The CommandHelper containing information about the message or slash interaction
+	 */
 	abstract condition(helper: CommandHelper<E, GC>): boolean | void
+	/**
+	 * The function that turns a string into a json object with all the command arguments.
+	 *
+	 * This can be left empty is {@link only} is set to {@link CommandType.Slash}
+	 *
+	 * @param helper The CommandHelper containing information about the message or slash interaction
+	 */
 	abstract converter(helper: CommandHelper<E, GC>): any
+	/**
+	 * The method that is called when a message or slash command is triggered
+	 *
+	 * @param helper The CommandHelper containing information about the message or slash interaction
+	 */
 	abstract execute(helper: CommandHelper<E, GC>): Promise<any>
 }
 
 export abstract class CommandMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+	/**
+	 * The function that should handle the message or slash interaction
+	 *
+	 * @param helper The CommandHelper containing information about the message or slash interaction
+	 * @returns If the next middleware / execute method should be called
+	 */
 	abstract handler(helper: CommandHelper<E, GC>): boolean | Promise<boolean>
 }
 
@@ -34,16 +98,31 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	> = {}
 
 	constructor(
+		/**
+		 * The type of command that is being handled
+		 *
+		 * Either {@link CommandType.Slash} or {@link CommandType.Message}
+		 */
 		public readonly type: CommandType,
 		public readonly cache: GC,
 		public readonly interaction?: CommandInteraction,
 		public readonly message?: Message
 	) {}
 
+	/**
+	 * The GuildMember that send the message or triggered the slash command
+	 */
 	get member() {
 		return (this.interaction || this.message)!.member as GuildMember
 	}
 
+	/**
+	 * Tests the message against the given regex pattern
+	 *
+	 * @param regexp The regexp to match against the message
+	 * @throws Error if the command is a slash command
+	 * @returns The groups that the regex match returned
+	 */
 	match(regexp: string) {
 		if (!this.message) throw new Error("CommandHelper.match() called on Slash command")
 
@@ -51,6 +130,20 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		return regex ? regex.slice(1) : null
 	}
 
+	/**
+	 * A convenience method to test if a message content matches a specific regex pattern of a command.
+	 *
+	 * If `isMessageCommand("play", "more")` is passed and the prefix is **!**,
+	 * **!play hello** will trigger this command while **!play** with or without trailing spaces will not.
+	 *
+	 * If `isMessageCommand("loop", "only")` is passed and the prefix is **!**,
+	 * **!loop** with or without trailing spaces will trigger this command while **!loop again** will not.
+	 *
+	 * @param command The name of the command
+	 * @param type Either "only" or "more"
+	 * @throws Error if the command is a slash command
+	 * @returns If the message content matches the command
+	 */
 	isMessageCommand(command: string, type: "only" | "more") {
 		if (!this.message)
 			throw new Error("CommandHelper.isMessageCommand() called on Slash command")
@@ -69,6 +162,12 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		}
 	}
 
+	/**
+	 * Gets the arguments passed in the message command
+	 *
+	 * @throws Error if the command is a slash command
+	 * @returns The arguments passed in the message
+	 */
 	input() {
 		if (!this.message) throw new Error("CommandHelper.input() called on Slash command")
 
@@ -80,6 +179,13 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		)
 	}
 
+	/**
+	 * Respond to the message or slash command with a message
+	 * If this method is called more than once, the previous message will be edited
+	 *
+	 * @param options The data to send back to the user
+	 * @param ms The message delete timer, defaults to 5 seconds
+	 */
 	respond(options: ResponseBuilder | CommandPayload, ms: number | null = 5000) {
 		const payload = options instanceof ResponseBuilder ? { embeds: [options.build()] } : options
 
@@ -119,6 +225,12 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		this.responded = true
 	}
 
+	/**
+	 * Gets a mentionable from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns Mentionable
+	 */
 	mentionable(name: string) {
 		return (this.interaction?.options.getMentionable(name) || this.params[name] || null) as
 			| GuildMember
@@ -127,32 +239,68 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 			| null
 	}
 
+	/**
+	 * Gets a mentionable from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns Channel
+	 */
 	channel(name: string) {
 		return (this.interaction?.options.getChannel(name) ||
 			this.params[name] ||
 			null) as GuildChannel | null
 	}
 
+	/**
+	 * Gets a role from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns Role
+	 */
 	role(name: string) {
 		return (this.interaction?.options.getRole(name) || this.params[name] || null) as Role | null
 	}
 
+	/**
+	 * Gets a user from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns User
+	 */
 	user(name: string) {
 		return (this.interaction?.options.getUser(name) || this.params[name] || null) as User | null
 	}
 
+	/**
+	 * Gets a string from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns String
+	 */
 	string(name: string) {
 		return (this.interaction?.options.getString(name) || this.params[name] || null) as
 			| string
 			| null
 	}
 
+	/**
+	 * Gets a integer from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns Integer
+	 */
 	integer(name: string) {
 		return (this.interaction?.options.getInteger(name) || this.params[name] || null) as
 			| number
 			| null
 	}
 
+	/**
+	 * Gets a boolean from the slash command options or converted json object of the data
+	 *
+	 * @param name Key in the slash command options or converted json object of the data
+	 * @returns Boolean
+	 */
 	boolean(name: string) {
 		return (this.interaction?.options.getBoolean(name) || this.params[name] || null) as
 			| boolean

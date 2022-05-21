@@ -6,16 +6,42 @@ enum Emoji {
 }
 
 export default class ResponseBuilder {
-	private constructor(public readonly emoji: Emoji, private readonly content: string) {}
+	private constructor(
+		/**
+		 * The emoji to show on the embed
+		 */
+		public readonly emoji: Emoji,
+		/**
+		 * The message to show on the embed
+		 */
+		public readonly content: string
+	) {}
 
+	/**
+	 * Creates a ResponseBuilder with a green tick emoji
+	 *
+	 * @param content The message that the embed should show
+	 * @returns ResponseBuilder
+	 */
 	static good(content: string) {
 		return new ResponseBuilder(Emoji.GOOD, content)
 	}
 
+	/**
+	 * Creates a ResponseBuilder with a red cross emoji
+	 *
+	 * @param content The message that the embed should show
+	 * @returns ResponseBuilder
+	 */
 	static bad(content: string) {
 		return new ResponseBuilder(Emoji.BAD, content)
 	}
 
+	/**
+	 * Creates a MessageEmbed with the data from the ResponseBuilder
+	 *
+	 * @returns MessageEmbed with the content and emoji
+	 */
 	build() {
 		return new MessageEmbed()
 			.setAuthor({ name: this.content, iconURL: this.emoji })

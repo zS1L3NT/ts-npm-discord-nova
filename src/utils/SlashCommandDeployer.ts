@@ -21,6 +21,9 @@ export default class SlashCommandDeployer<E extends BaseEntry, GC extends BaseGu
 		)
 	}
 
+	/**
+	 * Deploys all commands to the Discord REST API
+	 */
 	async deploy() {
 		const rest = new REST({ version: "9" }).setToken(process.env.DISCORD__TOKEN)
 		await rest.put(Routes.applicationGuildCommands(process.env.DISCORD__BOT_ID, this.guildId), {

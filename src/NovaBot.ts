@@ -12,16 +12,65 @@ export default abstract class NovaBot<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
+	/**
+	 * The display name of the bot.
+	 * This will be logged when the bot is started
+	 *
+	 * @example "SounDroid#1491"
+	 */
 	abstract name: string
+	/**
+	 * The icon of the bot.
+	 * This will be shown in the help command of the bot
+	 *
+	 * @example "https://cdn.discordapp.com/avatars/899858077027811379/56e8665909db40439b09e13627970b62.png?size=128"
+	 */
 	abstract icon: string
+	/**
+	 * The directory where Nova will look for button, command, event and selectMenu interactions.
+	 * Any folder called `/buttons`, `/commands`, `/events`, or `/selectMenus` within this directory will be added to the bot.
+	 *
+	 * @example path.join(__dirname, "interactions")
+	 */
 	abstract directory: string
+	/**
+	 * The client intents that the bot will use.
+	 *
+	 * {@link https://discordjs.guide/popular-topics/intents.html#privileged-intents}
+	 */
 	abstract intents: BitFieldResolvable<IntentsString, number>
 
+	/**
+	 * The text that the bot will show when the help command is used.
+	 *
+	 * You are provided with the GuildCache of the server that requested
+	 * the help command for better customizability of the help command per server
+	 *
+	 * @example cache => `Welcome to SounDroid! My prefix is ${cache.prefix}`
+	 */
 	abstract helpMessage: (cache: GC) => string
 
+	/**
+	 * The GuildCache class that is used by your bot
+	 */
 	abstract GuildCache: iBaseGuildCache<E, GC>
+	/**
+	 * The BotCache class that is used by your bot
+	 */
 	abstract BotCache: iBaseBotCache<E, GC, BC>
 
+	/**
+	 * A logger that can be used by Nova to log events to the console.
+	 *
+	 * @example
+	 * import Tracer from "tracer"
+	 *
+	 * class MyBot extends NovaBot {
+	 *     // ...
+	 *     logger = Tracer.console({})
+	 *     // ...
+	 * }
+	 */
 	abstract logger: {
 		discord: (...args: any[]) => void
 		info: (...args: any[]) => void
@@ -29,8 +78,16 @@ export default abstract class NovaBot<
 		error: (...args: any[]) => void
 	}
 
+	/**
+	 * This method will get called once your bot receives the "ready" event from Discord
+	 *
+	 * @param botCache The bot cache that is used by your bot
+	 */
 	onSetup(botCache: BC) {}
 
+	/**
+	 * Method to start the bot
+	 */
 	start() {
 		const bot = new Client({ intents: this.intents })
 		global.logger = this.logger
