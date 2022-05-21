@@ -4,7 +4,8 @@ import { useTry } from "no-try"
 import path from "path"
 
 import {
-	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseSelectMenu
+	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseModal,
+	BaseSelectMenu
 } from "../"
 import ButtonHelpMaximum from "../defaults/interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../defaults/interactions/buttons/help-minimum"
@@ -24,6 +25,7 @@ export default class FilesSetupHelper<
 	readonly commandFiles = new Collection<string, BaseCommand<E, GC>>()
 	readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
 	readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
+	readonly modalFiles = new Collection<string, BaseModal<E, GC>>()
 	readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
 
 	constructor(
@@ -43,6 +45,7 @@ export default class FilesSetupHelper<
 		this.setupCommands()
 		this.setupButtons()
 		this.setupSelectMenus()
+		this.setupModals()
 		this.setupEvents()
 	}
 
@@ -93,6 +96,17 @@ export default class FilesSetupHelper<
 				`selectMenus/${fileName}`
 			)
 			this.selectMenuFiles.set(name, new SelectMenu())
+		}
+	}
+
+	private setupModals() {
+		const fileNames = this.readEntities("modals")
+		if (fileNames === null) return
+
+		for (const fileName of fileNames) {
+			const name = fileName.split(".")[0]!
+			const Modal = this.require<new () => BaseModal<E, GC>>(`modals/${fileName}`)
+			this.modalFiles.set(name, new Modal())
 		}
 	}
 

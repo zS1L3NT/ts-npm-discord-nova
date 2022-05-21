@@ -23,6 +23,7 @@ export {
 	SelectMenuMiddleware,
 	SelectMenuHelper
 } from "./interactions/selectMenu"
+export { default as BaseModal, ModalMiddleware, ModalHelper } from "./interactions/modal"
 
 export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
 

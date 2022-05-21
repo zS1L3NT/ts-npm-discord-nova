@@ -28,7 +28,7 @@ export default abstract class NovaBot<
 	abstract icon: string
 	/**
 	 * The directory where Nova will look for button, command, event and selectMenu interactions.
-	 * Any folder called `/buttons`, `/commands`, `/events`, or `/selectMenus` within this directory will be added to the bot.
+	 * Any folder called `/buttons`, `/commands`, `/events`, `/selectMenus` or `/modals` within this directory will be added to the bot.
 	 *
 	 * @example path.join(__dirname, "interactions")
 	 */

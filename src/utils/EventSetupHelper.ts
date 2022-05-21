@@ -1,8 +1,10 @@
-import { ButtonInteraction, CommandInteraction, Message, SelectMenuInteraction } from "discord.js"
+import {
+	ButtonInteraction, CommandInteraction, Message, ModalSubmitInteraction, SelectMenuInteraction
+} from "discord.js"
 
 import {
 	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, CommandHelper, CommandType,
-	FilesSetupHelper, ResponseBuilder, SelectMenuHelper
+	FilesSetupHelper, ModalHelper, ResponseBuilder, SelectMenuHelper
 } from "../"
 
 export default class EventSetupHelper<
@@ -39,6 +41,7 @@ export default class EventSetupHelper<
 			if (interaction.isCommand()) await this.onSlashInteraction(cache, interaction)
 			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
 			if (interaction.isSelectMenu()) await this.onSelectMenuInteraction(cache, interaction)
+			if (interaction.isModalSubmit()) await this.onModalInteraction(cache, interaction)
 		})
 	}
 
@@ -182,5 +185,34 @@ export default class EventSetupHelper<
 		logger.discord(
 			`Closing SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
 		)
+	}
+
+	private async onModalInteraction(cache: GC, interaction: ModalSubmitInteraction) {
+		const modalFile = this.fsh.modalFiles.get(interaction.customId)
+		if (!modalFile) return
+		logger.discord(
+			`Opening ModalInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+		)
+
+		if (modalFile.defer) {
+			await interaction
+				.deferReply({ ephemeral: modalFile.ephemeral })
+				.catch(err => logger.error("Failed to defer select menu interaction", err))
+		}
+
+		const helper = new ModalHelper(cache, interaction)
+		try {
+			let broke = false
+			for (const middleware of modalFile.middleware) {
+				if (await middleware.handler(helper)) continue
+				broke = true
+				break
+			}
+
+			if (!broke) await modalFile.execute(helper)
+		} catch (err) {
+			logger.error("Error executing select menu command", err)
+			helper.respond(ResponseBuilder.bad("There was an error while executing this command!"))
+		}
 	}
 }
