@@ -21,7 +21,7 @@ export default class<
 	}
 
 	override condition(helper: CommandHelper<E, GC>) {
-		return helper.isMessageCommand("help", "only")
+		return helper.isMessageCommand(false)
 	}
 
 	override converter(helper: CommandHelper<E, GC>) {}

@@ -43,13 +43,13 @@ export default class EventSetupHelper<
 	}
 
 	private async onMessage(cache: GC, message: Message) {
-		const helper = new CommandHelper(CommandType.Message, cache, undefined, message)
+		for (const [name, commandFile] of this.fsh.commandFiles) {
+			const helper = new CommandHelper(name, CommandType.Message, cache, undefined, message)
 
-		for (const [fileName, commandFile] of this.fsh.commandFiles) {
 			if (commandFile.only === CommandType.Slash) continue
 			if (!commandFile.condition(helper)) continue
 
-			logger.discord(`Opening MessageCommand(${fileName}) for User(${message.author.tag})`)
+			logger.discord(`Opening MessageCommand(${name}) for User(${message.author.tag})`)
 
 			try {
 				helper.params = commandFile.converter(helper)
@@ -72,7 +72,7 @@ export default class EventSetupHelper<
 				)
 			}
 
-			logger.discord(`Closing MessageCommand(${fileName}) for User(${message.author.tag})`)
+			logger.discord(`Closing MessageCommand(${name}) for User(${message.author.tag})`)
 			break
 		}
 	}
@@ -85,7 +85,13 @@ export default class EventSetupHelper<
 			`Opening SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
 		)
 
-		const helper = new CommandHelper(CommandType.Slash, cache, interaction, undefined)
+		const helper = new CommandHelper(
+			interaction.commandName,
+			CommandType.Slash,
+			cache,
+			interaction,
+			undefined
+		)
 		await interaction
 			.deferReply({ ephemeral: commandFile.ephemeral })
 			.catch(err => logger.error("Failed to defer slash interaction", err))

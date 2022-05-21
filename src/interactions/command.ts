@@ -98,6 +98,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	> = {}
 
 	constructor(
+		private readonly name: string,
 		/**
 		 * The type of command that is being handled
 		 *
@@ -133,33 +134,25 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	/**
 	 * A convenience method to test if a message content matches a specific regex pattern of a command.
 	 *
-	 * If `isMessageCommand("play", "more")` is passed and the prefix is **!**,
+	 * If the command is **play**, the prefix is **!** and `isMessageCommand(true)` is passed,
 	 * **!play hello** will trigger this command while **!play** with or without trailing spaces will not.
 	 *
-	 * If `isMessageCommand("loop", "only")` is passed and the prefix is **!**,
+	 * If the command is **loop**, the prefix is **!** and `isMessageCommand(false)` is passed,
 	 * **!loop** with or without trailing spaces will trigger this command while **!loop again** will not.
 	 *
-	 * @param command The name of the command
-	 * @param type Either "only" or "more"
+	 * @param hasArgs If the command is expecting arguments
 	 * @throws Error if the command is a slash command
 	 * @returns If the message content matches the command
 	 */
-	isMessageCommand(command: string, type: "only" | "more") {
+	isMessageCommand(hasArgs: boolean) {
 		if (!this.message)
 			throw new Error("CommandHelper.isMessageCommand() called on Slash command")
 
-		const alias = this.cache.aliases[command]
+		const alias = this.cache.aliases[this.name]
 		const commandRegex =
-			escapeStringRegexp(this.cache.prefix) + (alias ? `(${command}|${alias})` : command)
+			escapeStringRegexp(this.cache.prefix) + (alias ? `(${this.name}|${alias})` : this.name)
 
-		switch (type) {
-			case "only":
-				return !!this.match(`^${commandRegex}(?:(?= *$)(?!\\w+))`)
-			case "more":
-				return !!this.match(`^${commandRegex}(?:(?= *)(?!\\w+))`)
-			default:
-				throw new Error(`Unknown command type`)
-		}
+		return !!this.match(`^${commandRegex}(?:(?= *${hasArgs ? "" : "$"})(?!\\w+))`)
 	}
 
 	/**
@@ -168,7 +161,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @throws Error if the command is a slash command
 	 * @returns The arguments passed in the message
 	 */
-	input() {
+	args() {
 		if (!this.message) throw new Error("CommandHelper.input() called on Slash command")
 
 		return (
