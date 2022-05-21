@@ -95,9 +95,12 @@ export default class EventSetupHelper<
 			interaction,
 			undefined
 		)
-		await interaction
-			.deferReply({ ephemeral: commandFile.ephemeral })
-			.catch(err => logger.error("Failed to defer slash interaction", err))
+
+		if (commandFile.defer) {
+			await interaction
+				.deferReply({ ephemeral: commandFile.ephemeral })
+				.catch(err => logger.error("Failed to defer slash interaction", err))
+		}
 
 		try {
 			let broke = false
@@ -109,9 +112,6 @@ export default class EventSetupHelper<
 
 			if (!broke) {
 				await commandFile.execute(helper)
-				if (!commandFile.defer) {
-					await interaction.deleteReply()
-				}
 			}
 		} catch (err) {
 			logger.error("Error executing slash interaction", err)
