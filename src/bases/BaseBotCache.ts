@@ -54,8 +54,8 @@ export default abstract class BaseBotCache<E extends BaseEntry, GC extends BaseG
 		})
 	}
 
-	abstract onConstruct(): void
-	abstract onSetGuildCache(cache: GC): void
+	onConstruct() {}
+	onSetGuildCache(cache: GC) {}
 	abstract registerGuildCache(guildId: string): void
 	abstract eraseGuildCache(guildId: string): void
 	abstract getEmptyEntry(): E

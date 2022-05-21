@@ -36,7 +36,7 @@ export default abstract class BaseGuildCache<
 		return this.entry.prefix
 	}
 
-	abstract onConstruct(): void
+	onConstruct() {}
 	abstract resolve(resolve: (cache: GC) => void): void
 	abstract updateMinutely(): void
 }
