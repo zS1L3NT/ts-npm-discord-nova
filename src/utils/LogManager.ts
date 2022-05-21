@@ -8,13 +8,14 @@ type LogData = {
 	description: string
 	command?: string
 	color?: ColorResolvable
+	embeds?: MessageEmbed[]
 }
 
 export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	constructor(private readonly cache: BaseGuildCache<E, GC>) {}
 
 	/**
-	 * Log the data to the log channel if the log_channel_id is set.
+	 * Log the data to the log channel if the `log_channel_id` is set.
 	 *
 	 * @param data Payload to log to the log channel if it is set
 	 */
@@ -47,7 +48,8 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 								text: `Command: ${data.command}`
 						  }
 						: undefined
-				})
+				}),
+				...(data.embeds || [])
 			]
 		})
 	}

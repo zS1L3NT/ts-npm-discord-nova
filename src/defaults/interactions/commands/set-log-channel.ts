@@ -55,7 +55,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 						`**New Log Channel**: <#${channel.id}>`
 					].join("\n"),
 					command: "set-log-channel",
-					color: "#4987C7"
+					color: "BLUE"
 				})
 			}
 		} else if (channel === null) {
@@ -66,7 +66,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				title: `Log channel unassigned`,
 				description: `<@${helper.member.id}> unassigned the log channel\b**Old Log Channel**: <#${oldChannelId}>`,
 				command: "set-log-channel",
-				color: "#4987C7"
+				color: "BLUE"
 			})
 		} else {
 			helper.respond(ResponseBuilder.bad(`Please select a text channel`))

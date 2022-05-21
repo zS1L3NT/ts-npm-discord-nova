@@ -74,7 +74,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 					`**Alias**: ${alias}`
 				].join("\n"),
 				command: "set-alias",
-				color: "#4987C7"
+				color: "BLUE"
 			})
 		} else {
 			if (!aliases[command]) {
@@ -95,7 +95,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 					`**Alias**: ${alias}`
 				].join("\n"),
 				command: "set-alias",
-				color: "#4987C7"
+				color: "BLUE"
 			})
 		}
 	}

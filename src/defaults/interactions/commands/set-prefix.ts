@@ -44,7 +44,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				`**New Prefix**: ${prefix}`
 			].join("\n"),
 			command: "set-prefix",
-			color: "#4987C7"
+			color: "BLUE"
 		})
 	}
 }
