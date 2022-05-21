@@ -1,10 +1,8 @@
-import {
-	ButtonInteraction, Client, CommandInteraction, Message, SelectMenuInteraction
-} from "discord.js"
+import { ButtonInteraction, CommandInteraction, Message, SelectMenuInteraction } from "discord.js"
 
 import {
 	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, CommandHelper, CommandType,
-	FilesSetupHelper, iBaseBotCache, iBaseGuildCache, NovaOptions, ResponseBuilder, SelectMenuHelper
+	FilesSetupHelper, ResponseBuilder, SelectMenuHelper
 } from "../"
 
 export default class EventSetupHelper<
@@ -12,20 +10,9 @@ export default class EventSetupHelper<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > {
-	readonly botCache: BC
-	readonly fsh: FilesSetupHelper<E, GC, BC>
-
-	constructor(
-		private readonly GCClass: iBaseGuildCache<E, GC>,
-		BCClass: iBaseBotCache<E, GC, BC>,
-		public readonly options: NovaOptions<E, GC, BC>,
-		private readonly bot: Client
-	) {
-		this.botCache = new BCClass(this.GCClass, this.bot)
-		this.fsh = new FilesSetupHelper(this.options)
-
+	constructor(private readonly botCache: BC, public readonly fsh: FilesSetupHelper<E, GC, BC>) {
 		for (const eventFile of this.fsh.eventFiles) {
-			this.bot.on(eventFile.name, async (...args) => {
+			this.botCache.bot.on(eventFile.name, async (...args) => {
 				let broke = false
 				for (const middleware of eventFile.middleware) {
 					if (await middleware.handler(this.botCache, ...args)) continue
@@ -37,7 +24,7 @@ export default class EventSetupHelper<
 			})
 		}
 
-		this.bot.on("messageCreate", async message => {
+		this.botCache.bot.on("messageCreate", async message => {
 			if (message.author.bot) return
 			if (!message.guild) return
 			const cache = await this.botCache.getGuildCache(message.guild!)
@@ -45,7 +32,7 @@ export default class EventSetupHelper<
 			await this.onMessage(cache, message)
 		})
 
-		this.bot.on("interactionCreate", async interaction => {
+		this.botCache.bot.on("interactionCreate", async interaction => {
 			if (!interaction.guild) return
 			const cache = await this.botCache.getGuildCache(interaction.guild!)
 

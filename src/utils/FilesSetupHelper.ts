@@ -4,8 +4,7 @@ import { useTry } from "no-try"
 import path from "path"
 
 import {
-	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseSelectMenu,
-	NovaOptions
+	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseSelectMenu
 } from "../"
 import ButtonHelpMaximum from "../defaults/interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../defaults/interactions/buttons/help-minimum"
@@ -27,7 +26,11 @@ export default class FilesSetupHelper<
 	readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
 	readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
 
-	constructor(public readonly options: NovaOptions<E, GC, BC>) {
+	constructor(
+		public readonly directory: string,
+		public readonly icon: string,
+		public readonly helpMessage: (cache: GC) => string
+	) {
 		this.commandFiles.set("help", new CommandHelp(this))
 		this.commandFiles.set("set-alias", new CommandSetAlias(this.readEntities("messages") || []))
 		this.commandFiles.set("set-log-channel", new CommandSetLogChannel())
@@ -44,13 +47,13 @@ export default class FilesSetupHelper<
 	}
 
 	private readEntities(name: string) {
-		const [err, files] = useTry(() => fs.readdirSync(path.join(this.options.directory, name)))
+		const [err, files] = useTry(() => fs.readdirSync(path.join(this.directory, name)))
 		if (err) return null
 		return files
 	}
 
 	private require<T>(location: string): T {
-		const file = require(path.join(this.options.directory, location))
+		const file = require(path.join(this.directory, location))
 		if ("default" in file) {
 			return file.default
 		} else {

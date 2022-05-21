@@ -3,55 +3,47 @@ import { BitFieldResolvable, Client, IntentsString } from "discord.js"
 import { useTryAsync } from "no-try"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, EventSetupHelper, iBaseBotCache, iBaseGuildCache,
-	SlashCommandDeployer
+	BaseBotCache, BaseEntry, BaseGuildCache, EventSetupHelper, FilesSetupHelper, iBaseBotCache,
+	iBaseGuildCache, SlashCommandDeployer
 } from "./"
 
-export type NovaOptions<
+export default abstract class NovaBot<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
-> = {
-	intents: BitFieldResolvable<IntentsString, number>
-	name: string
-	directory: string
+> {
+	abstract name: string
+	abstract icon: string
+	abstract directory: string
+	abstract intents: BitFieldResolvable<IntentsString, number>
 
-	help: {
-		message: (cache: GC) => string
-		icon: string
-		commandRegex?: string
-	}
+	abstract helpMessage: (cache: GC) => string
 
-	GuildCache: iBaseGuildCache<E, GC>
-	BotCache: iBaseBotCache<E, GC, BC>
+	abstract GuildCache: iBaseGuildCache<E, GC>
+	abstract BotCache: iBaseBotCache<E, GC, BC>
 
-	onSetup?: (botCache: BC) => void
-	logger: {
+	abstract logger: {
 		discord: (...args: any[]) => void
 		info: (...args: any[]) => void
 		warn: (...args: any[]) => void
 		error: (...args: any[]) => void
 	}
-}
 
-export default class NovaBot<
-	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>
-> {
-	constructor(options: NovaOptions<E, GC, BC>) {
-		const bot = new Client({ intents: options.intents })
-		global.logger = options.logger
+	onSetup(botCache: BC) {}
 
-		const { GuildCache, BotCache } = options
-		const esh = new EventSetupHelper<E, GC, BC>(GuildCache, BotCache, options, bot)
-		const { botCache } = esh
+	start() {
+		const bot = new Client({ intents: this.intents })
+		global.logger = this.logger
+
+		const botCache = new this.BotCache(this.GuildCache, bot)
+		const fsh = new FilesSetupHelper<E, GC, BC>(this.directory, this.icon, this.helpMessage)
+		const esh = new EventSetupHelper<E, GC, BC>(botCache, fsh)
 
 		const blacklist: string[] = []
 
 		bot.login(process.env.DISCORD__TOKEN)
 		bot.on("ready", () => {
-			logger.info(`Logged in as ${options.name}`)
+			logger.info(`Logged in as ${this.name}`)
 
 			let i = 0
 			let count = bot.guilds.cache.size
@@ -86,7 +78,7 @@ export default class NovaBot<
 				logger.info(`✅ All bot cache restored`)
 			})
 
-			options.onSetup?.(botCache)
+			this.onSetup(botCache)
 
 			AfterEvery(1).minutes(async () => {
 				for (const guild of bot.guilds.cache.toJSON()) {

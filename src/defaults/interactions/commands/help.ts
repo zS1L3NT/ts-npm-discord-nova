@@ -18,15 +18,10 @@ export default class<
 
 	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
 		super()
-
-		const commandRegex = this.fsh.options.help.commandRegex
-		if (!commandRegex) {
-			this.only = CommandType.Slash
-		}
 	}
 
 	override condition(helper: CommandHelper<E, GC>) {
-		return !!helper.match(this.fsh.options.help.commandRegex!)
+		return helper.isMessageCommand("help", "only")
 	}
 
 	override converter(helper: CommandHelper<E, GC>) {}

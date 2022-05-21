@@ -19,7 +19,7 @@ class HelpBuilder<
 			embeds: [
 				new MessageEmbed()
 					.setAuthor({ name: "Help", iconURL: this.QUESTION })
-					.setThumbnail(this.fsh.options.help.icon)
+					.setThumbnail(this.fsh.icon)
 					.setColor("#C7D1D8")
 					.setDescription("Overview of all commands")
 					.addFields(
@@ -47,11 +47,11 @@ class HelpBuilder<
 			embeds: [
 				new MessageEmbed()
 					.setAuthor({ name: "Help", iconURL: this.QUESTION })
-					.setThumbnail(this.fsh.options.help.icon)
+					.setThumbnail(this.fsh.icon)
 					.setColor("#C7D1D8")
 					.setDescription(
 						[
-							...this.fsh.options.help.message(this.cache).split("\n"),
+							...this.fsh.helpMessage(this.cache).split("\n"),
 							"",
 							"Click the button below to see all available commands",
 							"Use the select menu below to find out more about a specific command"
