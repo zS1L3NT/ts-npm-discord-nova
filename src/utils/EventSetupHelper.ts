@@ -55,7 +55,7 @@ export default class EventSetupHelper<
 			logger.discord(`Opening MessageCommand(${name}) for User(${message.author.tag})`)
 
 			try {
-				helper.params = commandFile.converter(helper)
+				helper.params = commandFile.converter(helper) || {}
 				await message.channel
 					.sendTyping()
 					.catch(err => logger.warn("Failed to send typing after message command", err))
