@@ -6,7 +6,7 @@ type iFilter = (message: Message) => boolean
 export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	private excluded: iFilter
 	private channel?: TextChannel
-	private messages = new Collection<string, Message>()
+	private readonly messages = new Collection<string, Message>()
 
 	constructor(
 		private readonly cache: GC,

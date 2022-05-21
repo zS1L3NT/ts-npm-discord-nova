@@ -15,7 +15,7 @@ export default abstract class BaseGuildCache<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<E, GC>
 > {
-	logger: LogManager<E, GC> = new LogManager(this)
+	readonly logger: LogManager<E, GC> = new LogManager(this)
 
 	constructor(
 		public readonly bot: Client,
