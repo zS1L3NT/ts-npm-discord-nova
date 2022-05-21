@@ -36,6 +36,8 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 
 	override async execute(helper: CommandHelper<E, GC>) {
 		const channel = helper.channel("channel")
+		const oldChannelId = helper.cache.entry.log_channel_id
+
 		if (channel instanceof TextChannel) {
 			if (channel.id === helper.cache.entry.log_channel_id) {
 				helper.respond(ResponseBuilder.bad("This channel is already the Log channel!"))
@@ -44,10 +46,28 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				helper.respond(
 					ResponseBuilder.good(`Log channel reassigned to \`#${channel.name}\``)
 				)
+				helper.cache.logger.log({
+					member: helper.member,
+					title: `Log channel changed`,
+					description: [
+						`<@${helper.member.id}> changed the log channel`,
+						`**Old Log Channel**: <#${oldChannelId}>`,
+						`**New Log Channel**: <#${channel.id}>`
+					].join("\n"),
+					command: "set-log-channel",
+					color: "#4987C7"
+				})
 			}
 		} else if (channel === null) {
 			await helper.cache.ref.update({ log_channel_id: "" })
 			helper.respond(ResponseBuilder.good(`Log channel unassigned`))
+			helper.cache.logger.log({
+				member: helper.member,
+				title: `Log channel unassigned`,
+				description: `<@${helper.member.id}> unassigned the log channel\b**Old Log Channel**: <#${oldChannelId}>`,
+				command: "set-log-channel",
+				color: "#4987C7"
+			})
 		} else {
 			helper.respond(ResponseBuilder.bad(`Please select a text channel`))
 		}

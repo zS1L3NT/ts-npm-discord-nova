@@ -31,8 +31,20 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 
 	override async execute(helper: CommandHelper<E, GC>) {
 		const prefix = helper.string("prefix")!
+		const oldPrefix = helper.cache.prefix
 
 		await helper.cache.ref.update({ prefix })
 		helper.respond(ResponseBuilder.good(`Prefix changed to \`${prefix}\``))
+		helper.cache.logger.log({
+			member: helper.member,
+			title: `Message command prefix changed`,
+			description: [
+				`<@${helper.member.id}> changed the server's message command prefix`,
+				`**Old Prefix**: ${oldPrefix}`,
+				`**New Prefix**: ${prefix}`
+			].join("\n"),
+			command: "set-prefix",
+			color: "#4987C7"
+		})
 	}
 }

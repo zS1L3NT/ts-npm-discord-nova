@@ -64,18 +64,39 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 			}
 
 			await helper.cache.ref.update({ aliases: { [command]: alias } })
-			return helper.respond(
-				ResponseBuilder.good(`Set Alias for \`${command}\` to \`${alias}\``)
-			)
+			helper.respond(ResponseBuilder.good(`Set Alias for \`${command}\` to \`${alias}\``))
+			helper.cache.logger.log({
+				member: helper.member,
+				title: `Alias added`,
+				description: [
+					`<@${helper.member.id}> added an alias for a command`,
+					`**Command**: ${command}`,
+					`**Alias**: ${alias}`
+				].join("\n"),
+				command: "set-alias",
+				color: "#4987C7"
+			})
 		} else {
 			if (!aliases[command]) {
 				return helper.respond(ResponseBuilder.bad("There is no Alias for this command!"))
 			}
 
+			const alias = aliases[command]
 			await helper.cache.ref.update({
 				aliases: { [command]: FieldValue.delete() }
 			})
-			return helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
+			helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
+			helper.cache.logger.log({
+				member: helper.member,
+				title: `Alias removed`,
+				description: [
+					`<@${helper.member.id}> removed an alias for a command`,
+					`**Command**: ${command}`,
+					`**Alias**: ${alias}`
+				].join("\n"),
+				command: "set-alias",
+				color: "#4987C7"
+			})
 		}
 	}
 }
