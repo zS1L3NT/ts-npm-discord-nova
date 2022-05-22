@@ -46,6 +46,8 @@ export default class EventSetupHelper<
 	}
 
 	private async onMessage(cache: GC, message: Message) {
+		if (!cache.entry.prefix) return
+
 		for (const [name, commandFile] of this.fsh.commandFiles) {
 			const helper = new CommandHelper(name, CommandType.Message, cache, undefined, message)
 
