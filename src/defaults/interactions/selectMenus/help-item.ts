@@ -18,8 +18,6 @@ export default class<
 	}
 
 	override async execute(helper: SelectMenuHelper<E, GC>) {
-		helper.interaction.update(
-			new HelpBuilder(this.fsh, helper.cache).buildCommand(helper.value!)
-		)
+		helper.update(new HelpBuilder(this.fsh, helper.cache).buildCommand(helper.value!))
 	}
 }

@@ -17,6 +17,6 @@ export default class<
 	}
 
 	override async execute(helper: ButtonHelper<E, GC>) {
-		await helper.interaction.update(new HelpBuilder(this.fsh, helper.cache).buildMinimum())
+		helper.update(new HelpBuilder(this.fsh, helper.cache).buildMinimum())
 	}
 }

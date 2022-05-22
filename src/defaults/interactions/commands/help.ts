@@ -1,6 +1,6 @@
 import {
-	BaseBotCache, BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType,
-	FilesSetupHelper, HelpBuilder
+	BaseBotCache, BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, FilesSetupHelper,
+	HelpBuilder
 } from "../../.."
 
 export default class<
@@ -8,8 +8,8 @@ export default class<
 	GC extends BaseGuildCache<E, GC>,
 	BC extends BaseBotCache<E, GC>
 > extends BaseCommand<E, GC> {
-	override defer = false
-	override ephemeral = false
+	override defer = true
+	override ephemeral = true
 	override data = {
 		description: "Shows you this help message"
 	}
@@ -29,10 +29,6 @@ export default class<
 	override async execute(helper: CommandHelper<E, GC>) {
 		const helpMenu = new HelpBuilder(this.fsh, helper.cache).buildMinimum()
 
-		if (helper.type === CommandType.Slash) {
-			helper.interaction!.channel?.send(helpMenu)
-		} else {
-			helper.respond(helpMenu)
-		}
+		helper.respond(helpMenu, null)
 	}
 }
