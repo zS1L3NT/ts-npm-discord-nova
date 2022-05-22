@@ -51,7 +51,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 					title: `Log channel changed`,
 					description: [
 						`<@${helper.member.id}> changed the log channel`,
-						oldChannelId ? `**Old Log Channel**: <#${oldChannelId}>` : "",
+						oldChannelId ? `**Old Log Channel**: <#${oldChannelId}>` : null,
 						`**New Log Channel**: <#${channel.id}>`
 					].join("\n"),
 					command: "set-log-channel",

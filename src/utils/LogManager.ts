@@ -5,7 +5,7 @@ import { BaseEntry, BaseGuildCache } from "../"
 type LogData = {
 	member?: GuildMember
 	title: string
-	description: string
+	description: string | string[]
 	command?: string
 	color?: ColorResolvable
 	embeds?: MessageEmbed[]
@@ -40,7 +40,9 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 						  }
 						: undefined,
 					title: data.title,
-					description: data.description,
+					description: Array.isArray(data.description)
+						? data.description.filter(s => s !== null).join("\n")
+						: data.description,
 					color: data.color,
 					timestamp: new Date(),
 					footer: data.command
