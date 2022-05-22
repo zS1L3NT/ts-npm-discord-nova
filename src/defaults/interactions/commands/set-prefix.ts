@@ -40,7 +40,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 			title: `Message command prefix changed`,
 			description: [
 				`<@${helper.member.id}> changed the server's message command prefix`,
-				oldPrefix ? `**Old Prefix**: ${oldPrefix}` : "",
+				oldPrefix ? `**Old Prefix**: ${oldPrefix}` : null,
 				`**New Prefix**: ${prefix}`
 			].join("\n"),
 			command: "set-prefix",
