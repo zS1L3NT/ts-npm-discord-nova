@@ -134,7 +134,8 @@ class HelpBuilder<
 			.addOptions(
 				Array.from(this.fsh.commandFiles.entries()).map(([name, commandFile]) => ({
 					label: name,
-					value: commandFile.data.description
+					value: name,
+					description: commandFile.data.description
 				}))
 			)
 	}
