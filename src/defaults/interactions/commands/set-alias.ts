@@ -63,7 +63,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				return helper.respond(ResponseBuilder.bad("Alias is already in use!"))
 			}
 
-			await helper.cache.ref.update({ aliases: { [command]: alias } })
+			await helper.cache.ref.update({ [`aliases.${command}`]: alias })
 			helper.respond(ResponseBuilder.good(`Set Alias for \`${command}\` to \`${alias}\``))
 			helper.cache.logger.log({
 				member: helper.member,
@@ -82,9 +82,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 			}
 
 			const alias = aliases[command]
-			await helper.cache.ref.update({
-				aliases: { [command]: FieldValue.delete() }
-			})
+			await helper.cache.ref.update({ [`aliases.${command}`]: FieldValue.delete() })
 			helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
 			helper.cache.logger.log({
 				member: helper.member,
