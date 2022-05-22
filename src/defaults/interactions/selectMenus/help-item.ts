@@ -9,7 +9,7 @@ export default class<
 	BC extends BaseBotCache<E, GC>
 > extends BaseSelectMenu<E, GC> {
 	override defer = false
-	override ephemeral = true
+	override ephemeral = false
 
 	override middleware = []
 

@@ -8,7 +8,7 @@ export default class<
 	BC extends BaseBotCache<E, GC>
 > extends BaseButton<E, GC> {
 	override defer = false
-	override ephemeral = true
+	override ephemeral = false
 
 	override middleware = []
 

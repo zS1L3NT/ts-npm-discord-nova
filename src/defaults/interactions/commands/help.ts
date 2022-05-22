@@ -27,8 +27,6 @@ export default class<
 	override converter(helper: CommandHelper<E, GC>) {}
 
 	override async execute(helper: CommandHelper<E, GC>) {
-		const helpMenu = new HelpBuilder(this.fsh, helper.cache).buildMinimum()
-
-		helper.respond(helpMenu, null)
+		helper.respond(new HelpBuilder(this.fsh, helper.cache).buildMinimum(), null)
 	}
 }
