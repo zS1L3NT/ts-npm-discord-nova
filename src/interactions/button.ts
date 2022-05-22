@@ -1,4 +1,4 @@
-import { ButtonInteraction } from "discord.js"
+import { ButtonInteraction, GuildMember, Message } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
@@ -46,6 +46,20 @@ export abstract class ButtonMiddleware<E extends BaseEntry, GC extends BaseGuild
 
 export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
+
+	/**
+	 * The GuildMember that pressednt the button
+	 */
+	get member() {
+		return this.interaction.member as GuildMember
+	}
+
+	/**
+	 * The Message containing this button
+	 */
+	get message() {
+		return this.interaction.message as Message
+	}
 
 	/**
 	 * Respond to the user with the `followUp` method on the {@link interaction}

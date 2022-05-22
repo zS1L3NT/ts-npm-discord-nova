@@ -1,4 +1,4 @@
-import { SelectMenuInteraction } from "discord.js"
+import { GuildMember, Message, SelectMenuInteraction } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
@@ -43,6 +43,20 @@ export abstract class SelectMenuMiddleware<E extends BaseEntry, GC extends BaseG
 
 export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	constructor(public readonly cache: GC, public readonly interaction: SelectMenuInteraction) {}
+
+	/**
+	 * The GuildMember that pressednt the button
+	 */
+	get member() {
+		return this.interaction.member as GuildMember
+	}
+
+	/**
+	 * The Message containing this select menu
+	 */
+	get message() {
+		return this.interaction.message as Message
+	}
 
 	/**
 	 * Respond to the user with the `followUp` method on the {@link interaction}

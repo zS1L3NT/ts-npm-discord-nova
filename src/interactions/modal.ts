@@ -1,4 +1,4 @@
-import { ModalSubmitInteraction } from "discord.js"
+import { GuildMember, Message, ModalSubmitInteraction } from "discord.js"
 
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
@@ -40,6 +40,20 @@ export abstract class ModalMiddleware<E extends BaseEntry, GC extends BaseGuildC
 
 export class ModalHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
 	constructor(public readonly cache: GC, public readonly interaction: ModalSubmitInteraction) {}
+
+	/**
+	 * The GuildMember that submitted the modal
+	 */
+	get member() {
+		return this.interaction.member as GuildMember
+	}
+
+	/**
+	 * The Message that opened this modal
+	 */
+	get message() {
+		return this.interaction.message as Message | null
+	}
 
 	/**
 	 * Respond to the user with the `followUp` method on the {@link interaction}
