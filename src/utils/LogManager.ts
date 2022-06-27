@@ -51,7 +51,7 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 						  }
 						: undefined
 				}),
-				...(data.embeds || [])
+				...(data.embeds ?? [])
 			]
 		})
 	}

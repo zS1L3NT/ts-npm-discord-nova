@@ -34,7 +34,7 @@ export default class FilesSetupHelper<
 		public readonly helpMessage: (cache: GC) => string
 	) {
 		this.commandFiles.set("help", new CommandHelp(this))
-		this.commandFiles.set("set-alias", new CommandSetAlias(this.readEntities("messages") || []))
+		this.commandFiles.set("set-alias", new CommandSetAlias(this.readEntities("messages") ?? []))
 		this.commandFiles.set("set-log-channel", new CommandSetLogChannel())
 		this.commandFiles.set("set-prefix", new CommandSetPrefix())
 		this.buttonFiles.set("help-maximum", new ButtonHelpMaximum(this))

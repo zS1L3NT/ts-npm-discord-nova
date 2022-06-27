@@ -59,7 +59,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				return helper.respond(ResponseBuilder.bad("Alias must be alphabetical!"))
 			}
 
-			if (this.commands.includes(alias) || Object.values(aliases).includes(alias)) {
+			if (this.commands.includes(alias) ?? Object.values(aliases).includes(alias)) {
 				return helper.respond(ResponseBuilder.bad("Alias is already in use!"))
 			}
 

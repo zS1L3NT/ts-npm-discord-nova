@@ -114,7 +114,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * The GuildMember that send the message or triggered the slash command
 	 */
 	get member() {
-		return (this.interaction || this.message)!.member as GuildMember
+		return (this.interaction ?? this.message)!.member as GuildMember
 	}
 
 	/**
@@ -169,13 +169,13 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns The arguments passed in the message
 	 */
 	args() {
-		if (!this.message) throw new Error("Commandhelper.args() called on Slash command")
+		if (!this.message) throw new Error("CommandHelper.args() called on Slash command")
 
 		return (
 			this.match(`^\\S* *(.*)`)?.[0]
 				?.replaceAll("  ", " ")
 				?.split(" ")
-				?.filter(i => i !== "") || []
+				?.filter(i => i !== "") ?? []
 		)
 	}
 
@@ -232,7 +232,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns Mentionable
 	 */
 	mentionable(name: string) {
-		return (this.interaction?.options.getMentionable(name) || this.params[name] || null) as
+		return (this.interaction?.options.getMentionable(name) ?? this.params[name] ?? null) as
 			| GuildMember
 			| User
 			| Role
@@ -246,8 +246,8 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns Channel
 	 */
 	channel(name: string) {
-		return (this.interaction?.options.getChannel(name) ||
-			this.params[name] ||
+		return (this.interaction?.options.getChannel(name) ??
+			this.params[name] ??
 			null) as GuildChannel | null
 	}
 
@@ -258,7 +258,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns Role
 	 */
 	role(name: string) {
-		return (this.interaction?.options.getRole(name) || this.params[name] || null) as Role | null
+		return (this.interaction?.options.getRole(name) ?? this.params[name] ?? null) as Role | null
 	}
 
 	/**
@@ -268,7 +268,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns User
 	 */
 	user(name: string) {
-		return (this.interaction?.options.getUser(name) || this.params[name] || null) as User | null
+		return (this.interaction?.options.getUser(name) ?? this.params[name] ?? null) as User | null
 	}
 
 	/**
@@ -278,7 +278,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns String
 	 */
 	string(name: string) {
-		return (this.interaction?.options.getString(name) || this.params[name] || null) as
+		return (this.interaction?.options.getString(name) ?? this.params[name] ?? null) as
 			| string
 			| null
 	}
@@ -290,7 +290,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns Integer
 	 */
 	integer(name: string) {
-		return (this.interaction?.options.getInteger(name) || this.params[name] || null) as
+		return (this.interaction?.options.getInteger(name) ?? this.params[name] ?? null) as
 			| number
 			| null
 	}
@@ -302,7 +302,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @returns Boolean
 	 */
 	boolean(name: string) {
-		return (this.interaction?.options.getBoolean(name) || this.params[name] || null) as
+		return (this.interaction?.options.getBoolean(name) ?? this.params[name] ?? null) as
 			| boolean
 			| null
 	}
