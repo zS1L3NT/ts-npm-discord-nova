@@ -26,7 +26,7 @@ export default class DateHelper {
 		"November",
 		"December"
 	]
-	static readonly longerMonths = [1, 3, 5, 7, 8, 10, 12]
+	static readonly longerMonths = [0, 2, 4, 6, 7, 9, 11]
 
 	constructor(private readonly time: number) {}
 
