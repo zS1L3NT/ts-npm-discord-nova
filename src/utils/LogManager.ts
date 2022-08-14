@@ -30,29 +30,34 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 			return
 		}
 
-		logChannel.send({
-			embeds: [
-				new MessageEmbed({
-					author: data.member
-						? {
-								name: data.member.user.tag,
-								iconURL: data.member.user.displayAvatarURL()
-						  }
-						: undefined,
-					title: data.title,
-					description: Array.isArray(data.description)
-						? data.description.filter(s => s !== null).join("\n")
-						: data.description,
-					color: data.color,
-					timestamp: new Date(),
-					footer: data.command
-						? {
-								text: `Command: ${data.command}`
-						  }
-						: undefined
-				}),
-				...(data.embeds ?? [])
-			]
-		})
+		const member = this.cache.guild.members.cache.find(
+			m => m.user.id === this.cache.bot.user!.id
+		)!
+		if (member.permissions.has("SEND_MESSAGES")) {
+			logChannel.send({
+				embeds: [
+					new MessageEmbed({
+						author: data.member
+							? {
+									name: data.member.user.tag,
+									iconURL: data.member.user.displayAvatarURL()
+							  }
+							: undefined,
+						title: data.title,
+						description: Array.isArray(data.description)
+							? data.description.filter(s => s !== null).join("\n")
+							: data.description,
+						color: data.color,
+						timestamp: new Date(),
+						footer: data.command
+							? {
+									text: `Command: ${data.command}`
+							  }
+							: undefined
+					}),
+					...(data.embeds ?? [])
+				]
+			})
+		}
 	}
 }
