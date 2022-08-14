@@ -186,7 +186,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 	 * @param options The data to send back to the user
 	 * @param ms The message delete timer, defaults to 5 seconds
 	 */
-	respond(options: ResponseBuilder | CommandPayload, ms: number | null = 5000) {
+	respond(options: ResponseBuilder | CommandPayload, ms: number | null = 10000) {
 		const payload = options instanceof ResponseBuilder ? { embeds: [options.build()] } : options
 
 		if (this.message) {
@@ -209,7 +209,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 				})
 				.catch(err => logger.warn("Failed to send / edit response", err))
 
-			new Promise(res => setTimeout(res, 5000))
+			new Promise(res => setTimeout(res, 10000))
 				.then(() => this.message?.delete())
 				.catch(err => logger.warn("Failed to delete message", err))
 		}
