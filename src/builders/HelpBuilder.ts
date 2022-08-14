@@ -11,6 +11,8 @@ class HelpBuilder<
 > {
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
+	private readonly WARNING =
+		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/warning.png?alt=media&token=bc9c95ca-27df-40eb-a015-6d23b88eae31"
 
 	constructor(private readonly fsh: FilesSetupHelper<E, GC, BC>, private readonly cache: GC) {}
 
@@ -43,6 +45,25 @@ class HelpBuilder<
 	}
 
 	buildMinimum(): CommandPayload {
+		if (!this.cache.isAdministrator) {
+			return {
+				embeds: [
+					new MessageEmbed()
+						.setAuthor({ name: "Warning", iconURL: this.WARNING })
+						.setThumbnail(this.fsh.icon)
+						.setColor("RED")
+						.setDescription(
+							[
+								`ADMINISTRATOR Permission is currently missing in <@&${
+									this.cache.guild.roles.botRoleFor(this.cache.bot.user!)!.id
+								}>`,
+								"All interactions with the bot will be temporarily unavailable until this permission is added."
+							].join("\n")
+						)
+				]
+			}
+		}
+
 		return {
 			embeds: [
 				new MessageEmbed()
