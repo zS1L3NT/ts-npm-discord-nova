@@ -127,8 +127,12 @@ export default abstract class NovaBot<
 						)
 					}
 
-					cache.isAdministrator = guild.roles.botRoleFor(bot.user!)!.permissions.has("ADMINISTRATOR")
-					await cache.updateMinutely()
+					cache.isAdministrator = guild.roles
+						.botRoleFor(bot.user!)!
+						.permissions.has("ADMINISTRATOR")
+					if (cache.isAdministrator) {
+						await cache.updateMinutely()
+					}
 
 					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)
 				})
@@ -142,7 +146,9 @@ export default abstract class NovaBot<
 				for (const guild of bot.guilds.cache.toJSON()) {
 					if (blacklist.includes(guild.id)) continue
 					const cache = await botCache.getGuildCache(guild)
-					cache.updateMinutely()
+					if (cache.isAdministrator) {
+						await cache.updateMinutely()
+					}
 				}
 			})
 		})
