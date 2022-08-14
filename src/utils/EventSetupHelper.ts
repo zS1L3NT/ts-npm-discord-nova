@@ -81,7 +81,7 @@ export default class EventSetupHelper<
 			} else {
 				helper.respond(
 					ResponseBuilder.bad(
-						"Administrator Permissions required for message commands to work"
+						"Bot needs ADMINISTRATOR permissions to use this message command"
 					)
 				)
 			}
@@ -132,7 +132,7 @@ export default class EventSetupHelper<
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Administrator Permissions required for slash commands to work")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this slash command")
 			)
 		}
 
@@ -174,7 +174,7 @@ export default class EventSetupHelper<
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Administrator Permissions required for buttons to work")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this button")
 			)
 		}
 
@@ -216,7 +216,7 @@ export default class EventSetupHelper<
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Administrator Permissions required for select menus to work")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this select menu")
 			)
 		}
 
@@ -258,7 +258,7 @@ export default class EventSetupHelper<
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Administrator Permissions required for modals to work")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this modal")
 			)
 		}
 

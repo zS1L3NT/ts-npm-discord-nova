@@ -54,7 +54,7 @@ class HelpBuilder<
 						.setColor("RED")
 						.setDescription(
 							[
-								`ADMINISTRATOR Permission is currently missing in <@&${
+								`ADMINISTRATOR is currently missing from the list of permissions in <@&${
 									this.cache.guild.roles.botRoleFor(this.cache.bot.user!)!.id
 								}>`,
 								"All interactions with the bot will be temporarily unavailable until this permission is added."
