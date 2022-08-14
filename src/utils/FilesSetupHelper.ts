@@ -15,6 +15,7 @@ import CommandSetLogChannel from "../defaults/interactions/commands/set-log-chan
 import CommandSetPrefix from "../defaults/interactions/commands/set-prefix"
 import EventGuildCreate from "../defaults/interactions/events/guildCreate"
 import EventGuildDelete from "../defaults/interactions/events/guildDelete"
+import EventRoleUpdate from "../defaults/interactions/events/roleUpdate"
 import SelectMenuHelpItem from "../defaults/interactions/selectMenus/help-item"
 
 export default class FilesSetupHelper<
@@ -40,7 +41,11 @@ export default class FilesSetupHelper<
 		this.buttonFiles.set("help-maximum", new ButtonHelpMaximum(this))
 		this.buttonFiles.set("help-minimum", new ButtonHelpMinimum(this))
 		this.selectMenuFiles.set("help-item", new SelectMenuHelpItem(this))
-		this.eventFiles.push(new EventGuildCreate(this), new EventGuildDelete<E, GC, BC>())
+		this.eventFiles.push(
+			new EventGuildCreate(this),
+			new EventGuildDelete<E, GC, BC>(),
+			new EventRoleUpdate<E, GC, BC>()
+		)
 
 		this.setupCommands()
 		this.setupButtons()

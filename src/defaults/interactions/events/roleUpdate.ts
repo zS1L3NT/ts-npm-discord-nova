@@ -1,6 +1,6 @@
 import { Role } from "discord.js"
 
-import { BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache, FilesSetupHelper } from "../../.."
+import { BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache } from "../../.."
 
 export default class<
 	E extends BaseEntry,
@@ -10,10 +10,6 @@ export default class<
 	override name = "roleUpdate" as const
 
 	override middleware = []
-
-	constructor(public fsh: FilesSetupHelper<E, GC, BC>) {
-		super()
-	}
 
 	override async execute(botCache: BC, oldRole: Role, newRole: Role) {
 		if (!oldRole.managed) return
