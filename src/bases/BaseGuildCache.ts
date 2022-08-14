@@ -25,6 +25,11 @@ export default abstract class BaseGuildCache<
 	 */
 	readonly logger: LogManager<E, GC> = new LogManager(this)
 
+	/**
+	 * The property determining if the bot has the admin permission in this Guild
+	 */
+	isAdministrator: boolean = false
+
 	constructor(
 		/**
 		 * The Discord Client that is used to interact with the Discord API.
