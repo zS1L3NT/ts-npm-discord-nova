@@ -127,6 +127,14 @@ export default abstract class NovaBot<
 						)
 					}
 
+					cache.isAdministrator = guild.roles.botRoleFor(bot.user!)!.permissions.has("ADMINISTRATOR")
+					if (!cache.isAdministrator) {
+						logger.error(
+							getTag(),
+							`❌ Bot doesn't have ADMINISTRATOR permission for Guild(${guild.name})`
+						)
+					}
+
 					await cache.updateMinutely()
 
 					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)

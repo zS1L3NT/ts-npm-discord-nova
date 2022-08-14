@@ -30,6 +30,7 @@ export default class EventSetupHelper<
 			if (message.author.bot) return
 			if (!message.guild) return
 			const cache = await this.botCache.getGuildCache(message.guild!)
+			if (!cache.isAdministrator) return
 
 			await this.onMessage(cache, message)
 		})
@@ -37,6 +38,7 @@ export default class EventSetupHelper<
 		this.botCache.bot.on("interactionCreate", async interaction => {
 			if (!interaction.guild) return
 			const cache = await this.botCache.getGuildCache(interaction.guild!)
+			if (!cache.isAdministrator) return
 
 			if (interaction.isCommand()) await this.onSlashInteraction(cache, interaction)
 			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
