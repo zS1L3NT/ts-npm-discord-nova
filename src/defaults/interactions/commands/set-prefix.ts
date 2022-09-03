@@ -1,3 +1,5 @@
+import { Colors } from "discord.js"
+
 import {
 	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
 	ResponseBuilder
@@ -44,7 +46,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				`**New Prefix**: ${prefix}`
 			].join("\n"),
 			command: "set-prefix",
-			color: "BLUE"
+			color: Colors.Blue
 		})
 	}
 }

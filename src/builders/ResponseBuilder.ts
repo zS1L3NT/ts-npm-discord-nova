@@ -1,4 +1,4 @@
-import { MessageEmbed } from "discord.js"
+import { EmbedBuilder } from "discord.js"
 
 enum Emoji {
 	GOOD = "https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/good.png?alt=media&token=4b833fc2-b8ff-4d5c-add2-f5a6029664fb",
@@ -38,12 +38,12 @@ export default class ResponseBuilder {
 	}
 
 	/**
-	 * Creates a MessageEmbed with the data from the ResponseBuilder
+	 * Creates a EmbedBuilder with the data from the ResponseBuilder
 	 *
-	 * @returns MessageEmbed with the content and emoji
+	 * @returns EmbedBuilder with the content and emoji
 	 */
 	build() {
-		return new MessageEmbed()
+		return new EmbedBuilder()
 			.setAuthor({ name: this.content, iconURL: this.emoji })
 			.setColor(this.emoji === Emoji.GOOD ? "#77B255" : "#DD2E44")
 	}

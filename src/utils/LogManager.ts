@@ -1,4 +1,4 @@
-import { ColorResolvable, GuildMember, MessageEmbed, TextChannel } from "discord.js"
+import { Colors, EmbedBuilder, GuildMember, PermissionFlagsBits, TextChannel } from "discord.js"
 
 import { BaseEntry, BaseGuildCache } from "../"
 
@@ -7,8 +7,8 @@ type LogData = {
 	title: string
 	description: string | string[]
 	command?: string
-	color?: ColorResolvable
-	embeds?: MessageEmbed[]
+	color?: typeof Colors[keyof typeof Colors]
+	embeds?: EmbedBuilder[]
 }
 
 export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
@@ -33,10 +33,10 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 		const member = this.cache.guild.members.cache.find(
 			m => m.user.id === this.cache.bot.user!.id
 		)!
-		if (member.permissions.has("SEND_MESSAGES")) {
+		if (member.permissions.has(PermissionFlagsBits.SendMessages)) {
 			logChannel.send({
 				embeds: [
-					new MessageEmbed({
+					new EmbedBuilder({
 						author: data.member
 							? {
 									name: data.member.user.tag,

@@ -1,4 +1,4 @@
-import { CommandInteraction, GuildChannel, GuildMember, Message, Role, User } from "discord.js"
+import { ChatInputCommandInteraction, GuildChannel, GuildMember, Message, Role, User } from "discord.js"
 import escapeStringRegexp from "escape-string-regexp"
 
 import { BaseEntry, BaseGuildCache, CommandPayload, iSlashData, ResponseBuilder } from "../"
@@ -106,7 +106,7 @@ export class CommandHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>
 		 */
 		public readonly type: CommandType,
 		public readonly cache: GC,
-		public readonly interaction?: CommandInteraction,
+		public readonly interaction?: ChatInputCommandInteraction,
 		public readonly message?: Message
 	) {}
 

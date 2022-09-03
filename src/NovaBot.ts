@@ -1,5 +1,5 @@
 import AfterEvery from "after-every"
-import { BitFieldResolvable, Client, IntentsString } from "discord.js"
+import { BitFieldResolvable, Client, GatewayIntentsString, PermissionFlagsBits } from "discord.js"
 import { useTryAsync } from "no-try"
 
 import {
@@ -38,7 +38,7 @@ export default abstract class NovaBot<
 	 *
 	 * {@link https://discordjs.guide/popular-topics/intents.html#privileged-intents}
 	 */
-	abstract intents: BitFieldResolvable<IntentsString, number>
+	abstract intents: BitFieldResolvable<GatewayIntentsString, number>
 
 	/**
 	 * The text that the bot will show when the help command is used.
@@ -129,7 +129,7 @@ export default abstract class NovaBot<
 
 					cache.isAdministrator = guild.roles
 						.botRoleFor(bot.user!)!
-						.permissions.has("ADMINISTRATOR")
+						.permissions.has(PermissionFlagsBits.Administrator)
 					if (cache.isAdministrator) {
 						await cache.updateMinutely()
 					}

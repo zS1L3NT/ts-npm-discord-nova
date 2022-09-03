@@ -1,5 +1,6 @@
 import {
-	ButtonInteraction, CommandInteraction, Message, ModalSubmitInteraction, SelectMenuInteraction
+	ButtonInteraction, ChatInputCommandInteraction, Message, ModalMessageModalSubmitInteraction,
+	SelectMenuInteraction
 } from "discord.js"
 
 import {
@@ -38,10 +39,11 @@ export default class EventSetupHelper<
 			if (!interaction.guild) return
 			const cache = await this.botCache.getGuildCache(interaction.guild!)
 
-			if (interaction.isCommand()) await this.onSlashInteraction(cache, interaction)
+			if (interaction.isChatInputCommand()) await this.onSlashInteraction(cache, interaction)
 			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
 			if (interaction.isSelectMenu()) await this.onSelectMenuInteraction(cache, interaction)
-			if (interaction.isModalSubmit()) await this.onModalInteraction(cache, interaction)
+			if (interaction.isModalSubmit() && interaction.isFromMessage())
+				await this.onModalInteraction(cache, interaction)
 		})
 	}
 
@@ -91,7 +93,7 @@ export default class EventSetupHelper<
 		}
 	}
 
-	private async onSlashInteraction(cache: GC, interaction: CommandInteraction) {
+	private async onSlashInteraction(cache: GC, interaction: ChatInputCommandInteraction) {
 		const helper = new CommandHelper(
 			interaction.commandName,
 			CommandType.Slash,
@@ -225,7 +227,7 @@ export default class EventSetupHelper<
 		)
 	}
 
-	private async onModalInteraction(cache: GC, interaction: ModalSubmitInteraction) {
+	private async onModalInteraction(cache: GC, interaction: ModalMessageModalSubmitInteraction) {
 		const helper = new ModalHelper(cache, interaction)
 		const modalFile = this.fsh.modalFiles.get(interaction.customId)
 		if (!modalFile) return

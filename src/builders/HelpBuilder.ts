@@ -1,4 +1,6 @@
-import { MessageActionRow, MessageButton, MessageEmbed, MessageSelectMenu } from "discord.js"
+import {
+	ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, SelectMenuBuilder
+} from "discord.js"
 
 import {
 	BaseBotCache, BaseEntry, BaseGuildCache, CommandPayload, CommandType, FilesSetupHelper
@@ -19,7 +21,7 @@ class HelpBuilder<
 	buildMaximum(): CommandPayload {
 		return {
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setAuthor({ name: "Help", iconURL: this.QUESTION })
 					.setThumbnail(this.fsh.icon)
 					.setColor("#C7D1D8")
@@ -32,12 +34,12 @@ class HelpBuilder<
 					)
 			],
 			components: [
-				new MessageActionRow().addComponents(this.createSelectMenu()),
-				new MessageActionRow().addComponents(
-					new MessageButton()
+				new ActionRowBuilder<SelectMenuBuilder>().addComponents(this.createSelectMenu()),
+				new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder()
 						.setCustomId("help-minimum")
 						.setLabel("Show Help Overview")
-						.setStyle("PRIMARY")
+						.setStyle(ButtonStyle.Primary)
 						.setEmoji("➖")
 				)
 			]
@@ -48,10 +50,10 @@ class HelpBuilder<
 		if (!this.cache.isAdministrator) {
 			return {
 				embeds: [
-					new MessageEmbed()
+					new EmbedBuilder()
 						.setAuthor({ name: "Warning", iconURL: this.WARNING })
 						.setThumbnail(this.fsh.icon)
-						.setColor("RED")
+						.setColor(Colors.Red)
 						.setDescription(
 							[
 								`ADMINISTRATOR is currently missing from the list of permissions in <@&${
@@ -66,7 +68,7 @@ class HelpBuilder<
 
 		return {
 			embeds: [
-				new MessageEmbed()
+				new EmbedBuilder()
 					.setAuthor({ name: "Help", iconURL: this.QUESTION })
 					.setThumbnail(this.fsh.icon)
 					.setColor("#C7D1D8")
@@ -80,12 +82,12 @@ class HelpBuilder<
 					)
 			],
 			components: [
-				new MessageActionRow().addComponents(this.createSelectMenu()),
-				new MessageActionRow().addComponents(
-					new MessageButton()
+				new ActionRowBuilder<SelectMenuBuilder>().addComponents(this.createSelectMenu()),
+				new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder()
 						.setCustomId("help-maximum")
 						.setLabel("Show all Commands")
-						.setStyle("PRIMARY")
+						.setStyle(ButtonStyle.Primary)
 						.setEmoji("➕")
 				)
 			]
@@ -93,7 +95,7 @@ class HelpBuilder<
 	}
 
 	buildCommand(command: string): CommandPayload {
-		const embed = new MessageEmbed().setAuthor({ name: command, iconURL: this.QUESTION })
+		const embed = new EmbedBuilder().setAuthor({ name: command, iconURL: this.QUESTION })
 
 		const commandFile = this.fsh.commandFiles.get(command)!
 		const aliases = this.cache.aliases
@@ -127,7 +129,10 @@ class HelpBuilder<
 					values.push(`**Default**: \`${option.default}\``)
 				}
 
-				embed.addField(`[${i + 1}]\t__${option.name}__`, values.join("\n"))
+				embed.addFields({
+					name: `[${i + 1}]\t__${option.name}__`,
+					value: values.join("\n")
+				})
 			}
 		}
 
@@ -136,12 +141,12 @@ class HelpBuilder<
 		return {
 			embeds: [embed],
 			components: [
-				new MessageActionRow().addComponents(this.createSelectMenu()),
-				new MessageActionRow().addComponents(
-					new MessageButton()
+				new ActionRowBuilder<SelectMenuBuilder>().addComponents(this.createSelectMenu()),
+				new ActionRowBuilder<ButtonBuilder>().addComponents(
+					new ButtonBuilder()
 						.setCustomId("help-minimum")
 						.setLabel("Back")
-						.setStyle("PRIMARY")
+						.setStyle(ButtonStyle.Primary)
 						.setEmoji("⬅")
 				)
 			]
@@ -149,7 +154,7 @@ class HelpBuilder<
 	}
 
 	createSelectMenu() {
-		return new MessageSelectMenu()
+		return new SelectMenuBuilder()
 			.setCustomId("help-item")
 			.setPlaceholder("Choose a command")
 			.addOptions(

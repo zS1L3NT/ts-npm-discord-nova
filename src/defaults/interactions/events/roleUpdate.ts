@@ -1,4 +1,4 @@
-import { Role } from "discord.js"
+import { Colors, PermissionFlagsBits, Role } from "discord.js"
 
 import { BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache } from "../../.."
 
@@ -18,8 +18,8 @@ export default class<
 		const cache = await botCache.getGuildCache(member.guild)
 
 		if (
-			oldRole.permissions.has("ADMINISTRATOR") &&
-			newRole.permissions.missing("ADMINISTRATOR")
+			oldRole.permissions.has(PermissionFlagsBits.Administrator) &&
+			newRole.permissions.missing(PermissionFlagsBits.Administrator)
 		) {
 			cache.isAdministrator = false
 			cache.logger.log({
@@ -28,13 +28,13 @@ export default class<
 					`ADMINISTRATOR was removed from my list of permissions in <@&${oldRole.id}>`,
 					"I need this role to operate properly, if not none of my commands will work."
 				].join("\n"),
-				color: "RED"
+				color: Colors.Red
 			})
 		}
 
 		if (
-			oldRole.permissions.missing("ADMINISTRATOR") &&
-			newRole.permissions.has("ADMINISTRATOR")
+			oldRole.permissions.missing(PermissionFlagsBits.Administrator) &&
+			newRole.permissions.has(PermissionFlagsBits.Administrator)
 		) {
 			cache.isAdministrator = true
 			cache.logger.log({
@@ -43,7 +43,7 @@ export default class<
 					`ADMINISTRATOR was added to my list of permissions in <@&${oldRole.id}>`,
 					"Thank you for restoring my permissions, now I can function properly"
 				].join("\n"),
-				color: "GREEN"
+				color: Colors.Green
 			})
 		}
 	}

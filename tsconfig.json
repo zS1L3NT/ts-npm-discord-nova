@@ -29,6 +29,7 @@
 		"allowUnusedLabels": true,
 		"resolveJsonModule": true,
 		"forceConsistentCasingInFileNames": true,
+		"skipLibCheck": true
 
 		/** Other */
 		// "noEmit": true,

@@ -1,45 +1,37 @@
-import { MessageActionRow, MessageEmbed } from "discord.js"
+import { MessageOptions } from "discord.js"
 
 import NovaBot from "./NovaBot"
 
 export { default as BaseBotCache, iBaseBotCache } from "./bases/BaseBotCache"
 export { default as BaseEntry } from "./bases/BaseEntry"
 export { default as BaseGuildCache, iBaseGuildCache } from "./bases/BaseGuildCache"
-
 export { default as HelpBuilder } from "./builders/HelpBuilder"
 export { default as ResponseBuilder } from "./builders/ResponseBuilder"
 export { default as SlashBuilder } from "./builders/SlashBuilder"
-
-export { default as BaseButton, ButtonMiddleware, ButtonHelper } from "./interactions/button"
+export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
+export { ButtonHelper, ButtonMiddleware, default as BaseButton } from "./interactions/button"
 export {
-	default as BaseCommand,
-	CommandMiddleware,
 	CommandHelper,
-	CommandType
+	CommandMiddleware,
+	CommandType,
+	default as BaseCommand
 } from "./interactions/command"
 export { default as BaseEvent, EventMiddleware } from "./interactions/event"
+export { default as BaseModal, ModalHelper, ModalMiddleware } from "./interactions/modal"
 export {
 	default as BaseSelectMenu,
-	SelectMenuMiddleware,
-	SelectMenuHelper
+	SelectMenuHelper,
+	SelectMenuMiddleware
 } from "./interactions/selectMenu"
-export { default as BaseModal, ModalMiddleware, ModalHelper } from "./interactions/modal"
-
-export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
-
-export { default as DateHelper } from "./utils/DateHelper"
+export * from "./NovaBot"
 export { default as ChannelCleaner } from "./utils/ChannelCleaner"
-export { default as FilesSetupHelper } from "./utils/FilesSetupHelper"
+export { default as DateHelper } from "./utils/DateHelper"
 export { default as EventSetupHelper } from "./utils/EventSetupHelper"
+export { default as FilesSetupHelper } from "./utils/FilesSetupHelper"
 export { default as LogManager } from "./utils/LogManager"
 export { default as SlashCommandDeployer } from "./utils/SlashCommandDeployer"
 
-export * from "./NovaBot"
-
-export type CommandPayload = {
-	embeds?: MessageEmbed[]
-	components?: MessageActionRow[]
-}
+export type CommandPayload = Pick<MessageOptions, "embeds" | "components">
 
 export interface iSlashData {
 	description: string

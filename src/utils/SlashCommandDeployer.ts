@@ -1,7 +1,6 @@
-import { Routes } from "discord-api-types/v9"
-import { Collection } from "discord.js"
+import { Routes } from "discord-api-types/v10"
+import { Collection, SlashCommandBuilder } from "discord.js"
 
-import { SlashCommandBuilder } from "@discordjs/builders"
 import { REST } from "@discordjs/rest"
 
 import { BaseCommand, BaseEntry, BaseGuildCache, SlashBuilder } from "../"

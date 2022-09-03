@@ -1,3 +1,4 @@
+import { Colors } from "discord.js"
 import { FieldValue } from "firebase-admin/firestore"
 
 import {
@@ -74,7 +75,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 					`**Alias**: ${alias}`
 				].join("\n"),
 				command: "set-alias",
-				color: "BLUE"
+				color: Colors.Blue
 			})
 		} else {
 			if (!aliases[command]) {
@@ -93,7 +94,7 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 					`**Alias**: ${alias}`
 				].join("\n"),
 				command: "set-alias",
-				color: "BLUE"
+				color: Colors.Blue
 			})
 		}
 	}
