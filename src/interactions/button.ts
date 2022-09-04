@@ -1,8 +1,14 @@
 import { ButtonInteraction, GuildMember, Message } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
-export default abstract class BaseButton<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default abstract class BaseButton<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	/**
 	 * If the button interaction should be deferred
 	 *
@@ -18,33 +24,42 @@ export default abstract class BaseButton<E extends BaseEntry, GC extends BaseGui
 	/**
 	 * Middleware to run before the {@link execute} method is called
 	 */
-	abstract middleware: ButtonMiddleware<E, GC>[]
+	abstract middleware: ButtonMiddleware<P, E, GC>[]
 
 	/**
 	 * The method that is called when a button interaction is triggered
 	 *
 	 * @param helper The ButtonHelper containing information about the button interaction
 	 */
-	abstract execute(helper: ButtonHelper<E, GC>): Promise<any>
+	abstract execute(helper: ButtonHelper<P, E, GC>): Promise<any>
 }
 
 export type iButtonMiddleware<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BM extends ButtonMiddleware<E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
+	BM extends ButtonMiddleware<P, E, GC>
 > = new () => BM
 
-export abstract class ButtonMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export abstract class ButtonMiddleware<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	/**
 	 * The function that should handle the button interaction
 	 *
 	 * @param helper The ButtonHelper containing information about the button interaction
 	 * @returns If the next middleware / execute method should be called
 	 */
-	abstract handler(helper: ButtonHelper<E, GC>): boolean | Promise<boolean>
+	abstract handler(helper: ButtonHelper<P, E, GC>): boolean | Promise<boolean>
 }
 
-export class ButtonHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export class ButtonHelper<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
 
 	/**

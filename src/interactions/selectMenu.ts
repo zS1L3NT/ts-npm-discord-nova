@@ -1,10 +1,13 @@
 import { GuildMember, Message, SelectMenuInteraction } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
 export default abstract class BaseSelectMenu<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
+	GC extends BaseGuildCache<P, E, GC>
 > {
 	/**
 	 * If the select menu interaction should be deferred
@@ -21,27 +24,35 @@ export default abstract class BaseSelectMenu<
 	/**
 	 * Middleware to run before the {@link execute} method is called
 	 */
-	abstract middleware: SelectMenuMiddleware<E, GC>[]
+	abstract middleware: SelectMenuMiddleware<P, E, GC>[]
 
 	/**
 	 * The method that is called when a select menu item is chosen
 	 *
 	 * @param helper The SelectMenuHelper containing information about the select menu interaction
 	 */
-	abstract execute(helper: SelectMenuHelper<E, GC>): Promise<any>
+	abstract execute(helper: SelectMenuHelper<P, E, GC>): Promise<any>
 }
 
-export abstract class SelectMenuMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export abstract class SelectMenuMiddleware<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	/**
 	 * The function that should handle the select menu interaction
 	 *
 	 * @param helper The SelectMenuHelper containing information about the select menu interaction
 	 * @returns If the next middleware / execute method should be called
 	 */
-	abstract handler(helper: SelectMenuHelper<E, GC>): boolean | Promise<boolean>
+	abstract handler(helper: SelectMenuHelper<P, E, GC>): boolean | Promise<boolean>
 }
 
-export class SelectMenuHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export class SelectMenuHelper<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	constructor(public readonly cache: GC, public readonly interaction: SelectMenuInteraction) {}
 
 	/**

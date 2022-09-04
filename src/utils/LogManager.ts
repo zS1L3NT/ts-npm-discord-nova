@@ -1,5 +1,7 @@
 import { Colors, EmbedBuilder, GuildMember, PermissionFlagsBits, TextChannel } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseEntry, BaseGuildCache } from "../"
 
 type LogData = {
@@ -11,8 +13,12 @@ type LogData = {
 	embeds?: EmbedBuilder[]
 }
 
-export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	constructor(private readonly cache: BaseGuildCache<E, GC>) {}
+export default class LogManager<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
+	constructor(private readonly cache: BaseGuildCache<P, E, GC>) {}
 
 	/**
 	 * Log the data to the log channel if the `log_channel_id` is set.
@@ -26,7 +32,8 @@ export default class LogManager<E extends BaseEntry, GC extends BaseGuildCache<E
 		const logChannel = this.cache.guild.channels.cache.get(logChannelId)
 		if (!(logChannel instanceof TextChannel)) {
 			console.error(`Guild(${this.cache.guild.name}) has no TextChannel(${logChannelId})`)
-			await this.cache.ref.update({ log_channel_id: "" })
+			//@ts-ignore
+			await this.cache.update({ log_channel_id: null })
 			return
 		}
 

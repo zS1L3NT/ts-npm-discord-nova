@@ -1,7 +1,9 @@
-.github
-src
+/.github
+/src
+.editorconfig
+.env.example
 .gitignore
 .prettierrc
-.editorconfig
 nodemon.json
+schema.prisma
 tsconfig.json

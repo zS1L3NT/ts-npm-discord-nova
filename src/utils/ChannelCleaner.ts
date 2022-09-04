@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client"
 import { Collection, Message, TextChannel } from "discord.js"
 
 import { BaseEntry, BaseGuildCache } from "../"
@@ -5,7 +6,11 @@ import { BaseEntry, BaseGuildCache } from "../"
 /**
  * A class that assists in the cleaning of a Discord TextChannel.
  */
-export default class ChannelCleaner<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default class ChannelCleaner<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	private excluded: (message: Message) => boolean
 	private channel?: TextChannel
 	private readonly messages = new Collection<string, Message>()

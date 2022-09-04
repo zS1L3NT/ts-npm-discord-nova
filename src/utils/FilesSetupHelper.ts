@@ -3,6 +3,8 @@ import fs from "fs"
 import { useTry } from "no-try"
 import path from "path"
 
+import { PrismaClient } from "@prisma/client"
+
 import {
 	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseModal,
 	BaseSelectMenu
@@ -19,15 +21,16 @@ import EventRoleUpdate from "../defaults/interactions/events/roleUpdate"
 import SelectMenuHelpItem from "../defaults/interactions/selectMenus/help-item"
 
 export default class FilesSetupHelper<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>
 > {
-	readonly commandFiles = new Collection<string, BaseCommand<E, GC>>()
-	readonly buttonFiles = new Collection<string, BaseButton<E, GC>>()
-	readonly selectMenuFiles = new Collection<string, BaseSelectMenu<E, GC>>()
-	readonly modalFiles = new Collection<string, BaseModal<E, GC>>()
-	readonly eventFiles: BaseEvent<E, GC, BC, any>[] = []
+	readonly commandFiles = new Collection<string, BaseCommand<P, E, GC>>()
+	readonly buttonFiles = new Collection<string, BaseButton<P, E, GC>>()
+	readonly selectMenuFiles = new Collection<string, BaseSelectMenu<P, E, GC>>()
+	readonly modalFiles = new Collection<string, BaseModal<P, E, GC>>()
+	readonly eventFiles: BaseEvent<P, E, GC, BC, any>[] = []
 
 	constructor(
 		public readonly directory: string,
@@ -43,8 +46,8 @@ export default class FilesSetupHelper<
 		this.selectMenuFiles.set("help-item", new SelectMenuHelpItem(this))
 		this.eventFiles.push(
 			new EventGuildCreate(this),
-			new EventGuildDelete<E, GC, BC>(),
-			new EventRoleUpdate<E, GC, BC>()
+			new EventGuildDelete<P, E, GC, BC>(),
+			new EventRoleUpdate<P, E, GC, BC>()
 		)
 
 		this.setupCommands()
@@ -75,7 +78,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const Command = this.require<new () => BaseCommand<E, GC>>(`commands/${fileName}`)
+			const Command = this.require<new () => BaseCommand<P, E, GC>>(`commands/${fileName}`)
 			this.commandFiles.set(name, new Command())
 		}
 	}
@@ -86,7 +89,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const Button = this.require<new () => BaseButton<E, GC>>(`buttons/${fileName}`)
+			const Button = this.require<new () => BaseButton<P, E, GC>>(`buttons/${fileName}`)
 			this.buttonFiles.set(name, new Button())
 		}
 	}
@@ -97,7 +100,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const SelectMenu = this.require<new () => BaseSelectMenu<E, GC>>(
+			const SelectMenu = this.require<new () => BaseSelectMenu<P, E, GC>>(
 				`selectMenus/${fileName}`
 			)
 			this.selectMenuFiles.set(name, new SelectMenu())
@@ -110,7 +113,7 @@ export default class FilesSetupHelper<
 
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
-			const Modal = this.require<new () => BaseModal<E, GC>>(`modals/${fileName}`)
+			const Modal = this.require<new () => BaseModal<P, E, GC>>(`modals/${fileName}`)
 			this.modalFiles.set(name, new Modal())
 		}
 	}
@@ -120,7 +123,7 @@ export default class FilesSetupHelper<
 		if (fileNames === null) return
 
 		for (const fileName of fileNames) {
-			const Event = this.require<new () => BaseEvent<E, GC, BC, any>>(`events/${fileName}`)
+			const Event = this.require<new () => BaseEvent<P, E, GC, BC, any>>(`events/${fileName}`)
 			this.eventFiles.push(new Event())
 		}
 	}

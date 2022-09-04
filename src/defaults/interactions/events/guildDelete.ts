@@ -1,12 +1,15 @@
 import { Guild } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache } from "../../.."
 
 export default class<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>
-> extends BaseEvent<E, GC, BC, "guildDelete"> {
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>
+> extends BaseEvent<P, E, GC, BC, "guildDelete"> {
 	override name = "guildDelete" as const
 
 	override middleware = []

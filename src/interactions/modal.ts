@@ -1,8 +1,14 @@
 import { GuildMember, Message, ModalMessageModalSubmitInteraction } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 
-export default abstract class BaseModal<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export default abstract class BaseModal<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	/**
 	 * If the modal submission should be deferred
 	 *
@@ -18,28 +24,39 @@ export default abstract class BaseModal<E extends BaseEntry, GC extends BaseGuil
 	/**
 	 * Middleware to run before the {@link execute} method is called
 	 */
-	abstract middleware: ModalMiddleware<E, GC>[]
+	abstract middleware: ModalMiddleware<P, E, GC>[]
 
 	/**
 	 * The method that is called when a modal is submitted
 	 *
 	 * @param helper The ModalHelper containing information about the modal submission
 	 */
-	abstract execute(helper: ModalHelper<E, GC>): Promise<any>
+	abstract execute(helper: ModalHelper<P, E, GC>): Promise<any>
 }
 
-export abstract class ModalMiddleware<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
+export abstract class ModalMiddleware<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
 	/**
 	 * The function that should handle the modal interaction
 	 *
 	 * @param helper The ModalHelper containing information about the modal interaction
 	 * @returns If the next middleware / execute method should be called
 	 */
-	abstract handler(helper: ModalHelper<E, GC>): boolean | Promise<boolean>
+	abstract handler(helper: ModalHelper<P, E, GC>): boolean | Promise<boolean>
 }
 
-export class ModalHelper<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> {
-	constructor(public readonly cache: GC, public readonly interaction: ModalMessageModalSubmitInteraction) {}
+export class ModalHelper<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> {
+	constructor(
+		public readonly cache: GC,
+		public readonly interaction: ModalMessageModalSubmitInteraction
+	) {}
 
 	/**
 	 * The GuildMember that submitted the modal

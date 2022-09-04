@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client"
 import AfterEvery from "after-every"
 import { BitFieldResolvable, Client, GatewayIntentsString, PermissionFlagsBits } from "discord.js"
 import { useTryAsync } from "no-try"
@@ -8,9 +9,10 @@ import {
 } from "./"
 
 export default abstract class NovaBot<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>
 > {
 	/**
 	 * The display name of the bot.
@@ -53,11 +55,11 @@ export default abstract class NovaBot<
 	/**
 	 * The GuildCache class that is used by your bot
 	 */
-	abstract GuildCache: iBaseGuildCache<E, GC>
+	abstract GuildCache: iBaseGuildCache<P, E, GC>
 	/**
 	 * The BotCache class that is used by your bot
 	 */
-	abstract BotCache: iBaseBotCache<E, GC, BC>
+	abstract BotCache: iBaseBotCache<P, E, GC, BC>
 
 	/**
 	 * A logger that can be used by Nova to log events to the console.
@@ -79,6 +81,11 @@ export default abstract class NovaBot<
 	}
 
 	/**
+	 * Instance of the prisma database client
+	 */
+	 abstract prisma: PrismaClient
+
+	/**
 	 * This method will get called once your bot receives the "ready" event from Discord
 	 *
 	 * @param botCache The bot cache that is used by your bot
@@ -92,9 +99,9 @@ export default abstract class NovaBot<
 		const bot = new Client({ intents: this.intents })
 		global.logger = this.logger
 
-		const botCache = new this.BotCache(this.GuildCache, bot)
-		const fsh = new FilesSetupHelper<E, GC, BC>(this.directory, this.icon, this.helpMessage)
-		const esh = new EventSetupHelper<E, GC, BC>(botCache, fsh)
+		const botCache = new this.BotCache(this.GuildCache, bot, this.prisma)
+		const fsh = new FilesSetupHelper<P, E, GC, BC>(this.directory, this.icon, this.helpMessage)
+		const esh = new EventSetupHelper<P, E, GC, BC>(botCache, fsh)
 
 		const blacklist: string[] = []
 
@@ -112,7 +119,7 @@ export default abstract class NovaBot<
 						blacklist.push(guild.id)
 						return logger.error(
 							getTag(),
-							`❌ Couldn't find a Firebase Document for Guild(${guild.name})`
+							`❌ Couldn't find an entry for Guild(${guild.name})`
 						)
 					}
 

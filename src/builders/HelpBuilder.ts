@@ -2,21 +2,24 @@ import {
 	ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, SelectMenuBuilder
 } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import {
 	BaseBotCache, BaseEntry, BaseGuildCache, CommandPayload, CommandType, FilesSetupHelper
 } from "../"
 
 class HelpBuilder<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>
 > {
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 	private readonly WARNING =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/warning.png?alt=media&token=bc9c95ca-27df-40eb-a015-6d23b88eae31"
 
-	constructor(private readonly fsh: FilesSetupHelper<E, GC, BC>, private readonly cache: GC) {}
+	constructor(private readonly fsh: FilesSetupHelper<P, E, GC, BC>, private readonly cache: GC) {}
 
 	buildMaximum(): CommandPayload {
 		return {
@@ -98,7 +101,7 @@ class HelpBuilder<
 		const embed = new EmbedBuilder().setAuthor({ name: command, iconURL: this.QUESTION })
 
 		const commandFile = this.fsh.commandFiles.get(command)!
-		const aliases = this.cache.aliases
+		const alias = this.cache.aliases.find(alias => alias.command === command)
 
 		const description = [
 			commandFile.data.description,
@@ -112,8 +115,8 @@ class HelpBuilder<
 			}**`
 		]
 
-		if (aliases[command]) {
-			description.push(`__Message Command Alias__: \`${aliases[command]}\``)
+		if (alias) {
+			description.push(`__Message Command Alias__: \`${alias.alias}\``)
 		}
 
 		if (commandFile.data.options) {

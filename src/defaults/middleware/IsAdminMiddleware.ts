@@ -1,12 +1,15 @@
 import { PermissionFlagsBits } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseEntry, BaseGuildCache, CommandHelper, CommandMiddleware, ResponseBuilder } from "../.."
 
 export default class IsAdminMiddleware<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
-> extends CommandMiddleware<E, GC> {
-	override handler(helper: CommandHelper<E, GC>) {
+	GC extends BaseGuildCache<P, E, GC>
+> extends CommandMiddleware<P, E, GC> {
+	override handler(helper: CommandHelper<P, E, GC>) {
 		if (
 			!helper.member.permissions.has(PermissionFlagsBits.Administrator) &&
 			helper.member.id !== process.env.DISCORD__DEV_ID

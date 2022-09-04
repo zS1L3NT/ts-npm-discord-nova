@@ -1,0 +1,22 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Alias {
+    guild_id String
+    alias    String
+    command  String
+
+    @@id([alias, command])
+}
+
+model Entry {
+    guild_id         String  @id
+    music_channel_id String?
+    music_message_id String?
+}

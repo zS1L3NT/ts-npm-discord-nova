@@ -10,7 +10,7 @@ I built this Discord Framework because when I built many different Discord bots,
 
 ## Features
 
--   Cache guild information in Firebase so that guild data doesn't reset everytime the bot is redeployed
+-   Cache guild information in PostGres so that guild data doesn't reset everytime the bot is redeployed
 -   Nova will read each command dynamically according to the filenames for each command.
     -   If you have a file `/slashs/play`, Nova will register a `/play` slash command and use the data in the file as the metadata and callback of the slash command
     -   Same works with
@@ -39,20 +39,16 @@ I don't intend to write any documentation for this framework since the framework
 - TypeScript
     -   [![@types/luxon](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@types/luxon?style=flat-square)](https://npmjs.com/package/@types/luxon)
     -   [![@types/node](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@types/node?style=flat-square)](https://npmjs.com/package/@types/node)
-    -   [![@types/node-fetch](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@types/node-fetch?style=flat-square)](https://npmjs.com/package/@types/node-fetch)
     -   [![discord-api-types](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/discord-api-types?style=flat-square)](https://npmjs.com/package/discord-api-types)
     -   [![typescript](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/typescript?style=flat-square)](https://npmjs.com/package/typescript)
 - DiscordJS
-    -   [![@discordjs/builders](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@discordjs/builders?style=flat-square)](https://npmjs.com/package/@discordjs/builders)
     -   [![@discordjs/rest](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@discordjs/rest?style=flat-square)](https://npmjs.com/package/@discordjs/rest)
     -   [![discord.js](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/discord.js?style=flat-square)](https://npmjs.com/package/discord.js)
-- Firebase
-    -   [![firebase-admin](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/firebase-admin?style=flat-square)](https://npmjs.com/package/firebase-admin)
+- Prisma
+    -   [![@prisma/client](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@prisma/client?style=flat-square)](https://npmjs.com/package/@prisma/client)
+    -   [![prisma](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/prisma?style=flat-square)](https://npmjs.com/package/prisma)
 - Miscellaneous
     -   [![after-every](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/after-every?style=flat-square)](https://npmjs.com/package/after-every)
+    -   [![escape-string-regexp](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/escape-string-regexp?style=flat-square)](https://npmjs.com/package/escape-string-regexp)
     -   [![luxon](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/luxon?style=flat-square)](https://npmjs.com/package/luxon)
     -   [![no-try](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/no-try?style=flat-square)](https://npmjs.com/package/no-try)
-    -   [![node-fetch](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/node-fetch?style=flat-square)](https://npmjs.com/package/node-fetch)
-- Peer Dependencies
-    -   [![@firebase/app-compat](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@firebase/app-compat?style=flat-square)](https://npmjs.com/package/@firebase/app-compat)
-    -   [![@firebase/app-types](https://img.shields.io/github/package-json/dependency-version/zS1L3NT/ts-npm-nova-bot/@firebase/app-types?style=flat-square)](https://npmjs.com/package/@firebase/app-types)

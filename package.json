@@ -1,6 +1,6 @@
 {
 	"name": "nova-bot",
-	"version": "2.2.1",
+	"version": "3.0.0-alpha.1",
 	"description": "Nova Bot, a framework for building Discord Bots",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -15,19 +15,16 @@
 	],
 	"dependencies": {
 		"@discordjs/rest": "1.1.0",
-		"@firebase/app-compat": "^0.1.33",
-		"@firebase/app-types": "^0.7.0",
+		"@prisma/client": "^4.3.1",
 		"@types/luxon": "^3.0.1",
 		"@types/node": "^18.7.14",
-		"@types/node-fetch": "^2.6.2",
 		"after-every": "^1.0.4",
 		"discord-api-types": "0.37.5",
 		"discord.js": "^14.3.0",
 		"escape-string-regexp": "5.0.0",
-		"firebase-admin": "^11.0.1",
 		"luxon": "^3.0.3",
 		"no-try": "^3.1.0",
-		"node-fetch": "^3.2.10",
+		"prisma": "^4.3.1",
 		"typescript": "^4.8.2"
 	}
 }

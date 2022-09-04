@@ -1,14 +1,17 @@
 import { Colors, TextChannel } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import {
 	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
 	ResponseBuilder
 } from "../../.."
 
-export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> extends BaseCommand<
-	E,
-	GC
-> {
+export default class<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> extends BaseCommand<P, E, GC> {
 	override defer = true
 	override ephemeral = true
 	override data = {
@@ -30,11 +33,11 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 	override only = CommandType.Slash
 	override middleware = [new IsAdminMiddleware()]
 
-	override condition(helper: CommandHelper<E, GC>) {}
+	override condition(helper: CommandHelper<P, E, GC>) {}
 
-	override converter(helper: CommandHelper<E, GC>) {}
+	override converter(helper: CommandHelper<P, E, GC>) {}
 
-	override async execute(helper: CommandHelper<E, GC>) {
+	override async execute(helper: CommandHelper<P, E, GC>) {
 		const channel = helper.channel("channel")
 		const oldChannelId = helper.cache.entry.log_channel_id
 
@@ -42,7 +45,8 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 			if (channel.id === helper.cache.entry.log_channel_id) {
 				helper.respond(ResponseBuilder.bad("This channel is already the Log channel!"))
 			} else {
-				await helper.cache.ref.update({ log_channel_id: channel.id })
+				//@ts-ignore
+				await helper.cache.update({ log_channel_id: channel.id })
 				helper.respond(
 					ResponseBuilder.good(`Log channel reassigned to \`#${channel.name}\``)
 				)
@@ -59,7 +63,8 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				})
 			}
 		} else if (channel === null) {
-			await helper.cache.ref.update({ log_channel_id: "" })
+			//@ts-ignore
+			await helper.cache.update({ log_channel_id: null })
 			helper.respond(ResponseBuilder.good(`Log channel unassigned`))
 			helper.cache.logger.log({
 				member: helper.member,

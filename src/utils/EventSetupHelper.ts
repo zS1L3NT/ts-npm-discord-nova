@@ -3,17 +3,23 @@ import {
 	SelectMenuInteraction
 } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import {
 	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, CommandHelper, CommandType,
 	FilesSetupHelper, ModalHelper, ResponseBuilder, SelectMenuHelper
 } from "../"
 
 export default class EventSetupHelper<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>
 > {
-	constructor(private readonly botCache: BC, public readonly fsh: FilesSetupHelper<E, GC, BC>) {
+	constructor(
+		private readonly botCache: BC,
+		public readonly fsh: FilesSetupHelper<P, E, GC, BC>
+	) {
 		for (const eventFile of this.fsh.eventFiles) {
 			this.botCache.bot.on(eventFile.name, async (...args) => {
 				let broke = false

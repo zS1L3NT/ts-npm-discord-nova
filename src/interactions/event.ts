@@ -1,11 +1,14 @@
 import { ClientEvents } from "discord.js"
 
+import { PrismaClient } from "@prisma/client"
+
 import { BaseBotCache, BaseEntry, BaseGuildCache } from "../"
 
 export default abstract class BaseEvent<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>,
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>,
 	N extends keyof ClientEvents
 > {
 	/**
@@ -17,7 +20,7 @@ export default abstract class BaseEvent<
 	/**
 	 * Middleware to run before the {@link execute} method is called
 	 */
-	abstract middleware: EventMiddleware<E, GC, BC, N>[]
+	abstract middleware: EventMiddleware<P, E, GC, BC, N>[]
 
 	/**
 	 * The method that is called when the event is emitted
@@ -29,17 +32,19 @@ export default abstract class BaseEvent<
 }
 
 export type iEventMiddleware<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>,
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>,
 	N extends keyof ClientEvents,
-	EM extends EventMiddleware<E, GC, BC, N>
+	EM extends EventMiddleware<P, E, GC, BC, N>
 > = new () => EM
 
 export abstract class EventMiddleware<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>,
-	BC extends BaseBotCache<E, GC>,
+	GC extends BaseGuildCache<P, E, GC>,
+	BC extends BaseBotCache<P, E, GC>,
 	N extends keyof ClientEvents
 > {
 	/**

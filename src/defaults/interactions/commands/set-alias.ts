@@ -1,15 +1,17 @@
 import { Colors } from "discord.js"
-import { FieldValue } from "firebase-admin/firestore"
+
+import { PrismaClient } from "@prisma/client"
 
 import {
 	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
 	iSlashStringOption, ResponseBuilder
 } from "../../.."
 
-export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> extends BaseCommand<
-	E,
-	GC
-> {
+export default class<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> extends BaseCommand<P, E, GC> {
 	override defer = true
 	override ephemeral = true
 	override data = {
@@ -46,25 +48,27 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 			.map(c => ({ name: c, value: c }))
 	}
 
-	override condition(helper: CommandHelper<E, GC>) {}
+	override condition(helper: CommandHelper<P, E, GC>) {}
 
-	override converter(helper: CommandHelper<E, GC>) {}
+	override converter(helper: CommandHelper<P, E, GC>) {}
 
-	override async execute(helper: CommandHelper<E, GC>) {
+	override async execute(helper: CommandHelper<P, E, GC>) {
 		const command = helper.string("command")!
 		const alias = helper.string("alias")
 
-		const aliases = helper.cache.aliases
+		const alias_ = helper.cache.aliases.find(a => a.alias === alias)
 		if (alias) {
 			if (!alias.match(/^[a-zA-Z]+$/)) {
 				return helper.respond(ResponseBuilder.bad("Alias must be alphabetical!"))
 			}
 
-			if (this.commands.includes(alias) ?? Object.values(aliases).includes(alias)) {
+			if (this.commands.includes(alias) ?? !!alias_) {
 				return helper.respond(ResponseBuilder.bad("Alias is already in use!"))
 			}
 
-			await helper.cache.ref.update({ [`aliases.${command}`]: alias })
+			await (<any>helper.cache.prisma).alias.create({
+				data: { alias, command, guild_id: helper.cache.guild.id }
+			})
 			helper.respond(ResponseBuilder.good(`Set Alias for \`${command}\` to \`${alias}\``))
 			helper.cache.logger.log({
 				member: helper.member,
@@ -78,12 +82,13 @@ export default class<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> exte
 				color: Colors.Blue
 			})
 		} else {
-			if (!aliases[command]) {
+			if (!alias_) {
 				return helper.respond(ResponseBuilder.bad("There is no Alias for this command!"))
 			}
 
-			const alias = aliases[command]
-			await helper.cache.ref.update({ [`aliases.${command}`]: FieldValue.delete() })
+			await (<any>helper.cache.prisma).alias.delete({
+				where: { alias_command: { alias: alias_.alias, command } }
+			})
 			helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
 			helper.cache.logger.log({
 				member: helper.member,

@@ -1,15 +1,15 @@
-import { Client, Guild } from "discord.js"
-import { DocumentReference } from "firebase-admin/firestore"
+import { Client, Colors, Guild } from "discord.js"
+
+import { PrismaClient } from "@prisma/client"
 
 import { BaseEntry, LogManager } from "../"
+import { Alias } from "./BaseEntry"
 
-export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC>> = new (
-	bot: Client,
-	guild: Guild,
-	ref: DocumentReference<E>,
-	entry: E,
-	resolve: (cache: GC) => void
-) => GC
+export type iBaseGuildCache<
+	P extends PrismaClient,
+	E extends BaseEntry,
+	GC extends BaseGuildCache<P, E, GC>
+> = new (bot: Client, guild: Guild, prisma: P) => GC
 
 /**
  * A class containing information related to each Guild.
@@ -17,13 +17,24 @@ export type iBaseGuildCache<E extends BaseEntry, GC extends BaseGuildCache<E, GC
  * Each Guild that the bot is in will have its own GuildCache.
  */
 export default abstract class BaseGuildCache<
+	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<E, GC>
+	GC extends BaseGuildCache<P, E, GC>
 > {
 	/**
 	 * The instance of the logger for this Guild
 	 */
-	readonly logger: LogManager<E, GC> = new LogManager(this)
+	readonly logger: LogManager<P, E, GC> = new LogManager(this)
+
+	/**
+	 * Cached entry value
+	 */
+	entry: E = this.getEmptyEntry()
+
+	/**
+	 * Command aliases
+	 */
+	aliases: Alias[] = []
 
 	/**
 	 * The property determining if the bot has the admin permission in this Guild
@@ -39,25 +50,9 @@ export default abstract class BaseGuildCache<
 		 * The Discord Guild that this GuildCache is for.
 		 */
 		public readonly guild: Guild,
-		/**
-		 * The Firestore reference to the Guild's Entry.
-		 */
-		public readonly ref: DocumentReference<E>,
-		/**
-		 * The Guild's Entry.
-		 */
-		public entry: E,
-		resolve: (cache: GC) => void
+		public readonly prisma: P
 	) {
-		this.resolve(resolve)
 		this.onConstruct()
-	}
-
-	/**
-	 * The Record of aliases for all commands in this server
-	 */
-	get aliases() {
-		return this.entry.aliases
 	}
 
 	/**
@@ -68,22 +63,46 @@ export default abstract class BaseGuildCache<
 	}
 
 	/**
-	 * A method that is called when the GuildCache is constructed.
+	 * Update the entry data
+	 *
+	 * @param data The data that changed in the entry
 	 */
-	onConstruct() {}
+	async update(data: Partial<E>) {
+		this.entry = { ...JSON.parse(JSON.stringify(this.entry)), ...data }
+		try {
+			this.entry = await (<any>this.prisma).entry.update({
+				data,
+				where: { guild_id: this.guild.id }
+			})
+		} catch (err) {
+			this.refresh()
+			logger.error(err)
+			this.logger.log({
+				title: (<Error>err).name,
+				description: (<Error>err).message,
+				color: Colors.Red
+			})
+		}
+	}
 
 	/**
-	 * This method is where the GuildCache's Firestore Entry should be listened to.
-	 *
-	 * It is important to call the {@link resolve} function to let the BotCache know that the GuildCache has been created.
-	 * If this method is not called, the BotCache will be stuck, since it waits for the GuildCache to be created.
-	 *
-	 * @param resolve The function used to alert the BotCache that this GuildCache has received it's first Firestore Entry
+	 * A method that is called when the GuildCache is constructed.
+	 * This should listen to changes in the database and update the GuildCache accordingly.
 	 */
-	abstract resolve(resolve: (cache: GC) => void): void
+	abstract onConstruct(): void
+
+	/**
+	 * This method is where the GuildCache's data is refetched from the database
+	 */
+	abstract refresh(): Promise<void>
 
 	/**
 	 * A method that is called every minute by the bot
 	 */
 	abstract updateMinutely(): void
+
+	/**
+	 * Get an empty entry
+	 */
+	abstract getEmptyEntry(): E
 }
