@@ -89,7 +89,7 @@ export default abstract class BaseGuildCache<
 	/**
 	 * A method that is called when the GuildCache is constructed.
 	 */
-	abstract onConstruct(): void
+	onConstruct() {}
 
 	/**
 	 * This method is where the GuildCache's data is refetched from the database.
