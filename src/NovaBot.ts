@@ -83,7 +83,7 @@ export default abstract class NovaBot<
 	/**
 	 * Instance of the prisma database client
 	 */
-	 abstract prisma: PrismaClient
+	 abstract prisma: P
 
 	/**
 	 * This method will get called once your bot receives the "ready" event from Discord
