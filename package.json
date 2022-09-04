@@ -1,6 +1,6 @@
 {
 	"name": "nova-bot",
-	"version": "3.0.0-alpha.5",
+	"version": "3.0.0-alpha.6",
 	"description": "Nova Bot, a framework for building Discord Bots",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
 		"after-every": "^1.0.4",
 		"discord-api-types": "0.37.5",
 		"discord.js": "^14.3.0",
-		"escape-string-regexp": "5.0.0",
+		"escape-string-regexp": "4.0.0",
 		"luxon": "^3.0.3",
 		"no-try": "^3.1.0",
 		"prisma": "^4.3.1",
