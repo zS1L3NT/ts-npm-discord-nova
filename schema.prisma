@@ -16,7 +16,7 @@ model Alias {
 }
 
 model Entry {
-    guild_id         String  @id
-    music_channel_id String?
-    music_message_id String?
+    guild_id       String  @id
+    prefix         String?
+    log_channel_id String?
 }
