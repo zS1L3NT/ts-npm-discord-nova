@@ -12,7 +12,7 @@ model Alias {
     alias    String
     command  String
 
-    @@id([alias, command])
+    @@id([guild_id, alias, command])
 }
 
 model Entry {
