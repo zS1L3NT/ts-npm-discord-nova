@@ -53,7 +53,7 @@ export default abstract class BaseGuildCache<
 		public readonly prisma: P
 	) {
 		this.onConstruct()
-		setInterval(this.refresh, 15_000)
+		setInterval(() => this.refresh(), 15_000)
 	}
 
 	/**
