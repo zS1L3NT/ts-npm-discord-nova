@@ -8,7 +8,6 @@ export { default as BaseGuildCache, iBaseGuildCache } from "./bases/BaseGuildCac
 export { default as HelpBuilder } from "./builders/HelpBuilder"
 export { default as ResponseBuilder } from "./builders/ResponseBuilder"
 export { default as SlashBuilder } from "./builders/SlashBuilder"
-export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
 export { ButtonHelper, ButtonMiddleware, default as BaseButton } from "./interactions/button"
 export {
 	CommandHelper,
@@ -23,6 +22,7 @@ export {
 	SelectMenuHelper,
 	SelectMenuMiddleware
 } from "./interactions/selectMenu"
+export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
 export * from "./NovaBot"
 export { default as ChannelCleaner } from "./utils/ChannelCleaner"
 export { default as DateHelper } from "./utils/DateHelper"
