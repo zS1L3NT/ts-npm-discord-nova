@@ -53,6 +53,7 @@ export default abstract class BaseGuildCache<
 		public readonly prisma: P
 	) {
 		this.onConstruct()
+		setInterval(this.refresh, 15_000)
 	}
 
 	/**
@@ -87,12 +88,11 @@ export default abstract class BaseGuildCache<
 
 	/**
 	 * A method that is called when the GuildCache is constructed.
-	 * This should listen to changes in the database and update the GuildCache accordingly.
 	 */
 	abstract onConstruct(): void
 
 	/**
-	 * This method is where the GuildCache's data is refetched from the database
+	 * This method is where the GuildCache's data is refetched from the database.
 	 */
 	abstract refresh(): Promise<void>
 
