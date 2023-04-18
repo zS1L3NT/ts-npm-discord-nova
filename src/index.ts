@@ -1,4 +1,4 @@
-import { MessageOptions } from "discord.js"
+import { BaseMessageOptions } from "discord.js"
 
 import NovaBot from "./NovaBot"
 
@@ -31,7 +31,7 @@ export { default as FilesSetupHelper } from "./utils/FilesSetupHelper"
 export { default as LogManager } from "./utils/LogManager"
 export { default as SlashCommandDeployer } from "./utils/SlashCommandDeployer"
 
-export type CommandPayload = Pick<MessageOptions, "embeds" | "components">
+export type CommandPayload = Pick<BaseMessageOptions, "embeds" | "components">
 
 export interface iSlashData {
 	description: string
