@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@discordjs/rest':
     specifier: 1.7.0
@@ -23,8 +27,8 @@ dependencies:
     specifier: ^14.9.0
     version: 14.9.0
   escape-string-regexp:
-    specifier: 5.0.0
-    version: 5.0.0
+    specifier: 4.0.0
+    version: 4.0.0
   luxon:
     specifier: ^3.3.0
     version: 3.3.0
@@ -180,9 +184,9 @@ packages:
       - utf-8-validate
     dev: false
 
-  /escape-string-regexp@5.0.0:
-    resolution: {integrity: sha512-/veY75JbMK4j1yjvuUxuVsiS/hr/4iHs9FTT6cgTexxdE0Ly/glccBAkloH/DofkjRbZU3bnoj38mOmhkZ0lHw==}
-    engines: {node: '>=12'}
+  /escape-string-regexp@4.0.0:
+    resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
+    engines: {node: '>=10'}
     dev: false
 
   /fast-deep-equal@3.1.3:
