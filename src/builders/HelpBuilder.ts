@@ -24,10 +24,8 @@ class HelpBuilder<
 	GC extends BaseGuildCache<P, E, GC>,
 	BC extends BaseBotCache<P, E, GC>,
 > {
-	private readonly QUESTION =
-		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
-	private readonly WARNING =
-		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/warning.png?alt=media&token=bc9c95ca-27df-40eb-a015-6d23b88eae31"
+	private readonly QUESTION = "https://res.cloudinary.com/zs1l3nt/image/upload/icons/question.png"
+	private readonly WARNING = "https://res.cloudinary.com/zs1l3nt/image/upload/icons/warning.png"
 
 	constructor(
 		private readonly fsh: FilesSetupHelper<P, E, GC, BC>,

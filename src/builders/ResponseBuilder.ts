@@ -1,8 +1,8 @@
 import { EmbedBuilder } from "discord.js"
 
 enum Emoji {
-	GOOD = "https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/good.png?alt=media&token=4b833fc2-b8ff-4d5c-add2-f5a6029664fb",
-	BAD = "https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/bad.png?alt=media&token=cbd48c77-784c-4f86-8de1-7335b452a894",
+	GOOD = "https://res.cloudinary.com/zs1l3nt/image/upload/icons/check.png",
+	BAD = "https://res.cloudinary.com/zs1l3nt/image/upload/icons/cross.png",
 }
 
 export default class ResponseBuilder {
