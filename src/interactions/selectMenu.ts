@@ -1,4 +1,4 @@
-import { GuildMember, Message, SelectMenuInteraction } from "discord.js"
+import { GuildMember, Message, StringSelectMenuInteraction } from "discord.js"
 
 import { PrismaClient } from "@prisma/client"
 
@@ -7,7 +7,7 @@ import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 export default abstract class BaseSelectMenu<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * If the select menu interaction should be deferred
@@ -37,7 +37,7 @@ export default abstract class BaseSelectMenu<
 export abstract class SelectMenuMiddleware<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * The function that should handle the select menu interaction
@@ -51,9 +51,12 @@ export abstract class SelectMenuMiddleware<
 export class SelectMenuHelper<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
-	constructor(public readonly cache: GC, public readonly interaction: SelectMenuInteraction) {}
+	constructor(
+		public readonly cache: GC,
+		public readonly interaction: StringSelectMenuInteraction,
+	) {}
 
 	/**
 	 * The GuildMember that pressednt the button

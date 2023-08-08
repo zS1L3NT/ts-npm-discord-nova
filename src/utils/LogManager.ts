@@ -9,14 +9,14 @@ type LogData = {
 	title: string
 	description: string | string[]
 	command?: string
-	color?: typeof Colors[keyof typeof Colors]
+	color?: (typeof Colors)[keyof typeof Colors]
 	embeds?: EmbedBuilder[]
 }
 
 export default class LogManager<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	constructor(private readonly cache: BaseGuildCache<P, E, GC>) {}
 
@@ -38,7 +38,7 @@ export default class LogManager<
 		}
 
 		const member = this.cache.guild.members.cache.find(
-			m => m.user.id === this.cache.bot.user!.id
+			m => m.user.id === this.cache.bot.user!.id,
 		)!
 		if (member.permissions.has(PermissionFlagsBits.SendMessages)) {
 			logChannel.send({
@@ -47,7 +47,7 @@ export default class LogManager<
 						author: data.member
 							? {
 									name: data.member.user.tag,
-									iconURL: data.member.user.displayAvatarURL()
+									iconURL: data.member.user.displayAvatarURL(),
 							  }
 							: undefined,
 						title: data.title,
@@ -58,12 +58,12 @@ export default class LogManager<
 						timestamp: new Date(),
 						footer: data.command
 							? {
-									text: `Command: ${data.command}`
+									text: `Command: ${data.command}`,
 							  }
-							: undefined
+							: undefined,
 					}),
-					...(data.embeds ?? [])
-				]
+					...(data.embeds ?? []),
+				],
 			})
 		}
 	}

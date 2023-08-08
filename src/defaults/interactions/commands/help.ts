@@ -1,20 +1,25 @@
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseBotCache, BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, FilesSetupHelper,
-	HelpBuilder
+	BaseBotCache,
+	BaseCommand,
+	BaseEntry,
+	BaseGuildCache,
+	CommandHelper,
+	FilesSetupHelper,
+	HelpBuilder,
 } from "../../.."
 
 export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > extends BaseCommand<P, E, GC> {
 	override defer = true
 	override ephemeral = true
 	override data = {
-		description: "Shows you this help message"
+		description: "Shows you this help message",
 	}
 
 	override middleware = []
@@ -27,7 +32,7 @@ export default class<
 		return helper.isMessageCommand(false)
 	}
 
-	override converter(helper: CommandHelper<P, E, GC>) {}
+	override converter() {}
 
 	override async execute(helper: CommandHelper<P, E, GC>) {
 		helper.respond(new HelpBuilder(this.fsh, helper.cache).buildMinimum(), null)

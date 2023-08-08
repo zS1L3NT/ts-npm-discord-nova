@@ -7,7 +7,7 @@ import { BaseEntry, BaseGuildCache, CommandHelper, CommandMiddleware, ResponseBu
 export default class IsAdminMiddleware<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > extends CommandMiddleware<P, E, GC> {
 	override handler(helper: CommandHelper<P, E, GC>) {
 		if (

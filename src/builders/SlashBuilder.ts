@@ -3,7 +3,10 @@ import { SlashCommandBuilder } from "discord.js"
 import { iSlashData } from "../"
 
 export default class SlashBuilder {
-	constructor(private readonly name: string, private readonly data: iSlashData) {}
+	constructor(
+		private readonly name: string,
+		private readonly data: iSlashData,
+	) {}
 
 	buildCommand() {
 		return this.build(SlashCommandBuilder)
@@ -48,7 +51,7 @@ export default class SlashBuilder {
 							boolean
 								.setName(option.name)
 								.setDescription(option.description)
-								.setRequired(option.required)
+								.setRequired(option.required),
 						)
 						break
 					case "user":
@@ -56,7 +59,7 @@ export default class SlashBuilder {
 							user
 								.setName(option.name)
 								.setDescription(option.description)
-								.setRequired(option.required)
+								.setRequired(option.required),
 						)
 						break
 					case "role":
@@ -64,7 +67,7 @@ export default class SlashBuilder {
 							role
 								.setName(option.name)
 								.setDescription(option.description)
-								.setRequired(option.required)
+								.setRequired(option.required),
 						)
 						break
 					case "channel":
@@ -72,7 +75,7 @@ export default class SlashBuilder {
 							channel
 								.setName(option.name)
 								.setDescription(option.description)
-								.setRequired(option.required)
+								.setRequired(option.required),
 						)
 						break
 					case "mentionable":
@@ -80,7 +83,7 @@ export default class SlashBuilder {
 							mentionable
 								.setName(option.name)
 								.setDescription(option.description)
-								.setRequired(option.required)
+								.setRequired(option.required),
 						)
 						break
 				}

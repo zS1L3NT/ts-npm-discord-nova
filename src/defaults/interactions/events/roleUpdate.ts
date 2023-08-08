@@ -8,7 +8,7 @@ export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > extends BaseEvent<P, E, GC, BC, "roleUpdate"> {
 	override name = "roleUpdate" as const
 
@@ -29,9 +29,9 @@ export default class<
 				title: `Administrator Permission Missing`,
 				description: [
 					`ADMINISTRATOR was removed from my list of permissions in <@&${oldRole.id}>`,
-					"I need this role to operate properly, if not none of my commands will work."
+					"I need this role to operate properly, if not none of my commands will work.",
 				].join("\n"),
-				color: Colors.Red
+				color: Colors.Red,
 			})
 		}
 
@@ -44,9 +44,9 @@ export default class<
 				title: `Administrator Permission Restored`,
 				description: [
 					`ADMINISTRATOR was added to my list of permissions in <@&${oldRole.id}>`,
-					"Thank you for restoring my permissions, now I can function properly"
+					"Thank you for restoring my permissions, now I can function properly",
 				].join("\n"),
-				color: Colors.Green
+				color: Colors.Green,
 			})
 		}
 	}

@@ -8,7 +8,7 @@ export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > extends BaseEvent<P, E, GC, BC, "guildDelete"> {
 	override name = "guildDelete" as const
 

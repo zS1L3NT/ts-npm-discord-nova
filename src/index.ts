@@ -13,14 +13,14 @@ export {
 	CommandHelper,
 	CommandMiddleware,
 	CommandType,
-	default as BaseCommand
+	default as BaseCommand,
 } from "./interactions/command"
 export { default as BaseEvent, EventMiddleware } from "./interactions/event"
 export { default as BaseModal, ModalHelper, ModalMiddleware } from "./interactions/modal"
 export {
 	default as BaseSelectMenu,
 	SelectMenuHelper,
-	SelectMenuMiddleware
+	SelectMenuMiddleware,
 } from "./interactions/selectMenu"
 export { default as IsAdminMiddleware } from "./defaults/middleware/IsAdminMiddleware"
 export * from "./NovaBot"

@@ -1,25 +1,38 @@
 import {
-	ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors, EmbedBuilder, SelectMenuBuilder
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	Colors,
+	EmbedBuilder,
+	StringSelectMenuBuilder,
 } from "discord.js"
 
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, CommandPayload, CommandType, FilesSetupHelper
+	BaseBotCache,
+	BaseEntry,
+	BaseGuildCache,
+	CommandPayload,
+	CommandType,
+	FilesSetupHelper,
 } from "../"
 
 class HelpBuilder<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > {
 	private readonly QUESTION =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/question.png?alt=media&token=fc6d0312-1ed2-408d-9309-5abe69c467c3"
 	private readonly WARNING =
 		"https://firebasestorage.googleapis.com/v0/b/zectan-projects.appspot.com/o/warning.png?alt=media&token=bc9c95ca-27df-40eb-a015-6d23b88eae31"
 
-	constructor(private readonly fsh: FilesSetupHelper<P, E, GC, BC>, private readonly cache: GC) {}
+	constructor(
+		private readonly fsh: FilesSetupHelper<P, E, GC, BC>,
+		private readonly cache: GC,
+	) {}
 
 	buildMaximum(): CommandPayload {
 		return {
@@ -32,20 +45,22 @@ class HelpBuilder<
 					.addFields(
 						Array.from(this.fsh.commandFiles.entries()).map(([name, commandFile]) => ({
 							name,
-							value: commandFile.data.description
-						}))
-					)
+							value: commandFile.data.description,
+						})),
+					),
 			],
 			components: [
-				new ActionRowBuilder<SelectMenuBuilder>().addComponents(this.createSelectMenu()),
+				new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+					this.createSelectMenu(),
+				),
 				new ActionRowBuilder<ButtonBuilder>().addComponents(
 					new ButtonBuilder()
 						.setCustomId("help-minimum")
 						.setLabel("Show Help Overview")
 						.setStyle(ButtonStyle.Primary)
-						.setEmoji("➖")
-				)
-			]
+						.setEmoji("➖"),
+				),
+			],
 		}
 	}
 
@@ -62,10 +77,10 @@ class HelpBuilder<
 								`ADMINISTRATOR is currently missing from the list of permissions in <@&${
 									this.cache.guild.roles.botRoleFor(this.cache.bot.user!)!.id
 								}>`,
-								"All interactions with the bot will be temporarily unavailable until this permission is added."
-							].join("\n")
-						)
-				]
+								"All interactions with the bot will be temporarily unavailable until this permission is added.",
+							].join("\n"),
+						),
+				],
 			}
 		}
 
@@ -80,20 +95,22 @@ class HelpBuilder<
 							...this.fsh.helpMessage(this.cache).split("\n"),
 							"",
 							"Click the button below to see all available commands",
-							"Use the select menu below to find out more about a specific command"
-						].join("\n")
-					)
+							"Use the select menu below to find out more about a specific command",
+						].join("\n"),
+					),
 			],
 			components: [
-				new ActionRowBuilder<SelectMenuBuilder>().addComponents(this.createSelectMenu()),
+				new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+					this.createSelectMenu(),
+				),
 				new ActionRowBuilder<ButtonBuilder>().addComponents(
 					new ButtonBuilder()
 						.setCustomId("help-maximum")
 						.setLabel("Show all Commands")
 						.setStyle(ButtonStyle.Primary)
-						.setEmoji("➕")
-				)
-			]
+						.setEmoji("➕"),
+				),
+			],
 		}
 	}
 
@@ -112,7 +129,7 @@ class HelpBuilder<
 					: commandFile.only === CommandType.Slash
 					? "Slash Commands"
 					: "Message Commands"
-			}**`
+			}**`,
 		]
 
 		if (alias) {
@@ -126,7 +143,7 @@ class HelpBuilder<
 				const values = [
 					`**(${option.required ? "required" : "optional"})**`,
 					`**About**: _${option.description}_`,
-					`**Type**: ${option.requirements}`
+					`**Type**: ${option.requirements}`,
 				]
 				if (option.default) {
 					values.push(`**Default**: \`${option.default}\``)
@@ -134,7 +151,7 @@ class HelpBuilder<
 
 				embed.addFields({
 					name: `[${i + 1}]\t__${option.name}__`,
-					value: values.join("\n")
+					value: values.join("\n"),
 				})
 			}
 		}
@@ -144,28 +161,30 @@ class HelpBuilder<
 		return {
 			embeds: [embed],
 			components: [
-				new ActionRowBuilder<SelectMenuBuilder>().addComponents(this.createSelectMenu()),
+				new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+					this.createSelectMenu(),
+				),
 				new ActionRowBuilder<ButtonBuilder>().addComponents(
 					new ButtonBuilder()
 						.setCustomId("help-minimum")
 						.setLabel("Back")
 						.setStyle(ButtonStyle.Primary)
-						.setEmoji("⬅")
-				)
-			]
+						.setEmoji("⬅"),
+				),
+			],
 		}
 	}
 
 	createSelectMenu() {
-		return new SelectMenuBuilder()
+		return new StringSelectMenuBuilder()
 			.setCustomId("help-item")
 			.setPlaceholder("Choose a command")
 			.addOptions(
 				Array.from(this.fsh.commandFiles.entries()).map(([name, commandFile]) => ({
 					label: name,
 					value: name,
-					description: commandFile.data.description
-				}))
+					description: commandFile.data.description,
+				})),
 			)
 	}
 }

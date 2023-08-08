@@ -9,7 +9,7 @@ export default abstract class BaseEvent<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
 	BC extends BaseBotCache<P, E, GC>,
-	N extends keyof ClientEvents
+	N extends keyof ClientEvents,
 > {
 	/**
 	 * The name of the event
@@ -37,7 +37,7 @@ export type iEventMiddleware<
 	GC extends BaseGuildCache<P, E, GC>,
 	BC extends BaseBotCache<P, E, GC>,
 	N extends keyof ClientEvents,
-	EM extends EventMiddleware<P, E, GC, BC, N>
+	EM extends EventMiddleware<P, E, GC, BC, N>,
 > = new () => EM
 
 export abstract class EventMiddleware<
@@ -45,7 +45,7 @@ export abstract class EventMiddleware<
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
 	BC extends BaseBotCache<P, E, GC>,
-	N extends keyof ClientEvents
+	N extends keyof ClientEvents,
 > {
 	/**
 	 * The function that should handle the event

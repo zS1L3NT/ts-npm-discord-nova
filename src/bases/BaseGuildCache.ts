@@ -8,7 +8,7 @@ import { Alias } from "./BaseEntry"
 export type iBaseGuildCache<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > = new (bot: Client, guild: Guild, prisma: P) => GC
 
 /**
@@ -19,7 +19,7 @@ export type iBaseGuildCache<
 export default abstract class BaseGuildCache<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * The instance of the logger for this Guild
@@ -50,7 +50,7 @@ export default abstract class BaseGuildCache<
 		 * The Discord Guild that this GuildCache is for.
 		 */
 		public readonly guild: Guild,
-		public readonly prisma: P
+		public readonly prisma: P,
 	) {
 		this.onConstruct()
 		setInterval(() => this.refresh(), 15_000)
@@ -73,7 +73,7 @@ export default abstract class BaseGuildCache<
 		try {
 			this.entry = await (<any>this.prisma).entry.update({
 				data,
-				where: { guild_id: this.guild.id }
+				where: { guild_id: this.guild.id },
 			})
 		} catch (err) {
 			this.refresh()
@@ -81,7 +81,7 @@ export default abstract class BaseGuildCache<
 			this.logger.log({
 				title: (<Error>err).name,
 				description: (<Error>err).message,
-				color: Colors.Red
+				color: Colors.Red,
 			})
 		}
 	}

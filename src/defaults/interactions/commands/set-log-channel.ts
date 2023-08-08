@@ -3,14 +3,19 @@ import { Colors, TextChannel } from "discord.js"
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
-	ResponseBuilder
+	BaseCommand,
+	BaseEntry,
+	BaseGuildCache,
+	CommandHelper,
+	CommandType,
+	IsAdminMiddleware,
+	ResponseBuilder,
 } from "../../.."
 
 export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > extends BaseCommand<P, E, GC> {
 	override defer = true
 	override ephemeral = true
@@ -21,21 +26,21 @@ export default class<
 				name: "channel",
 				description: [
 					"The channel which you would want to set as the log channel",
-					"Leave this empty to unset the log channel"
+					"Leave this empty to unset the log channel",
 				].join("\n"),
 				type: "channel" as const,
 				requirements: "Text channel that isn't already the log channel",
-				required: false
-			}
-		]
+				required: false,
+			},
+		],
 	}
 
 	override only = CommandType.Slash
 	override middleware = [new IsAdminMiddleware()]
 
-	override condition(helper: CommandHelper<P, E, GC>) {}
+	override condition() {}
 
-	override converter(helper: CommandHelper<P, E, GC>) {}
+	override converter() {}
 
 	override async execute(helper: CommandHelper<P, E, GC>) {
 		const channel = helper.channel("channel")
@@ -48,7 +53,7 @@ export default class<
 				//@ts-ignore
 				await helper.cache.update({ log_channel_id: channel.id })
 				helper.respond(
-					ResponseBuilder.good(`Log channel reassigned to \`#${channel.name}\``)
+					ResponseBuilder.good(`Log channel reassigned to \`#${channel.name}\``),
 				)
 				helper.cache.logger.log({
 					member: helper.member,
@@ -56,10 +61,10 @@ export default class<
 					description: [
 						`<@${helper.member.id}> changed the log channel`,
 						oldChannelId ? `**Old Log Channel**: <#${oldChannelId}>` : null,
-						`**New Log Channel**: <#${channel.id}>`
+						`**New Log Channel**: <#${channel.id}>`,
 					].join("\n"),
 					command: "set-log-channel",
-					color: Colors.Blue
+					color: Colors.Blue,
 				})
 			}
 		} else if (channel === null) {
@@ -71,7 +76,7 @@ export default class<
 				title: `Log channel unassigned`,
 				description: `<@${helper.member.id}> unassigned the log channel\b**Old Log Channel**: <#${oldChannelId}>`,
 				command: "set-log-channel",
-				color: Colors.Blue
+				color: Colors.Blue,
 			})
 		} else {
 			helper.respond(ResponseBuilder.bad(`Please select a text channel`))

@@ -1,5 +1,10 @@
 import {
-	ChatInputCommandInteraction, GuildChannel, GuildMember, Message, Role, User
+	ChatInputCommandInteraction,
+	GuildChannel,
+	GuildMember,
+	Message,
+	Role,
+	User,
 } from "discord.js"
 import escapeStringRegexp from "escape-string-regexp"
 
@@ -9,13 +14,13 @@ import { BaseEntry, BaseGuildCache, CommandPayload, iSlashData, ResponseBuilder 
 
 export enum CommandType {
 	Slash = "slash",
-	Message = "message"
+	Message = "message",
 }
 
 export default abstract class BaseCommand<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * If the slash command should be deferred
@@ -89,7 +94,7 @@ export default abstract class BaseCommand<
 export abstract class CommandMiddleware<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * The function that should handle the message or slash interaction
@@ -103,7 +108,7 @@ export abstract class CommandMiddleware<
 export class CommandHelper<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	private responded = false
 	private response: Message | undefined
@@ -123,7 +128,7 @@ export class CommandHelper<
 		public readonly type: CommandType,
 		public readonly cache: GC,
 		public readonly interaction?: ChatInputCommandInteraction,
-		public readonly message?: Message
+		public readonly message?: Message,
 	) {}
 
 	/**
@@ -175,7 +180,7 @@ export class CommandHelper<
 		return !!this.match(
 			hasArgs === null
 				? `^${commandRegex}`
-				: `^${commandRegex}(?:(?= *${hasArgs ? "" : "$"})(?!\\w+))`
+				: `^${commandRegex}(?:(?= *${hasArgs ? "" : "$"})(?!\\w+))`,
 		)
 	}
 

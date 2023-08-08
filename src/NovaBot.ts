@@ -1,18 +1,25 @@
-import { PrismaClient } from "@prisma/client"
 import AfterEvery from "after-every"
 import { BitFieldResolvable, Client, GatewayIntentsString, PermissionFlagsBits } from "discord.js"
 import { useTryAsync } from "no-try"
 
+import { PrismaClient } from "@prisma/client"
+
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, EventSetupHelper, FilesSetupHelper, iBaseBotCache,
-	iBaseGuildCache, SlashCommandDeployer
+	BaseBotCache,
+	BaseEntry,
+	BaseGuildCache,
+	EventSetupHelper,
+	FilesSetupHelper,
+	iBaseBotCache,
+	iBaseGuildCache,
+	SlashCommandDeployer,
 } from "./"
 
 export default abstract class NovaBot<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > {
 	/**
 	 * The display name of the bot.
@@ -83,13 +90,14 @@ export default abstract class NovaBot<
 	/**
 	 * Instance of the prisma database client
 	 */
-	 abstract prisma: P
+	abstract prisma: P
 
 	/**
 	 * This method will get called once your bot receives the "ready" event from Discord
 	 *
 	 * @param botCache The bot cache that is used by your bot
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onSetup(botCache: BC) {}
 
 	/**
@@ -110,7 +118,7 @@ export default abstract class NovaBot<
 			logger.info(`Logged in as ${this.name}`)
 
 			let i = 0
-			let count = bot.guilds.cache.size
+			const count = bot.guilds.cache.size
 			const getTag = () => `[${`${++i}`.padStart(`${count}`.length, "0")}/${count}]`
 			Promise.allSettled(
 				bot.guilds.cache.map(async guild => {
@@ -119,18 +127,18 @@ export default abstract class NovaBot<
 						blacklist.push(guild.id)
 						return logger.error(
 							getTag(),
-							`❌ Couldn't find an entry for Guild(${guild.name})`
+							`❌ Couldn't find an entry for Guild(${guild.name})`,
 						)
 					}
 
 					const [deployErr] = await useTryAsync(() =>
-						new SlashCommandDeployer(guild.id, esh.fsh.commandFiles).deploy()
+						new SlashCommandDeployer(guild.id, esh.fsh.commandFiles).deploy(),
 					)
 					if (deployErr) {
 						blacklist.push(guild.id)
 						return logger.error(
 							getTag(),
-							`❌ Couldn't get Slash Command permission for Guild(${guild.name})`
+							`❌ Couldn't get Slash Command permission for Guild(${guild.name})`,
 						)
 					}
 
@@ -142,7 +150,7 @@ export default abstract class NovaBot<
 					}
 
 					logger.info(getTag(), `✅ Restored cache for Guild(${guild.name})`)
-				})
+				}),
 			).then(() => {
 				logger.info(`✅ All bot cache restored`)
 			})

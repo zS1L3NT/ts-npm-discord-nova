@@ -1,15 +1,20 @@
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, BaseSelectMenu, FilesSetupHelper, HelpBuilder,
-	SelectMenuHelper
+	BaseBotCache,
+	BaseEntry,
+	BaseGuildCache,
+	BaseSelectMenu,
+	FilesSetupHelper,
+	HelpBuilder,
+	SelectMenuHelper,
 } from "../../.."
 
 export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > extends BaseSelectMenu<P, E, GC> {
 	override defer = false
 	override ephemeral = false

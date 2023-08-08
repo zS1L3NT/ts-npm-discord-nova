@@ -7,7 +7,7 @@ import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 export default abstract class BaseButton<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * If the button interaction should be deferred
@@ -38,13 +38,13 @@ export type iButtonMiddleware<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BM extends ButtonMiddleware<P, E, GC>
+	BM extends ButtonMiddleware<P, E, GC>,
 > = new () => BM
 
 export abstract class ButtonMiddleware<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * The function that should handle the button interaction
@@ -58,9 +58,12 @@ export abstract class ButtonMiddleware<
 export class ButtonHelper<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
-	constructor(public readonly cache: GC, public readonly interaction: ButtonInteraction) {}
+	constructor(
+		public readonly cache: GC,
+		public readonly interaction: ButtonInteraction,
+	) {}
 
 	/**
 	 * The GuildMember that pressednt the button

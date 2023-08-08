@@ -7,7 +7,7 @@ import { BaseEntry, BaseGuildCache, CommandPayload, ResponseBuilder } from "../"
 export default abstract class BaseModal<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * If the modal submission should be deferred
@@ -37,7 +37,7 @@ export default abstract class BaseModal<
 export abstract class ModalMiddleware<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * The function that should handle the modal interaction
@@ -51,11 +51,11 @@ export abstract class ModalMiddleware<
 export class ModalHelper<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	constructor(
 		public readonly cache: GC,
-		public readonly interaction: ModalMessageModalSubmitInteraction
+		public readonly interaction: ModalMessageModalSubmitInteraction,
 	) {}
 
 	/**

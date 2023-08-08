@@ -8,7 +8,7 @@ export type iBaseBotCache<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > = new (GCClass: iBaseGuildCache<P, E, GC>, bot: Client, prisma: P) => BC
 
 /**
@@ -20,7 +20,7 @@ export type iBaseBotCache<
 export default abstract class BaseBotCache<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	/**
 	 * The collection that contains all GuildCaches.
@@ -33,7 +33,7 @@ export default abstract class BaseBotCache<
 		 * The Discord Client that is used to interact with the Discord API.
 		 */
 		public readonly bot: Client,
-		public readonly prisma: P
+		public readonly prisma: P,
 	) {
 		this.onConstruct()
 	}
@@ -71,6 +71,7 @@ export default abstract class BaseBotCache<
 	 *
 	 * @param cache The GuildCache that was just created.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onSetGuildCache(cache: GC) {}
 
 	/**

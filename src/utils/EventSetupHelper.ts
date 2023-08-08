@@ -1,24 +1,35 @@
 import {
-	ButtonInteraction, ChatInputCommandInteraction, Message, ModalMessageModalSubmitInteraction,
-	SelectMenuInteraction
+	ButtonInteraction,
+	ChatInputCommandInteraction,
+	Message,
+	ModalMessageModalSubmitInteraction,
+	StringSelectMenuInteraction,
 } from "discord.js"
 
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseBotCache, BaseEntry, BaseGuildCache, ButtonHelper, CommandHelper, CommandType,
-	FilesSetupHelper, ModalHelper, ResponseBuilder, SelectMenuHelper
+	BaseBotCache,
+	BaseEntry,
+	BaseGuildCache,
+	ButtonHelper,
+	CommandHelper,
+	CommandType,
+	FilesSetupHelper,
+	ModalHelper,
+	ResponseBuilder,
+	SelectMenuHelper,
 } from "../"
 
 export default class EventSetupHelper<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > {
 	constructor(
 		private readonly botCache: BC,
-		public readonly fsh: FilesSetupHelper<P, E, GC, BC>
+		public readonly fsh: FilesSetupHelper<P, E, GC, BC>,
 	) {
 		for (const eventFile of this.fsh.eventFiles) {
 			this.botCache.bot.on(eventFile.name, async (...args) => {
@@ -47,7 +58,8 @@ export default class EventSetupHelper<
 
 			if (interaction.isChatInputCommand()) await this.onSlashInteraction(cache, interaction)
 			if (interaction.isButton()) await this.onButtonInteraction(cache, interaction)
-			if (interaction.isSelectMenu()) await this.onSelectMenuInteraction(cache, interaction)
+			if (interaction.isStringSelectMenu())
+				await this.onSelectMenuInteraction(cache, interaction)
 			if (interaction.isModalSubmit() && interaction.isFromMessage())
 				await this.onModalInteraction(cache, interaction)
 		})
@@ -69,7 +81,7 @@ export default class EventSetupHelper<
 					await message.channel
 						.sendTyping()
 						.catch(err =>
-							logger.warn("Failed to send typing after message command", err)
+							logger.warn("Failed to send typing after message command", err),
 						)
 
 					let broke = false
@@ -83,14 +95,14 @@ export default class EventSetupHelper<
 				} catch (err) {
 					logger.error("Error executing message command", err)
 					helper.respond(
-						ResponseBuilder.bad("There was an error while executing this command!")
+						ResponseBuilder.bad("There was an error while executing this command!"),
 					)
 				}
 			} else {
 				helper.respond(
 					ResponseBuilder.bad(
-						"Bot needs ADMINISTRATOR permissions to use this message command"
-					)
+						"Bot needs ADMINISTRATOR permissions to use this message command",
+					),
 				)
 			}
 
@@ -105,13 +117,13 @@ export default class EventSetupHelper<
 			CommandType.Slash,
 			cache,
 			interaction,
-			undefined
+			undefined,
 		)
 		const commandFile = this.fsh.commandFiles.get(interaction.commandName)
 		if (!commandFile) return
 
 		logger.discord(
-			`Opening SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
+			`Opening SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`,
 		)
 
 		if (commandFile.defer) {
@@ -135,17 +147,19 @@ export default class EventSetupHelper<
 			} catch (err) {
 				logger.error("Error executing slash interaction", err)
 				helper.respond(
-					ResponseBuilder.bad("There was an error while executing this command!")
+					ResponseBuilder.bad("There was an error while executing this command!"),
 				)
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this slash command")
+				ResponseBuilder.bad(
+					"Bot needs ADMINISTRATOR permissions to use this slash command",
+				),
 			)
 		}
 
 		logger.discord(
-			`Closing SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`
+			`Closing SlashInteraction(${interaction.commandName}) for User(${interaction.user.tag})`,
 		)
 	}
 
@@ -155,7 +169,7 @@ export default class EventSetupHelper<
 		if (!buttonFile) return
 
 		logger.discord(
-			`Opening ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+			`Opening ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`,
 		)
 
 		if (buttonFile.defer) {
@@ -177,27 +191,27 @@ export default class EventSetupHelper<
 			} catch (err) {
 				logger.error("Error executing button interaction", err)
 				helper.respond(
-					ResponseBuilder.bad("There was an error while executing this command!")
+					ResponseBuilder.bad("There was an error while executing this command!"),
 				)
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this button")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this button"),
 			)
 		}
 
 		logger.discord(
-			`Closing ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+			`Closing ButtonInteraction(${interaction.customId}) for User(${interaction.user.tag})`,
 		)
 	}
 
-	private async onSelectMenuInteraction(cache: GC, interaction: SelectMenuInteraction) {
+	private async onSelectMenuInteraction(cache: GC, interaction: StringSelectMenuInteraction) {
 		const helper = new SelectMenuHelper(cache, interaction)
 		const selectMenuFile = this.fsh.selectMenuFiles.get(interaction.customId)
 		if (!selectMenuFile) return
 
 		logger.discord(
-			`Opening SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+			`Opening SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`,
 		)
 
 		if (selectMenuFile.defer) {
@@ -219,17 +233,17 @@ export default class EventSetupHelper<
 			} catch (err) {
 				logger.error("Error executing select menu command", err)
 				helper.respond(
-					ResponseBuilder.bad("There was an error while executing this command!")
+					ResponseBuilder.bad("There was an error while executing this command!"),
 				)
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this select menu")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this select menu"),
 			)
 		}
 
 		logger.discord(
-			`Closing SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+			`Closing SelectMenuInteraction(${interaction.customId}) for User(${interaction.user.tag})`,
 		)
 	}
 
@@ -239,7 +253,7 @@ export default class EventSetupHelper<
 		if (!modalFile) return
 
 		logger.discord(
-			`Opening ModalInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+			`Opening ModalInteraction(${interaction.customId}) for User(${interaction.user.tag})`,
 		)
 
 		if (modalFile.defer) {
@@ -261,17 +275,17 @@ export default class EventSetupHelper<
 			} catch (err) {
 				logger.error("Error executing select menu command", err)
 				helper.respond(
-					ResponseBuilder.bad("There was an error while executing this command!")
+					ResponseBuilder.bad("There was an error while executing this command!"),
 				)
 			}
 		} else {
 			helper.respond(
-				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this modal")
+				ResponseBuilder.bad("Bot needs ADMINISTRATOR permissions to use this modal"),
 			)
 		}
 
 		logger.discord(
-			`Closing ModalInteraction(${interaction.customId}) for User(${interaction.user.tag})`
+			`Closing ModalInteraction(${interaction.customId}) for User(${interaction.user.tag})`,
 		)
 	}
 }

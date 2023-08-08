@@ -3,14 +3,20 @@ import { Colors } from "discord.js"
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseCommand, BaseEntry, BaseGuildCache, CommandHelper, CommandType, IsAdminMiddleware,
-	iSlashStringOption, ResponseBuilder
+	BaseCommand,
+	BaseEntry,
+	BaseGuildCache,
+	CommandHelper,
+	CommandType,
+	IsAdminMiddleware,
+	iSlashStringOption,
+	ResponseBuilder,
 } from "../../.."
 
 export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > extends BaseCommand<P, E, GC> {
 	override defer = true
 	override ephemeral = true
@@ -23,19 +29,19 @@ export default class<
 				type: "string" as const,
 				choices: [],
 				requirements: "Valid message command",
-				required: true
+				required: true,
 			},
 			{
 				name: "alias",
 				description: [
 					"The alias you want to set",
-					"Leave empty to unset the alias for this command"
+					"Leave empty to unset the alias for this command",
 				].join("\n"),
 				type: "string" as const,
 				requirements: "Alphabetic text",
-				required: false
-			}
-		]
+				required: false,
+			},
+		],
 	}
 
 	override only = CommandType.Slash
@@ -48,9 +54,9 @@ export default class<
 			.map(c => ({ name: c, value: c }))
 	}
 
-	override condition(helper: CommandHelper<P, E, GC>) {}
+	override condition() {}
 
-	override converter(helper: CommandHelper<P, E, GC>) {}
+	override converter() {}
 
 	override async execute(helper: CommandHelper<P, E, GC>) {
 		const command = helper.string("command")!
@@ -67,7 +73,7 @@ export default class<
 			}
 
 			await (<any>helper.cache.prisma).alias.create({
-				data: { alias, command, guild_id: helper.cache.guild.id }
+				data: { alias, command, guild_id: helper.cache.guild.id },
 			})
 			helper.respond(ResponseBuilder.good(`Set Alias for \`${command}\` to \`${alias}\``))
 			helper.cache.logger.log({
@@ -76,10 +82,10 @@ export default class<
 				description: [
 					`<@${helper.member.id}> added an alias for a command`,
 					`**Command**: ${command}`,
-					`**Alias**: ${alias}`
+					`**Alias**: ${alias}`,
 				].join("\n"),
 				command: "set-alias",
-				color: Colors.Blue
+				color: Colors.Blue,
 			})
 		} else {
 			if (!alias_) {
@@ -87,7 +93,7 @@ export default class<
 			}
 
 			await (<any>helper.cache.prisma).alias.delete({
-				where: { alias_command: { alias: alias_.alias, command } }
+				where: { alias_command: { alias: alias_.alias, command } },
 			})
 			helper.respond(ResponseBuilder.good(`Removed Alias for \`${command}\``))
 			helper.cache.logger.log({
@@ -96,10 +102,10 @@ export default class<
 				description: [
 					`<@${helper.member.id}> removed an alias for a command`,
 					`**Command**: ${command}`,
-					`**Alias**: ${alias}`
+					`**Alias**: ${alias}`,
 				].join("\n"),
 				command: "set-alias",
-				color: Colors.Blue
+				color: Colors.Blue,
 			})
 		}
 	}

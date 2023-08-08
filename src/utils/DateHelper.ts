@@ -10,7 +10,7 @@ export default class DateHelper {
 		Thu: "Thursday",
 		Fri: "Friday",
 		Sat: "Saturday",
-		Sun: "Sunday"
+		Sun: "Sunday",
 	}
 	static nameOfMonths = [
 		"January",
@@ -24,7 +24,7 @@ export default class DateHelper {
 		"September",
 		"October",
 		"November",
-		"December"
+		"December",
 	]
 	static readonly longerMonths = [0, 2, 4, 6, 7, 9, 11]
 
@@ -73,9 +73,9 @@ export default class DateHelper {
 				month: month + 1,
 				day,
 				hour,
-				minute
+				minute,
 			},
-			{ zone: "Asia/Singapore" }
+			{ zone: "Asia/Singapore" },
 		)
 	}
 

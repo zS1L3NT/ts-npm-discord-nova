@@ -3,14 +3,19 @@ import { Guild } from "discord.js"
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseBotCache, BaseEntry, BaseEvent, BaseGuildCache, FilesSetupHelper, SlashCommandDeployer
+	BaseBotCache,
+	BaseEntry,
+	BaseEvent,
+	BaseGuildCache,
+	FilesSetupHelper,
+	SlashCommandDeployer,
 } from "../../.."
 
 export default class<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > extends BaseEvent<P, E, GC, BC, "guildCreate"> {
 	override name = "guildCreate" as const
 

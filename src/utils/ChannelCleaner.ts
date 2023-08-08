@@ -1,5 +1,6 @@
-import { PrismaClient } from "@prisma/client"
 import { Collection, Message, TextChannel } from "discord.js"
+
+import { PrismaClient } from "@prisma/client"
 
 import { BaseEntry, BaseGuildCache } from "../"
 
@@ -9,7 +10,7 @@ import { BaseEntry, BaseGuildCache } from "../"
 export default class ChannelCleaner<
 	P extends PrismaClient,
 	E extends BaseEntry,
-	GC extends BaseGuildCache<P, E, GC>
+	GC extends BaseGuildCache<P, E, GC>,
 > {
 	private excluded: (message: Message) => boolean
 	private channel?: TextChannel
@@ -27,7 +28,7 @@ export default class ChannelCleaner<
 		/**
 		 * The only messages that should be in the Channel
 		 */
-		private readonly messageIds: string[]
+		private readonly messageIds: string[],
 	) {
 		this.excluded = () => false
 	}
@@ -54,7 +55,7 @@ export default class ChannelCleaner<
 			for (const message of messages.values()) {
 				if (!this.excluded(message) && !this.messageIds.includes(message.id)) {
 					logger.warn(
-						`Message(${message.content}) shouldn't be in Channel(${channel.name})`
+						`Message(${message.content}) shouldn't be in Channel(${channel.name})`,
 					)
 					message.delete().catch(err => logger.warn("Failed to delete message", err))
 				} else {
@@ -69,7 +70,7 @@ export default class ChannelCleaner<
 					logger.warn(`Channel(${channel.id}) has no Message(${messageId})`)
 					this.messageIds.splice(
 						this.messageIds.findIndex(m => m === messageId),
-						1
+						1,
 					)
 					removeCount++
 				}

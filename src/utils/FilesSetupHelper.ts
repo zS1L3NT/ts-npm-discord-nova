@@ -6,8 +6,14 @@ import path from "path"
 import { PrismaClient } from "@prisma/client"
 
 import {
-	BaseBotCache, BaseButton, BaseCommand, BaseEntry, BaseEvent, BaseGuildCache, BaseModal,
-	BaseSelectMenu
+	BaseBotCache,
+	BaseButton,
+	BaseCommand,
+	BaseEntry,
+	BaseEvent,
+	BaseGuildCache,
+	BaseModal,
+	BaseSelectMenu,
 } from "../"
 import ButtonHelpMaximum from "../defaults/interactions/buttons/help-maximum"
 import ButtonHelpMinimum from "../defaults/interactions/buttons/help-minimum"
@@ -24,7 +30,7 @@ export default class FilesSetupHelper<
 	P extends PrismaClient,
 	E extends BaseEntry,
 	GC extends BaseGuildCache<P, E, GC>,
-	BC extends BaseBotCache<P, E, GC>
+	BC extends BaseBotCache<P, E, GC>,
 > {
 	readonly commandFiles = new Collection<string, BaseCommand<P, E, GC>>()
 	readonly buttonFiles = new Collection<string, BaseButton<P, E, GC>>()
@@ -35,7 +41,7 @@ export default class FilesSetupHelper<
 	constructor(
 		public readonly directory: string,
 		public readonly icon: string,
-		public readonly helpMessage: (cache: GC) => string
+		public readonly helpMessage: (cache: GC) => string,
 	) {
 		this.commandFiles.set("help", new CommandHelp(this))
 		this.commandFiles.set("set-alias", new CommandSetAlias(this.readEntities("messages") ?? []))
@@ -47,7 +53,7 @@ export default class FilesSetupHelper<
 		this.eventFiles.push(
 			new EventGuildCreate(this),
 			new EventGuildDelete<P, E, GC, BC>(),
-			new EventRoleUpdate<P, E, GC, BC>()
+			new EventRoleUpdate<P, E, GC, BC>(),
 		)
 
 		this.setupCommands()
@@ -64,6 +70,7 @@ export default class FilesSetupHelper<
 	}
 
 	private require<T>(location: string): T {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const file = require(path.join(this.directory, location))
 		if ("default" in file) {
 			return file.default
@@ -101,7 +108,7 @@ export default class FilesSetupHelper<
 		for (const fileName of fileNames) {
 			const name = fileName.split(".")[0]!
 			const SelectMenu = this.require<new () => BaseSelectMenu<P, E, GC>>(
-				`selectMenus/${fileName}`
+				`selectMenus/${fileName}`,
 			)
 			this.selectMenuFiles.set(name, new SelectMenu())
 		}
